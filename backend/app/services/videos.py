@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
@@ -29,6 +30,8 @@ from app.services.video_processing import (
     extract_metadata,
     extract_representative_frames,
 )
+
+logger = logging.getLogger(__name__)
 
 CHUNK_SIZE = 1024 * 1024
 
@@ -312,6 +315,45 @@ def process_video_job(video_id: str, job_id: str) -> None:
             job.error_code = None
             job.error_message = None
             db.commit()
+
+            # Automatically continue the demo pipeline: analysis → notification → SOP → plan.
+            try:
+                from app.services import analysis as analysis_service
+
+                analyze_response, should_run = analysis_service.ensure_analysis_for_video(
+                    db, video.asset_code
+                )
+                job.current_step = "Analysis queued"
+                db.commit()
+                if should_run:
+                    analysis_row = analysis_service.get_analysis(
+                        db, analyze_response.analysis_code
+                    )
+                    if analysis_row.processing_job_id:
+                        analysis_service.run_analysis_job(
+                            analysis_row.id, analysis_row.processing_job_id
+                        )
+                    analysis_row = analysis_service.get_analysis(
+                        db, analyze_response.analysis_code
+                    )
+                    if analysis_row.status.value in {
+                        "completed",
+                        "needs_review",
+                    }:
+                        job.current_step = "Analysis complete — awaiting human review"
+                    else:
+                        job.current_step = "Analysis queued"
+                    db.commit()
+                else:
+                    job.current_step = "Analysis ready — awaiting human review"
+                    db.commit()
+            except Exception:
+                logger.exception(
+                    "Automatic analysis failed for video %s; operator can retry.",
+                    video.asset_code,
+                )
+                job.current_step = "Ready for AI analysis"
+                db.commit()
         except AppError as exc:
             video.status = VideoStatus.FAILED.value
             job.status = JobStatus.FAILED.value
