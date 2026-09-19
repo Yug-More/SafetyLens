@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "safetylens-detector"
+version = "0.1.0"
+description = "Temporal person-down detector for SafetyLens"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3"]
+video = ["mediapipe==1.0.1"]
+
+[project.scripts]
+safetylens-video = "safetylens_detector.video:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

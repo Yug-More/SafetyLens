@@ -22,6 +22,8 @@ import type {
   ApiExecutePlanResponse,
   ApiAuditEvent,
   ApiIncidentReport,
+  ApiDetectorEvent,
+  ApiDemoResetResponse,
   ApiSeverity,
   ApiSystemStatus,
   ApiVideoAsset,
@@ -222,6 +224,46 @@ export function fetchSystemStatus() {
 
 export function fetchDemoInfo() {
   return apiGetItem<ApiDemoInfo>("/api/demo/info");
+}
+
+export function resetDemoState(confirmed = true) {
+  return apiPostJson<ApiDemoResetResponse>("/api/demo/reset", {
+    confirmed,
+    preserve_seed_incidents: true,
+  });
+}
+
+export function fetchDetectorEvents(limit = 20) {
+  return apiGetCollection<ApiDetectorEvent>("/api/detector/events", { limit });
+}
+
+export function fetchDetectorEvent(eventId: string) {
+  return apiGetItem<ApiDetectorEvent>(`/api/detector/events/${eventId}`);
+}
+
+export function retryDetectorEvent(eventId: string) {
+  return apiPostJson<ApiDetectorEvent>(`/api/detector/events/${eventId}/retry`);
+}
+
+export function ingestDetectorEvent(request: {
+  event: Record<string, unknown>;
+  clip?: File;
+  location?: string;
+  autoAnalyze?: boolean;
+  incidentIdentifier?: string;
+}) {
+  const formData = new FormData();
+  formData.append("event_json", JSON.stringify(request.event));
+  formData.append("location", request.location ?? "Loading Zone B");
+  formData.append("auto_analyze", String(request.autoAnalyze ?? true));
+  formData.append(
+    "incident_identifier",
+    request.incidentIdentifier ?? "INC-2026-0042"
+  );
+  if (request.clip) {
+    formData.append("clip", request.clip);
+  }
+  return apiPostMultipart<ApiDetectorEvent>("/api/detector/events", formData);
 }
 
 export function uploadVideo(request: VideoUploadRequest) {

@@ -4,6 +4,7 @@ from app.api.routes import (
     analysis,
     cameras,
     dashboard,
+    detector,
     execution,
     health,
     incidents,
@@ -22,3 +23,4 @@ api_router.include_router(system.router)
 api_router.include_router(videos.router)
 api_router.include_router(analysis.router)
 api_router.include_router(execution.router)
+api_router.include_router(detector.router)
