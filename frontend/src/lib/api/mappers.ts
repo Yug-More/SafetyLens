@@ -1,4 +1,5 @@
 import { formatDistanceToNowStrict } from "date-fns";
+import { resolveMediaUrl } from "@/lib/api/client";
 import type {
   ApiActivityEvent,
   ApiCamera,
@@ -7,9 +8,12 @@ import type {
   ApiIncidentDetail,
   ApiIncidentStatus,
   ApiProcedure,
+  ApiProcessingJob,
   ApiRecommendedAction,
   ApiSeverity,
   ApiSystemService,
+  ApiVideoAsset,
+  ApiVideoFrame,
 } from "@/lib/api/types";
 import type {
   ActivityEvent,
@@ -22,6 +26,7 @@ import type {
   SafetyProcedure,
   SystemService,
 } from "@/types";
+import type { ProcessingJobView, VideoAsset, VideoFrameItem } from "@/types/video";
 
 export function formatRelativeTime(iso: string): string {
   try {
@@ -190,5 +195,53 @@ export function mapIncidentDetail(detail: ApiIncidentDetail): {
       ? mapProcedure(detail.matched_procedure)
       : null,
     evidenceDescriptions: detail.evidence.map((item) => item.description),
+  };
+}
+
+export function mapVideoAsset(video: ApiVideoAsset): VideoAsset {
+  return {
+    id: video.id,
+    assetCode: video.asset_code,
+    originalFilename: video.original_filename,
+    mimeType: video.mime_type,
+    fileSizeBytes: video.file_size_bytes,
+    durationSeconds: video.duration_seconds,
+    width: video.width,
+    height: video.height,
+    fps: video.fps,
+    frameCount: video.frame_count,
+    cameraId: video.camera_id,
+    cameraName: video.camera_name,
+    location: video.location,
+    status: video.status,
+    createdAt: video.created_at,
+    contentUrl: resolveMediaUrl(video.content_url),
+    latestJobCode: video.latest_job_code,
+    latestJobStatus: video.latest_job_status,
+  };
+}
+
+export function mapVideoFrame(frame: ApiVideoFrame): VideoFrameItem {
+  return {
+    id: frame.id,
+    frameCode: frame.frame_code,
+    frameNumber: frame.frame_number,
+    timestampSeconds: frame.timestamp_seconds,
+    width: frame.width,
+    height: frame.height,
+    contentUrl: resolveMediaUrl(frame.content_url),
+  };
+}
+
+export function mapProcessingJob(job: ApiProcessingJob): ProcessingJobView {
+  return {
+    id: job.id,
+    jobCode: job.job_code,
+    videoAssetCode: job.video_asset_code,
+    status: job.status,
+    progress: job.progress,
+    currentStep: job.current_step,
+    errorCode: job.error_code,
+    errorMessage: job.error_message,
   };
 }

@@ -1,4 +1,5 @@
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -24,6 +25,16 @@ class Settings(BaseSettings):
         alias="FRONTEND_ORIGINS",
     )
     demo_mode: bool = Field(default=True, alias="DEMO_MODE")
+    upload_directory: str = Field(default="./data/uploads", alias="UPLOAD_DIRECTORY")
+    frame_directory: str = Field(default="./data/frames", alias="FRAME_DIRECTORY")
+    max_video_size_mb: int = Field(default=100, alias="MAX_VIDEO_SIZE_MB", ge=1)
+    max_video_duration_seconds: int = Field(
+        default=120,
+        alias="MAX_VIDEO_DURATION_SECONDS",
+        ge=1,
+    )
+    frame_sample_count: int = Field(default=10, alias="FRAME_SAMPLE_COUNT", ge=1, le=60)
+    max_frame_dimension: int = Field(default=1280, alias="MAX_FRAME_DIMENSION", ge=320)
 
     @field_validator("frontend_origins")
     @classmethod
@@ -38,6 +49,18 @@ class Settings(BaseSettings):
     @property
     def cors_origins(self) -> list[str]:
         return [origin.strip() for origin in self.frontend_origins.split(",") if origin.strip()]
+
+    @property
+    def max_video_size_bytes(self) -> int:
+        return self.max_video_size_mb * 1024 * 1024
+
+    @property
+    def upload_path(self) -> Path:
+        return Path(self.upload_directory).expanduser().resolve()
+
+    @property
+    def frame_path(self) -> Path:
+        return Path(self.frame_directory).expanduser().resolve()
 
 
 @lru_cache

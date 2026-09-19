@@ -166,3 +166,78 @@ export interface ApiHealth {
   database_status: string;
   timestamp: string;
 }
+
+export type ApiVideoStatus =
+  | "uploading"
+  | "uploaded"
+  | "processing"
+  | "ready"
+  | "failed";
+
+export type ApiJobStatus = "queued" | "processing" | "completed" | "failed";
+
+export interface ApiVideoAsset {
+  id: string;
+  asset_code: string;
+  original_filename: string;
+  mime_type: string;
+  file_size_bytes: number;
+  duration_seconds: number | null;
+  width: number | null;
+  height: number | null;
+  fps: number | null;
+  frame_count: number | null;
+  camera_id: string | null;
+  camera_name: string | null;
+  location: string;
+  status: ApiVideoStatus;
+  created_at: string;
+  updated_at: string;
+  content_url: string | null;
+  latest_job_code: string | null;
+  latest_job_status: ApiJobStatus | null;
+}
+
+export interface ApiVideoFrame {
+  id: string;
+  frame_code: string;
+  video_asset_id: string;
+  frame_number: number;
+  timestamp_seconds: number;
+  width: number;
+  height: number;
+  created_at: string;
+  content_url: string;
+}
+
+export interface ApiProcessingJob {
+  id: string;
+  job_code: string;
+  video_asset_id: string;
+  video_asset_code: string | null;
+  job_type: string;
+  status: ApiJobStatus;
+  progress: number;
+  current_step: string;
+  error_code: string | null;
+  error_message: string | null;
+  started_at: string | null;
+  completed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiVideoUploadResponse {
+  asset_code: string;
+  job_code: string;
+  status: ApiVideoStatus;
+  original_filename: string;
+  location: string;
+  created_at: string;
+}
+
+export interface VideoUploadRequest {
+  file: File;
+  location: string;
+  cameraId?: string;
+}

@@ -1,6 +1,8 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import {
   Activity,
   Camera,
@@ -21,6 +23,7 @@ import {
   PanelSkeleton,
 } from "@/components/ConnectionBanner";
 import { EmptyState } from "@/components/EmptyState";
+import { VideoUploadDialog } from "@/components/VideoUploadDialog";
 import { useApiResource } from "@/hooks/useApiResource";
 import {
   fetchCameras,
@@ -45,6 +48,9 @@ import {
 } from "@/data/fallback";
 
 export default function OverviewPage() {
+  const router = useRouter();
+  const [uploadOpen, setUploadOpen] = useState(false);
+
   const loadOverview = useCallback(async () => {
     const [summary, camerasRes, incidentsRes, activityRes, systemRes] =
       await Promise.all([
@@ -186,7 +192,20 @@ export default function OverviewPage() {
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]">
-        {primaryCamera ? <CameraMonitor camera={primaryCamera} /> : null}
+        {primaryCamera ? (
+          <CameraMonitor
+            camera={primaryCamera}
+            onUploadClick={() => {
+              if (source === "fallback") {
+                toast.error(
+                  "Video upload requires the SafetyLens API. Demo fallback cannot accept uploads."
+                );
+                return;
+              }
+              setUploadOpen(true);
+            }}
+          />
+        ) : null}
         {activeIncident ? <IncidentCard incident={activeIncident} /> : null}
       </section>
 
@@ -195,6 +214,19 @@ export default function OverviewPage() {
         <SystemStatus services={data.services} />
         <ActivityFeed events={data.activity} />
       </section>
+
+      <VideoUploadDialog
+        open={uploadOpen}
+        onOpenChange={setUploadOpen}
+        cameras={data.cameras}
+        defaultCameraId={primaryCamera?.id ?? "cam-04"}
+        defaultLocation={primaryCamera?.location ?? "Loading Zone B"}
+        onUploaded={(response) => {
+          router.push(
+            `/monitor?asset=${encodeURIComponent(response.asset_code)}&job=${encodeURIComponent(response.job_code)}`
+          );
+        }}
+      />
     </div>
   );
 }

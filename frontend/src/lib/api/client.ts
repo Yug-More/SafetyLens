@@ -97,3 +97,35 @@ export async function apiGetCollection<T>(
 
   return (await response.json()) as ApiCollectionResponse<T>;
 }
+
+export async function apiPostMultipart<T>(
+  path: string,
+  formData: FormData,
+  init?: RequestInit
+): Promise<T> {
+  const response = await fetch(buildUrl(path), {
+    ...init,
+    method: "POST",
+    body: formData,
+    headers: {
+      Accept: "application/json",
+      ...(init?.headers ?? {}),
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw await parseError(response);
+  }
+
+  const payload = (await response.json()) as ApiItemResponse<T>;
+  return payload.data;
+}
+
+export function resolveMediaUrl(pathOrUrl: string | null | undefined): string {
+  if (!pathOrUrl) return "";
+  if (pathOrUrl.startsWith("http://") || pathOrUrl.startsWith("https://")) {
+    return pathOrUrl;
+  }
+  return buildUrl(pathOrUrl);
+}

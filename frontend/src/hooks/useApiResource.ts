@@ -9,6 +9,8 @@ interface UseApiResourceOptions<T> {
   loader: () => Promise<T>;
   fallback: () => T;
   enabled?: boolean;
+  /** When false, API failures surface as errors even if demo fallback env is enabled. */
+  allowFallback?: boolean;
 }
 
 interface UseApiResourceResult<T> {
@@ -24,6 +26,7 @@ export function useApiResource<T>({
   loader,
   fallback,
   enabled = true,
+  allowFallback = true,
 }: UseApiResourceOptions<T>): UseApiResourceResult<T> {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -59,7 +62,7 @@ export function useApiResource<T>({
         const message =
           err instanceof Error ? err.message : "Unable to reach the SafetyLens API.";
 
-        if (isDemoFallbackEnabled()) {
+        if (allowFallback && isDemoFallbackEnabled()) {
           if (!warnedRef.current && process.env.NODE_ENV === "development") {
             console.warn(
               "[SafetyLens] API unavailable — activating Offline Demo Mode fallback.",
@@ -86,7 +89,7 @@ export function useApiResource<T>({
     return () => {
       cancelled = true;
     };
-  }, [enabled, fallback, loader, reloadToken]);
+  }, [allowFallback, enabled, fallback, loader, reloadToken]);
 
   return {
     data,
