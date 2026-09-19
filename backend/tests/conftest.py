@@ -30,6 +30,8 @@ def temp_media(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setenv("MAX_VIDEO_SIZE_MB", "5")
     monkeypatch.setenv("MAX_VIDEO_DURATION_SECONDS", "30")
     monkeypatch.setenv("FRAME_SAMPLE_COUNT", "8")
+    monkeypatch.setenv("AI_PROVIDER", "demo")
+    monkeypatch.setenv("AI_DEMO_MODE", "true")
     get_settings.cache_clear()
     ensure_storage_directories()
     yield tmp_path
@@ -69,6 +71,7 @@ def client(
 ) -> Generator[TestClient, None, None]:
     TestingSessionLocal = sessionmaker(bind=db_engine, autoflush=False, autocommit=False)
     monkeypatch.setattr("app.services.videos.SessionLocal", TestingSessionLocal)
+    monkeypatch.setattr("app.services.analysis.SessionLocal", TestingSessionLocal)
 
     app = create_app()
 
