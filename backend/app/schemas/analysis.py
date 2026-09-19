@@ -46,6 +46,11 @@ class IncidentAnalysisRead(APIModel):
     recommended_actions: list[str] = Field(default_factory=list)
     limitations: list[str] = Field(default_factory=list)
     inconclusive: bool = False
+    required_ppe: list[str] = Field(default_factory=list)
+    observed_ppe: list[str] = Field(default_factory=list)
+    possibly_missing_ppe: list[str] = Field(default_factory=list)
+    analysis_mode: str | None = None
+    human_review_required: bool = True
     error_code: str | None = None
     error_message: str | None = None
     started_at: datetime | None = None

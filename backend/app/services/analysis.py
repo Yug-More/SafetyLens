@@ -156,6 +156,11 @@ def _analysis_to_read(analysis: IncidentAnalysis) -> IncidentAnalysisRead:
         recommended_actions=_loads_json_list(analysis.recommended_actions_json),
         limitations=_loads_json_list(analysis.limitations_json),
         inconclusive=analysis.inconclusive,
+        required_ppe=_loads_json_list(analysis.required_ppe_json),
+        observed_ppe=_loads_json_list(analysis.observed_ppe_json),
+        possibly_missing_ppe=_loads_json_list(analysis.possibly_missing_ppe_json),
+        analysis_mode=analysis.analysis_mode,
+        human_review_required=analysis.human_review_required,
         error_code=analysis.error_code,
         error_message=analysis.error_message,
         started_at=analysis.started_at,
@@ -637,12 +642,32 @@ def run_analysis_job(analysis_id: str, job_id: str) -> None:
 
         provider = get_ai_provider(settings)
         camera_name = video.camera.name if video.camera is not None else None
+        required_ppe: list[str] = []
+        try:
+            from app.models.ppe_policy import CameraPpePolicy
+
+            if video.camera_id:
+                policy = db.scalars(
+                    select(CameraPpePolicy).where(
+                        CameraPpePolicy.camera_id == video.camera_id,
+                        CameraPpePolicy.is_active.is_(True),
+                    )
+                ).first()
+                if policy is not None:
+                    required_ppe = policy.required_ppe
+        except Exception:
+            logger.exception("Failed loading PPE policy for %s", video.asset_code)
+
         result = provider.analyze_frames(
             frames=frame_inputs,
             location=video.location,
             camera_name=camera_name,
             video_asset_code=video.asset_code,
             duration_seconds=video.duration_seconds,
+            camera_id=video.camera_id,
+            demo_scenario=video.demo_scenario,
+            demo_ppe_observation=video.demo_ppe_observation,
+            required_ppe=required_ppe or None,
         )
 
         _update_job(
@@ -681,15 +706,28 @@ def run_analysis_job(analysis_id: str, job_id: str) -> None:
                 )
             )
 
+        from app.core.incident_types import normalize_incident_type
+
         analysis.incident_detected = result.incident_detected
-        analysis.incident_type = result.incident_type
+        analysis.incident_type = normalize_incident_type(result.incident_type) or result.incident_type
         analysis.summary = result.summary
         analysis.detailed_analysis = result.detailed_analysis
         analysis.severity = result.severity.value
-        analysis.confidence = result.confidence
+        # Configured demo scenarios must not present fake confidence scores.
+        if result.analysis_mode == "configured_demo":
+            analysis.confidence = None
+        else:
+            analysis.confidence = result.confidence
         analysis.recommended_actions_json = json.dumps(result.recommended_actions)
         analysis.limitations_json = json.dumps(result.limitations)
         analysis.inconclusive = result.inconclusive
+        analysis.required_ppe_json = json.dumps(result.required_ppe)
+        analysis.observed_ppe_json = json.dumps(result.observed_ppe)
+        analysis.possibly_missing_ppe_json = json.dumps(result.possibly_missing_ppe)
+        analysis.analysis_mode = result.analysis_mode
+        analysis.human_review_required = bool(
+            result.human_review_required or result.incident_detected
+        )
         analysis.provider_name = provider.name
         analysis.is_demo = provider.is_demo
         analysis.is_simulated = provider.is_simulated

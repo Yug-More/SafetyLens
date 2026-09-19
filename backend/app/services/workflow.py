@@ -157,7 +157,27 @@ def ensure_notification(db: Session, analysis: IncidentAnalysis) -> OperatorNoti
     incident = ensure_incident_for_analysis(db, analysis)
     title = "Possible person-down event"
     if analysis.incident_type:
-        title = analysis.incident_type.replace("_", " ").capitalize() + " event"
+        from app.core.incident_types import is_ppe_incident, ppe_item_label
+
+        if is_ppe_incident(analysis.incident_type, analysis.summary):
+            title = "Possible PPE noncompliance"
+            try:
+                import json
+
+                missing = json.loads(analysis.possibly_missing_ppe_json or "[]")
+            except Exception:
+                missing = []
+            if missing:
+                labels = ", ".join(ppe_item_label(str(item)) for item in missing)
+                note_message = f"{labels.capitalize()} not visible · Review required"
+            else:
+                note_message = "PPE not visible in evidence · Review required"
+        else:
+            title = analysis.incident_type.replace("_", " ").capitalize() + " event"
+            note_message = "Review required"
+    else:
+        note_message = "Review required"
+
     note = OperatorNotification(
         id=str(uuid4()),
         notification_code=_next_code(
@@ -176,7 +196,7 @@ def ensure_notification(db: Session, analysis: IncidentAnalysis) -> OperatorNoti
         status="unread",
         review_status="pending",
         dismissed=False,
-        message="Review required",
+        message=note_message,
         detected_at=analysis.completed_at or utc_now(),
     )
     db.add(note)
@@ -188,7 +208,13 @@ def ensure_notification(db: Session, analysis: IncidentAnalysis) -> OperatorNoti
             description=(
                 f"{note.camera_name or 'Camera'} · {note.location}. "
                 f"Severity {note.severity or 'unknown'} · "
-                f"confidence {int(round((note.confidence or 0) * (100 if (note.confidence or 0) <= 1 else 1)))}%."
+                + (
+                    "Configured scenario."
+                    if analysis.analysis_mode == "configured_demo" or analysis.confidence is None
+                    else (
+                        f"confidence {int(round((note.confidence or 0) * (100 if (note.confidence or 0) <= 1 else 1)))}%."
+                    )
+                )
             ),
             incident_id=incident.id if incident else None,
             status="attention",
@@ -254,6 +280,41 @@ def prepare_response_for_analysis(db: Session, analysis_identifier: str) -> Work
     ).first()
     if plan is not None and note is not None and note.incident_id and not plan.incident_id:
         plan.incident_id = note.incident_id
+
+    # Attach the strongest retrieved procedure to the incident for reporting.
+    if note is not None and note.incident_id and retrieval is not None:
+        incident = db.get(Incident, note.incident_id)
+        if incident is not None and not incident.matched_procedure_id:
+            from app.core.incident_types import is_person_down_incident, is_ppe_incident
+            from app.models.procedure import SafetyProcedure
+            from app.models.procedure_policy import ProcedureChunk, ProcedureRetrievalMatch
+
+            ranked_matches = db.scalars(
+                select(ProcedureRetrievalMatch)
+                .where(ProcedureRetrievalMatch.retrieval_id == retrieval.id)
+                .order_by(ProcedureRetrievalMatch.rank.asc())
+            ).all()
+            prefer_ppe = is_ppe_incident(analysis.incident_type, analysis.summary)
+            prefer_fall = is_person_down_incident(analysis.incident_type, analysis.summary)
+            selected_procedure_id: str | None = None
+            fallback_procedure_id: str | None = None
+            for match in ranked_matches:
+                chunk = db.get(ProcedureChunk, match.chunk_id)
+                if chunk is None:
+                    continue
+                if fallback_procedure_id is None:
+                    fallback_procedure_id = chunk.procedure_id
+                procedure = db.get(SafetyProcedure, chunk.procedure_id)
+                if procedure is None:
+                    continue
+                code = procedure.procedure_code.lower()
+                if prefer_ppe and "ppe" in code:
+                    selected_procedure_id = chunk.procedure_id
+                    break
+                if prefer_fall and "fall" in code:
+                    selected_procedure_id = chunk.procedure_id
+                    break
+            incident.matched_procedure_id = selected_procedure_id or fallback_procedure_id
 
     db.commit()
     return get_workflow_status(db, analysis.analysis_code)

@@ -41,6 +41,13 @@ class IncidentAnalysisResult(BaseModel):
     recommended_actions: list[str] = Field(default_factory=list)
     limitations: list[str] = Field(default_factory=list)
     inconclusive: bool = False
+    required_ppe: list[str] = Field(default_factory=list)
+    observed_ppe: list[str] = Field(default_factory=list)
+    possibly_missing_ppe: list[str] = Field(default_factory=list)
+    analysis_mode: Literal["configured_demo", "multimodal", "demo_heuristic"] = (
+        "demo_heuristic"
+    )
+    human_review_required: bool = True
 
     @field_validator("incident_type", "summary", "detailed_analysis")
     @classmethod
@@ -50,7 +57,7 @@ class IncidentAnalysisResult(BaseModel):
             raise ValueError("must not be blank")
         return cleaned
 
-    @field_validator("recommended_actions", "limitations")
+    @field_validator("recommended_actions", "limitations", "required_ppe", "observed_ppe", "possibly_missing_ppe")
     @classmethod
     def strip_list_items(cls, value: list[str]) -> list[str]:
         cleaned: list[str] = []

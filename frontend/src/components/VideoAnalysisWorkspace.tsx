@@ -265,6 +265,11 @@ export function VideoAnalysisWorkspace({
           recommendedActions: [],
           limitations: [],
           inconclusive: false,
+          requiredPpe: [],
+          observedPpe: [],
+          possiblyMissingPpe: [],
+          analysisMode: null,
+          humanReviewRequired: true,
           errorCode: null,
           errorMessage: null,
           evidence: [],
@@ -474,7 +479,13 @@ export function VideoAnalysisWorkspace({
               existing facility camera.{" "}
               <span className="text-foreground">Recorded Demo Feed</span>
               {" · "}
-              <span className="text-foreground">Demo AI analysis</span>
+              <span className="text-foreground">
+                {analysis?.analysisMode === "configured_demo"
+                  ? "Configured PPE Demo · Human verification required"
+                  : analysis && !analysis.isDemo
+                    ? "Multimodal analysis · Human verification required"
+                    : "Demo AI analysis · Human verification required"}
+              </span>
             </p>
           </div>
           {pipelineStage === "human_review_required" && reviewHref ? (
@@ -572,7 +583,9 @@ export function VideoAnalysisWorkspace({
             <p className="mt-1 text-xs text-red-200/80">
               {(analysis.severity ?? "high").replace(/^./, (c) => c.toUpperCase())} severity
               {" · "}
-              {confidencePercent(analysis.confidence)} confidence
+              {analysis.analysisMode === "configured_demo"
+                ? "Configured scenario"
+                : `${confidencePercent(analysis.confidence)} confidence`}
               {" · "}
               Review required
             </p>
