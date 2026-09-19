@@ -21,6 +21,18 @@ def parse_capture_source(value: str) -> int | str:
     return int(stripped) if stripped.isdecimal() else stripped
 
 
+def frame_has_visible_signal(frame: Any, *, minimum_peak: float = 8.0) -> bool:
+    """Reject the all-black startup frames emitted by some virtual cameras."""
+
+    if getattr(frame, "size", 1) == 0:
+        return False
+    try:
+        return float(frame.max()) > minimum_peak
+    except (AttributeError, TypeError, ValueError):
+        # Unknown frame containers should remain compatible with custom sources.
+        return True
+
+
 def _open_capture(cv2: Any, source: int | str) -> Any:
     if isinstance(source, int) and hasattr(cv2, "CAP_DSHOW"):
         capture = cv2.VideoCapture(source, cv2.CAP_DSHOW)
@@ -76,6 +88,7 @@ def run_live(
     preview: bool = True,
     mirror: bool = False,
     maximum_seconds: float | None = None,
+    camera_warmup_seconds: float = 15.0,
 ) -> int:
     if sample_fps <= 0:
         raise ValueError("sample_fps must be positive.")
@@ -83,6 +96,8 @@ def run_live(
         raise ValueError("missing_pose_grace_seconds must be non-negative.")
     if maximum_seconds is not None and maximum_seconds <= 0:
         raise ValueError("maximum_seconds must be positive when supplied.")
+    if camera_warmup_seconds <= 0:
+        raise ValueError("camera_warmup_seconds must be positive.")
 
     try:
         import cv2
@@ -96,12 +111,6 @@ def run_live(
         capture.release()
         raise RuntimeError(f"Could not open live camera source: {capture_source}")
 
-    engine = DetectorEngine()
-    evidence = EvidenceWindowBuffer[Any](
-        pre_event_seconds=pre_event_seconds,
-        maximum_frames=max(120, round(sample_fps * pre_event_seconds * 2)),
-    )
-    state = DetectorState.NO_PERSON
     started = perf_counter()
     next_sample_seconds = 0.0
     missing_since: float | None = None
@@ -128,11 +137,71 @@ def run_live(
     )
 
     try:
+        print(
+            json.dumps(
+                {
+                    "type": "camera_warming_up",
+                    "timeout_seconds": camera_warmup_seconds,
+                }
+            ),
+            flush=True,
+        )
+        warmup_started = perf_counter()
+        first_frame = None
+        while first_frame is None:
+            ok, candidate = capture.read()
+            if not ok or candidate is None:
+                raise RuntimeError("Live camera stopped returning frames during startup.")
+            if frame_has_visible_signal(candidate):
+                first_frame = candidate
+                break
+            warmup_elapsed = perf_counter() - warmup_started
+            if preview:
+                cv2.putText(
+                    candidate,
+                    "Waiting for Camo camera video...",
+                    (20, 40),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.8,
+                    (0, 210, 255),
+                    2,
+                    cv2.LINE_AA,
+                )
+                cv2.imshow("SafetyLens Live - press Q to stop", candidate)
+                if cv2.waitKey(1) & 0xFF in {ord("q"), ord("Q")}:
+                    return events
+            if warmup_elapsed >= camera_warmup_seconds:
+                raise RuntimeError(
+                    "Camera opened but only returned black frames. Confirm Camo Studio is "
+                    "showing the phone feed, resume Camo output, and retry."
+                )
+
+        print(
+            json.dumps(
+                {
+                    "type": "camera_ready",
+                    "warmup_seconds": round(perf_counter() - warmup_started, 3),
+                }
+            ),
+            flush=True,
+        )
+        started = perf_counter()
+        engine = DetectorEngine()
+        evidence = EvidenceWindowBuffer[Any](
+            pre_event_seconds=pre_event_seconds,
+            maximum_frames=max(120, round(sample_fps * pre_event_seconds * 2)),
+        )
+        state = DetectorState.NO_PERSON
+        pending_frame = first_frame
         with MediaPipePoseProvider(model_path) as provider:
             while True:
-                ok, frame = capture.read()
-                if not ok or frame is None:
-                    raise RuntimeError("Live camera stopped returning frames.")
+                if pending_frame is not None:
+                    frame = pending_frame
+                    pending_frame = None
+                else:
+                    ok, frame = capture.read()
+                    if not ok or frame is None:
+                        raise RuntimeError("Live camera stopped returning frames.")
                 timestamp = perf_counter() - started
                 if mirror:
                     frame = cv2.flip(frame, 1)
@@ -272,6 +341,7 @@ def main() -> int:
     parser.add_argument("--mirror", action="store_true")
     parser.add_argument("--no-preview", action="store_true")
     parser.add_argument("--max-seconds", type=float)
+    parser.add_argument("--camera-warmup-seconds", type=float, default=15.0)
     args = parser.parse_args()
 
     run_live(
@@ -286,6 +356,7 @@ def main() -> int:
         preview=not args.no_preview,
         mirror=args.mirror,
         maximum_seconds=args.max_seconds,
+        camera_warmup_seconds=args.camera_warmup_seconds,
     )
     return 0
 
