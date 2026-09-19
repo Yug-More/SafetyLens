@@ -140,18 +140,28 @@ def test_human_review_can_be_saved(client: TestClient, tmp_path):
 
 
 def test_duplicate_active_analysis_rejected(client: TestClient, tmp_path, monkeypatch):
-    uploaded = _upload_ready_video(client, tmp_path)
-
-    # Stall the background worker so the first analysis stays queued/running.
+    # Stall analysis so the auto pipeline leaves an active analysis after upload.
     monkeypatch.setattr(
         "app.services.analysis.run_analysis_job",
         lambda *_args, **_kwargs: None,
     )
+    uploaded = _upload_ready_video(client, tmp_path)
+
     first = client.post(f"/api/videos/{uploaded['asset_code']}/analyze")
     assert first.status_code == 202
+    first_code = first.json()["data"]["analysis_code"]
+
+    # Idempotent retry reuses the active analysis.
     second = client.post(f"/api/videos/{uploaded['asset_code']}/analyze")
-    assert second.status_code == 409
-    assert second.json()["error"]["code"] == "ANALYSIS_IN_PROGRESS"
+    assert second.status_code == 202
+    assert second.json()["data"]["analysis_code"] == first_code
+
+    # Forced new analysis is blocked while one is active.
+    forced = client.post(
+        f"/api/videos/{uploaded['asset_code']}/analyze?force_new=true"
+    )
+    assert forced.status_code == 409
+    assert forced.json()["error"]["code"] == "ANALYSIS_IN_PROGRESS"
 
 
 def test_openai_provider_is_mocked_and_validated(client: TestClient, tmp_path, monkeypatch):
@@ -198,7 +208,9 @@ def test_openai_provider_is_mocked_and_validated(client: TestClient, tmp_path, m
         lambda settings=None: FakeOpenAIProvider(),
     )
 
-    started = client.post(f"/api/videos/{uploaded['asset_code']}/analyze").json()["data"]
+    started = client.post(
+        f"/api/videos/{uploaded['asset_code']}/analyze?force_new=true"
+    ).json()["data"]
     assert started["provider_name"] == "openai"
     assert started["is_demo"] is False
 
