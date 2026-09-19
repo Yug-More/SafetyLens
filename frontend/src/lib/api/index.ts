@@ -1,11 +1,14 @@
-import { apiGetCollection, apiGetItem, apiPostMultipart } from "@/lib/api/client";
+import { apiGetCollection, apiGetItem, apiPostJson, apiPostMultipart } from "@/lib/api/client";
 import type {
   ApiActivityEvent,
+  ApiAIProviderInfo,
+  ApiAnalyzeVideoResponse,
   ApiCamera,
   ApiDashboardSummary,
   ApiDemoInfo,
   ApiHealth,
   ApiIncident,
+  ApiIncidentAnalysis,
   ApiIncidentDetail,
   ApiIncidentStatus,
   ApiProcedure,
@@ -16,6 +19,7 @@ import type {
   ApiVideoFrame,
   ApiVideoStatus,
   ApiVideoUploadResponse,
+  AnalysisReviewRequest,
   VideoUploadRequest,
 } from "@/lib/api/types";
 
@@ -112,4 +116,31 @@ export function fetchVideoFrames(identifier: string) {
 
 export function fetchProcessingJob(identifier: string) {
   return apiGetItem<ApiProcessingJob>(`/api/processing-jobs/${identifier}`);
+}
+
+export function fetchAIProvider() {
+  return apiGetItem<ApiAIProviderInfo>("/api/ai/provider");
+}
+
+export function startVideoAnalysis(identifier: string) {
+  return apiPostJson<ApiAnalyzeVideoResponse>(`/api/videos/${identifier}/analyze`);
+}
+
+export function fetchAnalysis(identifier: string) {
+  return apiGetItem<ApiIncidentAnalysis>(`/api/analyses/${identifier}`);
+}
+
+export function fetchVideoAnalyses(identifier: string) {
+  return apiGetCollection<ApiIncidentAnalysis>(`/api/videos/${identifier}/analyses`);
+}
+
+export function submitAnalysisReview(
+  identifier: string,
+  request: AnalysisReviewRequest
+) {
+  return apiPostJson<ApiIncidentAnalysis>(`/api/analyses/${identifier}/review`, {
+    decision: request.decision,
+    reviewer_name: request.reviewerName ?? "demo-reviewer",
+    notes: request.notes ?? null,
+  });
 }

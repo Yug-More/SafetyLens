@@ -1,6 +1,6 @@
-# SafetyLens Backend (Stage 3)
+# SafetyLens Backend (Stage 4)
 
-FastAPI service providing typed REST contracts, SQLite persistence, seeded demo data, and a video processing pipeline that prepares evidence frames for Stage 4 multimodal AI.
+FastAPI service providing typed REST contracts, SQLite persistence, seeded demo data, video processing, and multimodal incident analysis on extracted frames.
 
 ## Requirements
 
@@ -34,8 +34,18 @@ cp .env.example .env
 | `MAX_VIDEO_SIZE_MB` | Upload size limit | `100` |
 | `MAX_VIDEO_DURATION_SECONDS` | Max clip duration | `120` |
 | `FRAME_SAMPLE_COUNT` | Representative frames to sample | `10` |
+| `AI_PROVIDER` | `demo` or `openai` | `demo` |
+| `AI_DEMO_MODE` | Labels demo-oriented behavior | `true` |
+| `OPENAI_API_KEY` | Required only for `openai` | empty |
+| `VISION_MODEL` | Required only for `openai` | empty |
+| `AI_REQUEST_TIMEOUT_SECONDS` | Provider timeout | `45` |
+| `AI_MAX_RETRIES` | Provider retries | `2` |
+| `AI_MAX_FRAMES` | Max frames sent to a provider | `8` |
+| `AI_MAX_IMAGE_DIMENSION` | Max encode dimension | `1280` |
 
-Do not commit `.env`. Keep `.env.example` tracked.
+Do not commit `.env`. Keep `.env.example` tracked. Never put API keys in the repository.
+
+Default `AI_PROVIDER=demo` runs deterministic local analysis with no credentials. Set `AI_PROVIDER=openai` plus `OPENAI_API_KEY` and `VISION_MODEL` only when intentionally using a real provider.
 
 ## Storage
 
@@ -52,7 +62,7 @@ Prefer short clips (10–30 seconds) for demos.
 
 ## Database initialization and seeding
 
-Tables are created automatically on API startup. Seed Stage 2 demo data with:
+Tables are created automatically on API startup (including Stage 4 analysis tables). Seed Stage 2 demo data with:
 
 ```bash
 python -m app.seed.run
@@ -60,17 +70,16 @@ python -m app.seed.run
 
 The seed command is idempotent.
 
-## Video-processing workflow
+## Video-processing and analysis workflow
 
 1. Client uploads multipart video + location (+ optional camera_id)
-2. Backend streams the file to disk with size enforcement
-3. Extension, MIME type, and OpenCV decode checks run
-4. Video + queued processing job records are created
-5. Background task extracts metadata and samples frames
-6. Job progress updates through validation → metadata → sampling → ready
-7. Frontend polls the job and displays video + frame timeline
+2. Backend stores the file, extracts metadata, and samples frames
+3. When the video is `ready`, client calls `POST /api/videos/{asset_code}/analyze`
+4. Background job selects up to `AI_MAX_FRAMES` frames and runs the configured provider
+5. Structured results, evidence (frame codes + timestamps), and a pending review are stored
+6. Client polls `GET /api/analyses/{analysis_code}` and may submit human review
 
-Stage 3 does **not** classify incidents or run multimodal AI.
+Demo AI is explicitly labeled simulated. Real providers are labeled separately. Detector pose/heuristic scores are never treated as fall probability.
 
 ## Start the server
 
@@ -85,7 +94,7 @@ Interactive docs:
 
 ## Tests
 
-Tests use an isolated in-memory SQLite database and temporary media directories. They never modify development uploads or `safetylens.db`.
+Tests use an isolated in-memory SQLite database and temporary media directories. They never modify development uploads or `safetylens.db`. External AI providers are mocked — no paid API calls.
 
 ```bash
 pytest
@@ -117,7 +126,13 @@ pytest
 - `GET /api/processing-jobs/{job_identifier}`
 - `GET /api/frames/{frame_identifier}/content`
 
-Video content is served with `FileResponse`. Explicit HTTP Range support is not implemented in Stage 3; short demo clips still play in modern browsers.
+### Stage 4
+
+- `GET /api/ai/provider`
+- `POST /api/videos/{video_identifier}/analyze`
+- `GET /api/videos/{video_identifier}/analyses`
+- `GET /api/analyses/{analysis_identifier}`
+- `POST /api/analyses/{analysis_identifier}/review`
 
 ## Troubleshooting OpenCV on macOS
 
@@ -126,11 +141,11 @@ Video content is served with `FileResponse`. Explicit HTTP Range support is not 
 - If uploads fail with `UNREADABLE_VIDEO`, verify the file opens in QuickTime/VLC
 - Reinstall with `pip install --force-reinstall opencv-python-headless`
 
-## Stage 3 limitations
+## Stage 4 limitations
 
-- No multimodal AI / fall classification
-- No SOP retrieval from uploaded video content
-- No real notifications or action execution
+- No SOP retrieval from analysis (Stage 5)
+- No approval execution / notifications / PDF reports (Stage 6)
 - No authentication
 - No deletion endpoints
 - No distributed job queue (in-process BackgroundTasks only)
+- Live detector integration uses the existing upload + analyze contract when Sean’s clips are ready

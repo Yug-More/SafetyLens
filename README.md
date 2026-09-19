@@ -66,47 +66,44 @@ This event-triggered architecture keeps routine footage local and activates adva
 
 ---
 
-## Current Stage (Stage 3)
+## Current Stage (Stage 4)
 
-Stage 3 adds a secure video upload and processing pipeline on top of the Stage 2 API foundation.
+Stage 4 adds multimodal incident analysis on uploaded video frames, with a Demo AI provider by default and an optional real OpenAI vision provider.
 
 ### Architecture
 
 ```text
 frontend (Next.js)
-   | upload + poll
+   | upload → poll frames → analyze → review
    v
 backend (FastAPI)
-   | stream to disk
+   | AI provider abstraction (demo | openai)
    v
-SQLite metadata + OpenCV frame sampling
+selected JPEG frames → structured IncidentAnalysisResult
    |
-   +--> data/uploads (UUID videos)
-   +--> data/frames  (JPEG candidates)
+   +--> SQLite analysis + evidence + human review
 ```
 
 ### Workflow
 
-Upload video → validate → store securely → extract metadata → sample frames → track job progress → preview video → review evidence-candidate frames
+Upload video → extract frames → **Analyze frames** → structured severity/confidence/evidence → human review → (Stages 5–6 later: SOP retrieval and approved actions)
 
 ### Capabilities available now
 
-- Stage 1 operations console UI (preserved)
-- Stage 2 API, SQLite seed data, and frontend integration
-- Multipart video upload with streaming size limits
-- OpenCV metadata extraction and representative frame sampling
-- Processing job progress polling
-- Video library, recorded demo playback, and frame timeline
-- Loading / error / empty / offline-demo states (uploads require live API)
+- Everything from Stages 1–3 (dashboard, API, upload, frame timeline)
+- AI provider abstraction with explicit demo vs real labeling
+- Deterministic Demo AI (no API key) and optional OpenAI vision provider
+- `POST /api/videos/{asset_code}/analyze` and analysis/review endpoints
+- Evidence timestamps that seek the uploaded video player
+- Human review decisions required before treating analysis as confirmed
 
-### Stage 3 limitations
+### Stage 4 limitations
 
-- No multimodal AI verification or fall classification
-- No SOP retrieval driven by uploaded video
-- No real notifications or approval execution
-- No report generation
+- No SOP retrieval from analysis (Stage 5)
+- No approval execution / notifications / PDF reports (Stage 6)
+- Sean’s live detector is not required; uploaded videos analyze independently
+- Detector pose/heuristic scores are never treated as fall probability
 - No authentication / RBAC
-- Uploaded frames are evidence **candidates**, not confirmed incident proof
 
 ---
 
