@@ -12,16 +12,6 @@ from .mediapipe_provider import MediaPipePoseProvider
 from .models import DetectorState, PoseObservation
 
 
-STATE_PRESENTATION = {
-    DetectorState.NO_PERSON: ("Waiting for person", "Step into the full-body camera view"),
-    DetectorState.MONITORING: ("Monitoring", "No fall indicators detected"),
-    DetectorState.SUSPECTED: ("Movement detected", "Checking posture and motion"),
-    DetectorState.CONFIRMING: ("Possible fall", "Confirming a sustained person-down posture"),
-    DetectorState.INCIDENT: ("Possible fall detected", "Human review is required"),
-    DetectorState.COOLDOWN: ("Alert recorded", "Waiting for the person to stand before rearming"),
-    DetectorState.LOW_VISIBILITY: ("Adjust camera view", "Keep one full person visible"),
-}
-
 REASON_PRESENTATION = {
     "rapid_drop": "rapid downward movement",
     "horizontal_posture": "low body posture",
@@ -71,8 +61,12 @@ def frame_has_visible_signal(frame: Any, *, minimum_peak: float = 8.0) -> bool:
         return True
 
 
-def state_presentation(state: DetectorState) -> tuple[str, str]:
-    return STATE_PRESENTATION[state]
+def public_detection_status(fall_active: bool) -> tuple[str, str]:
+    """Expose only the two outcomes that matter in the live demo."""
+
+    if fall_active:
+        return "Fall detected", "Person is down - human review required"
+    return "Normal", "Person tracked - no confirmed fall"
 
 
 def pose_is_fully_framed(
@@ -100,18 +94,6 @@ def pose_is_fully_framed(
         and landmark.visibility >= minimum_visibility
         for name in required
     )
-
-
-def _state_color(state: DetectorState, *, alert_active: bool) -> tuple[int, int, int]:
-    if alert_active or state == DetectorState.INCIDENT:
-        return (40, 40, 235)
-    if state in {DetectorState.SUSPECTED, DetectorState.CONFIRMING}:
-        return (0, 170, 255)
-    if state in {DetectorState.NO_PERSON, DetectorState.LOW_VISIBILITY}:
-        return (0, 200, 255)
-    if state == DetectorState.COOLDOWN:
-        return (255, 170, 30)
-    return (60, 210, 90)
 
 
 def _pose_bounds(
@@ -243,7 +225,7 @@ def _draw_status_panel(
         cv2.addWeighted(alert_layer, 0.84, frame, 0.16, 0, frame)
         cv2.putText(
             frame,
-            "POSSIBLE FALL - REVIEW NOW",
+            "FALL DETECTED - REVIEW NOW",
             (max(20, width // 2 - 270), banner_top + 52),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.92,
@@ -346,7 +328,6 @@ def run_live(
     next_sample_seconds = 0.0
     missing_since: float | None = None
     track_marked_missing = False
-    alert_until = 0.0
     notice_until = 0.0
     notice: str | None = None
     analyzed_frames = 0
@@ -428,6 +409,7 @@ def run_live(
         latest_observation: PoseObservation | None = None
         latest_reasons: tuple[str, ...] = ()
         detector_armed = False
+        fall_active = False
         framing_ready_since: float | None = None
         pending_frame = first_frame
         with MediaPipePoseProvider(model_path) as provider:
@@ -492,7 +474,18 @@ def run_live(
 
                     if result is not None:
                         state = result.state
-                        latest_reasons = result.reasons
+                        if result.event is not None:
+                            fall_active = True
+                            latest_reasons = result.event.trigger_signals
+                        elif (
+                            fall_active
+                            and result.previous_state == DetectorState.COOLDOWN
+                            and result.state == DetectorState.MONITORING
+                        ):
+                            fall_active = False
+                            latest_reasons = ()
+                            notice = "Monitoring resumed"
+                            notice_until = timestamp + 3.0
                         if result.state != result.previous_state:
                             print(
                                 json.dumps(
@@ -501,7 +494,9 @@ def run_live(
                                         "timestamp_seconds": round(timestamp, 3),
                                         "previous_state": result.previous_state.value,
                                         "state": result.state.value,
-                                        "display_state": state_presentation(result.state)[0],
+                                        "display_state": public_detection_status(
+                                            fall_active
+                                        )[0],
                                         "reasons": list(result.reasons),
                                     }
                                 ),
@@ -509,7 +504,6 @@ def run_live(
                             )
                         if result.event is not None:
                             events += 1
-                            alert_until = timestamp + 7.0
                             notice = "Incident recorded"
                             notice_until = timestamp + 4.0
                             evidence.start_capture(
@@ -545,11 +539,19 @@ def run_live(
                         notice_until = timestamp + 4.0
 
                 if preview:
-                    alert_active = timestamp < alert_until
-                    if detector_armed:
-                        title, detail = state_presentation(state)
-                        color = _state_color(state, alert_active=alert_active)
-                        pose_label = "PERSON TRACKED"
+                    if detector_armed and fall_active:
+                        title, detail = public_detection_status(True)
+                        color = (40, 40, 235)
+                        pose_label = "FALL DETECTED"
+                    elif detector_armed and latest_observation is not None:
+                        title, detail = public_detection_status(False)
+                        color = (60, 210, 90)
+                        pose_label = "NORMAL"
+                    elif detector_armed:
+                        title = "Waiting for person"
+                        detail = "Return to the full-body camera view"
+                        color = (150, 150, 150)
+                        pose_label = "NORMAL"
                     elif latest_observation is None:
                         title = "Position one person"
                         detail = "Step into view with your head, ankles, and floor visible"
@@ -585,7 +587,7 @@ def run_live(
                         detail=detail,
                         color=color,
                         reasons=latest_reasons if detector_armed else (),
-                        alert_active=alert_active,
+                        alert_active=fall_active,
                         notice=notice if timestamp < notice_until else None,
                     )
                     cv2.imshow("SafetyLens Live - press Q to stop", frame)
