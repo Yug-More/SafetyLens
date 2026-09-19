@@ -1,6 +1,6 @@
 # SafetyLens temporal detector
 
-This package owns the lightweight, continuous part of SafetyLens. It consumes timestamped pose landmarks, derives explainable motion/posture metrics, and emits at most one `possible_person_down` event per fall episode. It does not diagnose injury, produce response instructions, or write to the main application database.
+This package owns the lightweight, continuous part of SafetyLens. It consumes timestamped pose landmarks, derives explainable motion/posture metrics, emits at most one `possible_person_down` event per fall episode, and retains a bounded pre/post-event evidence window. It does not diagnose injury, produce response instructions, or write to the main application database.
 
 The initial milestone is deliberately independent of a pose runtime. MediaPipe, MoveNet, or a small YOLO pose model can implement the `PoseProvider` protocol after a local benchmark. The temporal logic and event contract remain the same.
 
@@ -44,8 +44,7 @@ Each landmark is `[x, y, visibility]`. The replay prints state transitions and c
 
 1. Benchmark candidate pose providers on the actual laptop.
 2. Connect prerecorded video and webcam to the same observation pipeline.
-3. Add the bounded pre/post-event frame buffer.
+3. Encode buffered frames into an incident clip.
 4. Export the event clip through Yug's existing `POST /api/videos/upload` workflow.
 
 See `docs/team/DETECTOR_CONTRACT.md` for the integration boundary.
-
