@@ -1,12 +1,16 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Search } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { SeverityBadge } from "@/components/SeverityBadge";
 import { StatusBadge } from "@/components/StatusBadge";
 import { EmptyState } from "@/components/EmptyState";
+import {
+  ConnectionBanner,
+  PanelSkeleton,
+} from "@/components/ConnectionBanner";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -15,60 +19,93 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { incidents } from "@/data/mock";
-import type { IncidentSeverity, IncidentStatus } from "@/types";
+import { useApiResource } from "@/hooks/useApiResource";
+import { fetchIncidents } from "@/lib/api";
+import { mapIncident } from "@/lib/api/mappers";
+import { getFallbackIncidents } from "@/data/fallback";
+import { isDemoFallbackEnabled } from "@/lib/api/client";
+import type { Incident, IncidentSeverity, IncidentStatus } from "@/types";
 
 type SeverityFilter = "all" | IncidentSeverity;
 type StatusFilter = "all" | IncidentStatus;
-type DateFilter = "all" | "today" | "yesterday" | "older";
+
+function toApiStatus(status: StatusFilter): string | undefined {
+  if (status === "all") return undefined;
+  if (status === "in_progress") return "approved";
+  return status;
+}
 
 export default function IncidentsPage() {
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [severity, setSeverity] = useState<SeverityFilter>("all");
   const [status, setStatus] = useState<StatusFilter>("all");
-  const [dateFilter, setDateFilter] = useState<DateFilter>("all");
 
-  const filtered = useMemo(() => {
-    return incidents.filter((incident) => {
-      const matchesQuery =
-        query.trim().length === 0 ||
-        incident.title.toLowerCase().includes(query.toLowerCase()) ||
-        incident.id.toLowerCase().includes(query.toLowerCase()) ||
-        incident.location.toLowerCase().includes(query.toLowerCase());
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDebouncedQuery(query.trim()), 250);
+    return () => window.clearTimeout(timer);
+  }, [query]);
 
-      const matchesSeverity =
-        severity === "all" || incident.severity === severity;
-      const matchesStatus = status === "all" || incident.status === status;
-
-      const time = incident.relativeTime.toLowerCase();
-      const isToday =
-        time.includes("second") ||
-        time.includes("minute") ||
-        time.includes("hour");
-      const isYesterday = time.includes("yesterday");
-      const matchesDate =
-        dateFilter === "all" ||
-        (dateFilter === "today" && isToday) ||
-        (dateFilter === "yesterday" && isYesterday) ||
-        (dateFilter === "older" && !isToday && !isYesterday);
-
-      return matchesQuery && matchesSeverity && matchesStatus && matchesDate;
+  const loader = useCallback(async () => {
+    const response = await fetchIncidents({
+      severity: severity === "all" ? undefined : severity,
+      status: toApiStatus(status),
+      search: debouncedQuery || undefined,
+      limit: 50,
     });
-  }, [query, severity, status, dateFilter]);
+    return {
+      incidents: response.data.map(mapIncident),
+      count: response.meta.count,
+    };
+  }, [debouncedQuery, severity, status]);
+
+  const fallback = useCallback(() => {
+    let list = getFallbackIncidents();
+    if (severity !== "all") {
+      list = list.filter((item) => item.severity === severity);
+    }
+    if (status !== "all") {
+      list = list.filter((item) => item.status === status);
+    }
+    if (debouncedQuery) {
+      const q = debouncedQuery.toLowerCase();
+      list = list.filter(
+        (item) =>
+          item.title.toLowerCase().includes(q) ||
+          item.id.toLowerCase().includes(q) ||
+          item.location.toLowerCase().includes(q)
+      );
+    }
+    return { incidents: list, count: list.length };
+  }, [debouncedQuery, severity, status]);
+
+  const { data, error, source, isLoading, reload } = useApiResource({
+    loader,
+    fallback,
+  });
+
+  const incidents: Incident[] = data?.incidents ?? [];
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
+      <ConnectionBanner
+        mode={source === "fallback" ? "fallback" : source === "error" ? "error" : "api"}
+        message={error}
+        onRetry={reload}
+      />
+
       <PageHeader
         title="Incidents"
         subtitle="Search, filter, and review facility safety events"
         status={
           <span className="rounded-md border border-border bg-panel px-2.5 py-1 text-xs text-muted-foreground">
-            {incidents.length} mock incidents
+            {data?.count ?? 0} incidents
+            {source === "fallback" ? " · Demo Data" : ""}
           </span>
         }
       />
 
-      <section className="grid gap-3 rounded-xl border border-border bg-panel p-4 md:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-3 rounded-xl border border-border bg-panel p-4 md:grid-cols-2 xl:grid-cols-3">
         <label className="block space-y-1.5 md:col-span-2 xl:col-span-1">
           <span className="text-xs font-medium text-muted-foreground">Search</span>
           <div className="relative">
@@ -125,41 +162,33 @@ export default function IncidentsPage() {
             </SelectContent>
           </Select>
         </label>
-
-        <label className="block space-y-1.5">
-          <span className="text-xs font-medium text-muted-foreground">Date</span>
-          <Select
-            value={dateFilter}
-            onValueChange={(value) => {
-              if (value) setDateFilter(value as DateFilter);
-            }}
-          >
-            <SelectTrigger className="w-full" aria-label="Filter by date">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All dates</SelectItem>
-              <SelectItem value="today">Today</SelectItem>
-              <SelectItem value="yesterday">Yesterday</SelectItem>
-              <SelectItem value="older">Older</SelectItem>
-            </SelectContent>
-          </Select>
-        </label>
       </section>
 
-      {filtered.length === 0 ? (
+      {isLoading ? <PanelSkeleton className="min-h-64" /> : null}
+
+      {!isLoading && source === "error" && !isDemoFallbackEnabled() ? (
+        <EmptyState
+          title="Unable to load incidents"
+          description={error ?? "Start the backend API and retry."}
+          actionLabel="Retry"
+          onAction={reload}
+        />
+      ) : null}
+
+      {!isLoading && incidents.length === 0 && source !== "error" ? (
         <EmptyState
           title="No incidents match these filters"
-          description="Adjust search or filter criteria to view demo incident records."
+          description="Adjust search or filter criteria to view incident records."
           actionLabel="Clear filters"
           onAction={() => {
             setQuery("");
             setSeverity("all");
             setStatus("all");
-            setDateFilter("all");
           }}
         />
-      ) : (
+      ) : null}
+
+      {!isLoading && incidents.length > 0 ? (
         <div className="overflow-hidden rounded-xl border border-border bg-panel">
           <div className="overflow-x-auto">
             <table className="min-w-full text-left text-sm">
@@ -174,7 +203,7 @@ export default function IncidentsPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((incident) => (
+                {incidents.map((incident) => (
                   <tr
                     key={incident.id}
                     className="border-b border-border/70 last:border-0 hover:bg-secondary/30"
@@ -215,7 +244,7 @@ export default function IncidentsPage() {
             </table>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

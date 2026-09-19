@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import {
   CheckCircle2,
@@ -14,20 +14,68 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { Button } from "@/components/ui/button";
 import {
-  activeIncident,
-  getActionsForIncident,
-  getProcedureById,
-} from "@/data/mock";
+  ConnectionBanner,
+  PanelSkeleton,
+} from "@/components/ConnectionBanner";
+import { EmptyState } from "@/components/EmptyState";
+import { useApiResource } from "@/hooks/useApiResource";
+import { fetchIncidentDetail } from "@/lib/api";
+import { mapIncidentDetail } from "@/lib/api/mappers";
+import { getFallbackIncidentDetail } from "@/data/fallback";
 
 export default function ResponsePage() {
-  const incident = activeIncident;
-  const procedure = getProcedureById(incident.procedureId ?? "");
-  const actions = getActionsForIncident(incident);
+  const loader = useCallback(async () => {
+    const detail = await fetchIncidentDetail("INC-2026-0042");
+    return mapIncidentDetail(detail);
+  }, []);
+
+  const fallback = useCallback(() => getFallbackIncidentDetail(), []);
+
+  const { data, error, source, isLoading, reload } = useApiResource({
+    loader,
+    fallback,
+  });
+
   const [approveOpen, setApproveOpen] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
 
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-7xl space-y-6">
+        <PageHeader title="Response Center" subtitle="Loading incident review…" />
+        <PanelSkeleton className="min-h-96" />
+      </div>
+    );
+  }
+
+  if (source === "error" || !data) {
+    return (
+      <div className="mx-auto max-w-7xl space-y-6">
+        <PageHeader
+          title="Response Center"
+          subtitle="Review evidence, procedure guidance, and recommended actions"
+        />
+        <ConnectionBanner mode="error" message={error} onRetry={reload} />
+        <EmptyState
+          title="Incident details unavailable"
+          description="Connect to the API to load INC-2026-0042."
+          actionLabel="Retry"
+          onAction={reload}
+        />
+      </div>
+    );
+  }
+
+  const { incident, procedure, actions, evidenceDescriptions } = data;
+
   return (
     <div className="mx-auto max-w-7xl space-y-6">
+      <ConnectionBanner
+        mode={source === "fallback" ? "fallback" : "api"}
+        message={error}
+        onRetry={reload}
+      />
+
       <PageHeader
         title="Response Center"
         subtitle="Review evidence, procedure guidance, and recommended actions before approval"
@@ -93,21 +141,30 @@ export default function ResponsePage() {
               <FileWarning className="size-4 text-warning" aria-hidden="true" />
               <h2 className="text-base font-semibold text-foreground">Evidence Panel</h2>
             </div>
-            <div className="relative mb-4 overflow-hidden rounded-lg border border-border bg-[#070d18] aspect-video">
+            <div className="relative mb-4 aspect-video overflow-hidden rounded-lg border border-border bg-[#070d18]">
               <div className="camera-grid absolute inset-0 opacity-60" />
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-center">
                 <p className="text-sm font-medium text-slate-200">
                   Preserved evidence clip
                 </p>
                 <p className="text-xs text-slate-400">
-                  Camera 04 · Loading Zone B · Mock clip
+                  Camera 04 · Loading Zone B · Stage 2 record
                 </p>
               </div>
               <span className="absolute top-3 left-3 rounded bg-black/50 px-2 py-1 text-[11px] text-red-300">
                 EVIDENCE
               </span>
             </div>
-            <p className="text-sm leading-relaxed text-slate-200">{incident.evidence}</p>
+            <ul className="space-y-2 text-sm leading-relaxed text-slate-200">
+              {evidenceDescriptions.map((item) => (
+                <li key={item} className="rounded-lg border border-border/60 bg-secondary/25 px-3 py-2">
+                  {item}
+                </li>
+              ))}
+              {evidenceDescriptions.length === 0 ? (
+                <li>{incident.evidence}</li>
+              ) : null}
+            </ul>
           </article>
 
           <article className="rounded-xl border border-border bg-panel p-4 shadow-sm">
@@ -119,7 +176,7 @@ export default function ResponsePage() {
               {[
                 "Incident detected by edge monitoring",
                 "Evidence clip preserved for review",
-                "Procedure matched: Worker Fall Response — Section 4.2",
+                "Procedure matched: Worker Fall Response",
                 "Awaiting human approval before action execution",
               ].map((item) => (
                 <li
@@ -167,7 +224,9 @@ export default function ResponsePage() {
                   ))}
                 </ol>
               </>
-            ) : null}
+            ) : (
+              <p className="text-sm text-muted-foreground">No matched procedure.</p>
+            )}
           </article>
 
           <article className="rounded-xl border border-border bg-panel p-4 shadow-sm">
@@ -202,10 +261,10 @@ export default function ResponsePage() {
         open={approveOpen}
         onOpenChange={setApproveOpen}
         title="Approve recommended actions?"
-        description="In Stage 1 this is a mock approval. No alerts, tickets, or emergency actions will be executed."
+        description="In Stage 2 this is a mock approval. No alerts, tickets, or emergency actions will be executed."
         confirmLabel="Approve for Demo"
         onConfirm={() =>
-          toast.success("Actions approved in demo mode. Execution arrives in Stage 2.")
+          toast.success("Actions approved in demo mode. Execution arrives in a later stage.")
         }
       />
 
