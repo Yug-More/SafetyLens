@@ -57,6 +57,16 @@ For the hackathon demonstration, uploading a recorded camera clip simulates the 
 
 ---
 
+## Live Detection Demo
+
+SafetyLens continuously tracks body posture and movement. The operator sees a clear green normal state during routine activity and a red alert after a fall is confirmed.
+
+| Normal monitoring | Confirmed fall |
+| --- | --- |
+| ![SafetyLens tracking a standing person with a green normal status](docs/assets/demo/normal-standing.png) | ![SafetyLens showing a red fall-detected alert with the person on the floor](docs/assets/demo/fall-detected.png) |
+
+---
+
 ## Core Features
 
 ### Intelligent Camera Monitoring
