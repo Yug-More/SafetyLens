@@ -1,6 +1,7 @@
 # Dependencies
 node_modules/
 frontend/node_modules/
+.pnpm-store/
 backend/.venv/
 .venv/
 venv/
