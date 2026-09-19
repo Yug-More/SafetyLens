@@ -9,15 +9,27 @@ import { Button } from "@/components/ui/button";
 import { SeverityBadge } from "@/components/SeverityBadge";
 import { StatusBadge } from "@/components/StatusBadge";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
+import { buildResponseHref } from "@/lib/incident-context";
 import type { Incident } from "@/types";
 
 interface IncidentCardProps {
   incident: Incident;
+  analysisId?: string | null;
+  videoId?: string | null;
   className?: string;
 }
 
-export function IncidentCard({ incident, className }: IncidentCardProps) {
+export function IncidentCard({
+  incident,
+  analysisId,
+  videoId,
+  className,
+}: IncidentCardProps) {
   const [dismissOpen, setDismissOpen] = useState(false);
+  const reviewHref =
+    analysisId || videoId
+      ? buildResponseHref({ analysis_id: analysisId, video_id: videoId })
+      : "/response";
 
   return (
     <>
@@ -101,7 +113,7 @@ export function IncidentCard({ incident, className }: IncidentCardProps) {
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2">
-          <Button render={<Link href="/response" />}>Review Incident</Button>
+          <Button render={<Link href={reviewHref} />}>Review Incident</Button>
           <Button variant="outline" onClick={() => setDismissOpen(true)}>
             Dismiss
           </Button>

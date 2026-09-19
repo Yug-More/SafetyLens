@@ -606,3 +606,49 @@ export interface ApiDemoResetResponse {
   reseeding_completed: boolean;
   demo_mode: boolean;
 }
+
+export interface ApiWorkflowStatus {
+  analysis_id: string;
+  analysis_code: string;
+  video_id: string | null;
+  video_code: string | null;
+  camera_id: string | null;
+  camera_name: string | null;
+  location: string | null;
+  incident_id: string | null;
+  incident_code: string | null;
+  notification_id: string | null;
+  notification_code: string | null;
+  retrieval_id: string | null;
+  retrieval_code: string | null;
+  plan_id: string | null;
+  plan_code: string | null;
+  review_decision: string | null;
+  pipeline_status: string;
+  message: string;
+  incident_detected: boolean | null;
+  severity: string | null;
+  confidence: number | null;
+  incident_type: string | null;
+}
+
+export interface ApiOperatorNotification {
+  id: string;
+  notification_code: string;
+  analysis_id: string;
+  analysis_code: string | null;
+  video_code: string | null;
+  title: string;
+  incident_type: string | null;
+  camera_id: string | null;
+  camera_name: string | null;
+  location: string;
+  severity: string | null;
+  confidence: number | null;
+  status: string;
+  review_status: string;
+  dismissed: boolean;
+  message: string;
+  detected_at: string;
+  created_at: string;
+}

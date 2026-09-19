@@ -14,9 +14,11 @@ from app.core.config import Settings, get_settings
 from app.core.enums import (
     AnalysisSeverity,
     AnalysisStatus,
+    IncidentStatus,
     JobStatus,
     JobType,
     ReviewDecision,
+    ReviewStatus,
     VideoStatus,
 )
 from app.core.errors import AppError
@@ -24,7 +26,9 @@ from app.database.base import utc_now
 from app.database.session import SessionLocal
 from app.models.analysis_evidence import AnalysisEvidence
 from app.models.analysis_review import AnalysisReview
+from app.models.incident import Incident
 from app.models.incident_analysis import IncidentAnalysis
+from app.models.notification import OperatorNotification
 from app.models.processing_job import ProcessingJob
 from app.models.video import VideoAsset
 from app.models.video_frame import VideoFrame
@@ -397,6 +401,37 @@ def submit_review(
     elif payload.decision == ReviewDecision.NEEDS_MORE_INFO:
         analysis.status = AnalysisStatus.NEEDS_REVIEW.value
 
+    # Keep operator notification / linked incident in sync with the review gate.
+    note = db.scalars(
+        select(OperatorNotification).where(OperatorNotification.analysis_id == analysis.id)
+    ).first()
+    if note is not None:
+        if payload.decision == ReviewDecision.CONFIRMED:
+            note.review_status = "confirmed"
+            note.status = "reviewed"
+            note.message = "Incident confirmed — awaiting action approval"
+        elif payload.decision == ReviewDecision.REJECTED:
+            note.review_status = "rejected"
+            note.status = "resolved"
+            note.message = "Marked as false alarm"
+            note.dismissed = True
+        elif payload.decision == ReviewDecision.NEEDS_MORE_INFO:
+            note.review_status = "needs_more_info"
+            note.status = "attention"
+            note.message = "Needs more information"
+        if note.incident_id:
+            incident = db.get(Incident, note.incident_id)
+            if incident is not None:
+                if payload.decision == ReviewDecision.CONFIRMED:
+                    incident.status = IncidentStatus.APPROVED.value
+                    incident.review_status = ReviewStatus.APPROVED.value
+                elif payload.decision == ReviewDecision.REJECTED:
+                    incident.status = IncidentStatus.DISMISSED.value
+                    incident.review_status = ReviewStatus.REJECTED.value
+                elif payload.decision == ReviewDecision.NEEDS_MORE_INFO:
+                    incident.status = IncidentStatus.AWAITING_REVIEW.value
+                    incident.review_status = ReviewStatus.PENDING.value
+
     db.commit()
     return get_analysis(db, analysis.analysis_code)
 
@@ -571,6 +606,18 @@ def run_analysis_job(analysis_id: str, job_id: str) -> None:
             step="completed",
         )
         db.commit()
+
+        # Idempotent post-analysis preparation (notification + SOP + draft plan).
+        if result.incident_detected:
+            try:
+                from app.services.workflow import prepare_response_for_analysis
+
+                prepare_response_for_analysis(db, analysis.analysis_code)
+            except Exception:
+                logger.exception(
+                    "Post-analysis workflow preparation failed for %s",
+                    analysis.analysis_code,
+                )
     except AIProviderError as exc:
         logger.exception("AI provider failed for analysis %s", analysis_id)
         _fail_analysis(db, analysis_id, job_id, "AI_PROVIDER_ERROR", str(exc))
