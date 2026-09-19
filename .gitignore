@@ -44,6 +44,7 @@ backend/*.sqlite*
 # Uploaded media and extracted frames
 backend/data/uploads/
 backend/data/frames/
+backend/data/procedures/
 !backend/data/README.md
 
 # Build / caches

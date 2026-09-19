@@ -43,16 +43,35 @@ PROCEDURE_SEED = [
     {
         "id": "proc-fall",
         "procedure_code": "SOP-FALL-4.2",
-        "title": "Worker Fall Response",
+        "title": "Worker Fall and Person-Down Response",
         "category": "Emergency Response",
         "version": "4.2",
+        "is_sample": True,
         "content": (
-            "1. Notify the floor supervisor immediately.\n"
-            "2. Request medical assistance.\n"
-            "3. Do not move the worker unless immediate danger exists.\n"
-            "4. Stop nearby machinery.\n"
-            "5. Preserve the relevant camera footage.\n"
-            "6. Record the incident and all actions taken."
+            "SAMPLE COMPANY PROCEDURE — Redwood Distribution Center\n"
+            "This document is a sample internal safety procedure for demonstration. "
+            "It is not legal advice and is not an external regulatory requirement.\n\n"
+            "## Initial Scene Assessment\n"
+            "1. Confirm the scene is safe for responders before approaching the worker.\n"
+            "2. Assess whether the worker is responsive and whether immediate danger exists.\n\n"
+            "## Supervisor Notification\n"
+            "3. Notify the floor supervisor immediately of a possible person-down event.\n"
+            "4. Provide location, camera reference, and observed worker status.\n\n"
+            "## Medical Evaluation\n"
+            "5. Request medical assistance or on-site medical assessment without delay.\n"
+            "6. Do not move the worker unless immediate danger exists.\n\n"
+            "## Emergency Escalation\n"
+            "7. Escalate to emergency services when the worker is unresponsive, "
+            "seriously injured, or when medical staff advise escalation.\n\n"
+            "## Area Isolation\n"
+            "8. Stop nearby machinery that could endanger the worker or responders.\n"
+            "9. Isolate the immediate area to keep non-essential personnel clear.\n\n"
+            "## Evidence Preservation\n"
+            "10. Preserve the relevant camera footage and related digital evidence.\n"
+            "11. Do not alter, overwrite, or discard source media from the incident window.\n\n"
+            "## Incident Documentation\n"
+            "12. Record the incident details, observations, and all actions taken.\n"
+            "13. Complete the company incident report after human review of recommended actions."
         ),
     },
     {
@@ -61,6 +80,7 @@ PROCEDURE_SEED = [
         "title": "Fire and Smoke Response",
         "category": "Emergency Response",
         "version": "2.1",
+        "is_sample": True,
         "content": (
             "1. Activate the nearest fire alarm.\n"
             "2. Evacuate personnel using designated routes.\n"
@@ -75,6 +95,7 @@ PROCEDURE_SEED = [
         "title": "PPE Compliance Procedure",
         "category": "Compliance",
         "version": "3.4",
+        "is_sample": True,
         "content": (
             "1. Identify the non-compliant worker and zone.\n"
             "2. Issue an immediate PPE reminder.\n"
@@ -89,6 +110,7 @@ PROCEDURE_SEED = [
         "title": "Restricted Area Access Procedure",
         "category": "Access Control",
         "version": "5.1",
+        "is_sample": True,
         "content": (
             "1. Confirm the restricted-zone boundary breach.\n"
             "2. Notify security and the area supervisor.\n"
@@ -131,29 +153,48 @@ def _get_or_create_camera(db: Session, camera_id: str, name: str, location: str)
 
 
 def _get_or_create_procedure(db: Session, data: dict) -> SafetyProcedure:
+    from app.core.config import get_settings
+    from app.core.enums import ProcedureSourceFormat
+    from app.services.procedure_ingest import chunk_procedure_text, content_sha256
+    from app.services.procedures import replace_procedure_chunks
+
     existing = db.scalars(
         select(SafetyProcedure).where(SafetyProcedure.procedure_code == data["procedure_code"])
     ).first()
+    content = data["content"]
+    digest = content_sha256(content)
     if existing:
         existing.title = data["title"]
         existing.category = data["category"]
         existing.version = data["version"]
-        existing.content = data["content"]
+        existing.content = content
         existing.source_name = SOURCE_NAME
         existing.is_active = True
-        return existing
+        existing.is_sample = bool(data.get("is_sample", True))
+        existing.source_format = ProcedureSourceFormat.SEED.value
+        existing.content_hash = digest
+        procedure = existing
+    else:
+        procedure = SafetyProcedure(
+            id=data["id"],
+            procedure_code=data["procedure_code"],
+            title=data["title"],
+            category=data["category"],
+            version=data["version"],
+            content=content,
+            source_name=SOURCE_NAME,
+            is_active=True,
+            is_sample=bool(data.get("is_sample", True)),
+            source_format=ProcedureSourceFormat.SEED.value,
+            content_hash=digest,
+            source_filename=f"{data['procedure_code']}.seed.md",
+        )
+        db.add(procedure)
+        db.flush()
 
-    procedure = SafetyProcedure(
-        id=data["id"],
-        procedure_code=data["procedure_code"],
-        title=data["title"],
-        category=data["category"],
-        version=data["version"],
-        content=data["content"],
-        source_name=SOURCE_NAME,
-        is_active=True,
-    )
-    db.add(procedure)
+    cfg = get_settings()
+    drafts = chunk_procedure_text([(None, content)], max_chars=cfg.procedure_chunk_max_chars)
+    replace_procedure_chunks(db, procedure, drafts)
     return procedure
 
 

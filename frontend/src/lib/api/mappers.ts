@@ -110,12 +110,21 @@ export function mapProcedure(procedure: ApiProcedure): SafetyProcedure {
   return {
     id: procedure.id,
     title: procedure.title,
-    section: `Version ${procedure.version}`,
+    section: `${procedure.procedure_code} · v${procedure.version}`,
     category: procedure.category,
-    description: `${procedure.source_name} · ${procedure.procedure_code}`,
+    description: `${procedure.source_name}${
+      procedure.is_sample ? " · sample company procedure" : ""
+    }`,
     steps: procedure.steps.length > 0 ? procedure.steps : [procedure.content],
     lastUpdated: procedure.updated_at.slice(0, 10),
-    documentPages: Math.max(1, Math.ceil(procedure.content.length / 400)),
+    documentPages: Math.max(1, procedure.chunk_count ?? Math.ceil(procedure.content.length / 400)),
+    procedureCode: procedure.procedure_code,
+    version: procedure.version,
+    sourceFilename: procedure.source_filename ?? null,
+    sourceFormat: procedure.source_format ?? null,
+    chunkCount: procedure.chunk_count ?? 0,
+    isSample: procedure.is_sample ?? false,
+    isActive: procedure.is_active,
   };
 }
 

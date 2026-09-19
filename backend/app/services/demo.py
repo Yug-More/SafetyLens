@@ -6,30 +6,33 @@ from app.services.analysis import get_provider_info
 def get_demo_info() -> DemoInfo:
     settings = get_settings()
     provider = get_provider_info(settings)
+    planner = (
+        "Demo Planner (simulated)"
+        if settings.is_demo_planner
+        else f"{settings.planner_provider} (real provider)"
+    )
     return DemoInfo(
         demo_mode=settings.demo_mode,
         facility="Redwood Distribution Center",
         scenario="Camera 04 — Loading Zone B worker-fall review",
         description=(
-            "Stage 4 demo environment with seeded operations data plus "
-            f"multimodal analysis via {provider.label}."
+            "Stage 5 demo with seeded operations data, multimodal analysis via "
+            f"{provider.label}, lexical procedure retrieval, and {planner}."
         ),
         simulated_capabilities=[
             "Camera inventory and connection status",
-            "Seeded incident detection records",
-            "Video upload, metadata extraction, and frame sampling",
-            f"Multimodal incident analysis ({provider.label})",
+            "Video upload, frame sampling, and multimodal analysis",
+            "Company procedure upload (PDF/TXT/Markdown) and chunking",
+            "Deterministic lexical retrieval with verified citations",
+            "Grounded response plans (recommendations only)",
             "Human review of AI analysis before critical actions",
-            "Procedure matching for demo scenarios",
-            "Recommended actions awaiting human review",
-            "System health and activity timeline",
         ],
         limitations=[
             "Live camera monitoring remains simulated unless Sean's detector is integrated.",
-            f"Analysis provider in use: {provider.label}.",
-            "Pose/detector scores are never treated as calibrated fall probability.",
-            "Notifications and emergency alerts are not sent.",
-            "Approval execution, SOP retrieval from analysis, and report generation arrive in later stages.",
+            f"Analysis provider: {provider.label}. Planner: {planner}.",
+            "Response plans are recommendations only — Stage 5 does not execute actions.",
+            "Sample SOP text is demonstration content, not legal advice.",
+            "Approval execution, notifications, and PDF reports arrive in Stage 6.",
             "No authentication / RBAC.",
         ],
     )
