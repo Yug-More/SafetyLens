@@ -30,6 +30,8 @@ def temp_media(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setenv("UPLOAD_DIRECTORY", str(uploads))
     monkeypatch.setenv("FRAME_DIRECTORY", str(frames))
     monkeypatch.setenv("PROCEDURE_DIRECTORY", str(procedures))
+    monkeypatch.setenv("REPORT_DIRECTORY", str(tmp_path / "reports"))
+    (tmp_path / "reports").mkdir()
     monkeypatch.setenv("MAX_VIDEO_SIZE_MB", "5")
     monkeypatch.setenv("MAX_VIDEO_DURATION_SECONDS", "30")
     monkeypatch.setenv("FRAME_SAMPLE_COUNT", "8")

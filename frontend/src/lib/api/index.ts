@@ -17,6 +17,11 @@ import type {
   ApiProcedureUploadResponse,
   ApiProcessingJob,
   ApiResponsePlan,
+  ApiPlanApproval,
+  ApiActionExecution,
+  ApiExecutePlanResponse,
+  ApiAuditEvent,
+  ApiIncidentReport,
   ApiSeverity,
   ApiSystemStatus,
   ApiVideoAsset,
@@ -125,6 +130,90 @@ export function generateResponsePlan(
 
 export function fetchResponsePlan(identifier: string) {
   return apiGetItem<ApiResponsePlan>(`/api/response-plans/${identifier}`);
+}
+
+export function approveResponsePlan(
+  planIdentifier: string,
+  body: {
+    selectedActionIds: string[];
+    reviewerName?: string;
+    notes?: string;
+    incidentIdentifier?: string;
+    confirmed: boolean;
+  }
+) {
+  return apiPostJson<ApiPlanApproval>(`/api/response-plans/${planIdentifier}/approve`, {
+    selected_action_ids: body.selectedActionIds,
+    reviewer_name: body.reviewerName ?? "demo-reviewer",
+    notes: body.notes ?? null,
+    incident_identifier: body.incidentIdentifier ?? "INC-2026-0042",
+    confirmed: body.confirmed,
+  });
+}
+
+export function rejectResponsePlan(
+  planIdentifier: string,
+  body: { reviewerName?: string; reason?: string; notes?: string }
+) {
+  return apiPostJson<ApiPlanApproval>(`/api/response-plans/${planIdentifier}/reject`, {
+    reviewer_name: body.reviewerName ?? "demo-reviewer",
+    reason: body.reason ?? null,
+    notes: body.notes ?? null,
+  });
+}
+
+export function executeResponsePlan(planIdentifier: string) {
+  return apiPostJson<ApiExecutePlanResponse>(
+    `/api/response-plans/${planIdentifier}/execute`,
+    { confirmed: true }
+  );
+}
+
+export function fetchPlanExecutions(planIdentifier: string) {
+  return apiGetCollection<ApiActionExecution>(
+    `/api/response-plans/${planIdentifier}/executions`
+  );
+}
+
+export function retryExecution(executionIdentifier: string) {
+  return apiPostJson<ApiActionExecution>(
+    `/api/executions/${executionIdentifier}/retry`
+  );
+}
+
+export function fetchIncidentAudit(incidentIdentifier: string) {
+  return apiGetCollection<ApiAuditEvent>(
+    `/api/incidents/${incidentIdentifier}/audit`
+  );
+}
+
+export function generateIncidentReport(
+  incidentIdentifier: string,
+  planIdentifier?: string,
+  forceRegenerate = false
+) {
+  return apiPostJson<ApiIncidentReport>(
+    `/api/incidents/${incidentIdentifier}/reports`,
+    {
+      plan_identifier: planIdentifier ?? null,
+      force_regenerate: forceRegenerate,
+    }
+  );
+}
+
+export function fetchIncidentReports(incidentIdentifier: string) {
+  return apiGetCollection<ApiIncidentReport>(
+    `/api/incidents/${incidentIdentifier}/reports`
+  );
+}
+
+export function fetchReport(reportIdentifier: string) {
+  return apiGetItem<ApiIncidentReport>(`/api/reports/${reportIdentifier}`);
+}
+
+export function getReportDownloadUrl(reportIdentifier: string) {
+  const base = process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:8000";
+  return `${base.replace(/\/$/, "")}/api/reports/${reportIdentifier}/download`;
 }
 
 export function fetchSystemStatus() {

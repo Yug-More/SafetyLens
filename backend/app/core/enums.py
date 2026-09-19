@@ -126,3 +126,67 @@ class ResponsePlanStatus(str, enum.Enum):
 class PlannerProviderName(str, enum.Enum):
     DEMO = "demo"
     OPENAI = "openai"
+
+
+class PlanApprovalStatus(str, enum.Enum):
+    PENDING = "pending"
+    APPROVED = "approved"
+    PARTIALLY_APPROVED = "partially_approved"
+    REJECTED = "rejected"
+
+
+class PlanExecutionStatus(str, enum.Enum):
+    NONE = "none"
+    IN_PROGRESS = "in_progress"
+    EXECUTED = "executed"
+    PARTIALLY_FAILED = "partially_failed"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+
+
+class ActionExecutionStatus(str, enum.Enum):
+    PENDING = "pending"
+    RUNNING = "running"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    SKIPPED = "skipped"
+
+
+class SimulatedActionType(str, enum.Enum):
+    ALERT_SUPERVISOR = "alert_supervisor"
+    REQUEST_MEDICAL = "request_medical"
+    CREATE_TICKET = "create_ticket"
+    PRESERVE_EVIDENCE = "preserve_evidence"
+    AREA_ISOLATION = "area_isolation"
+    FOLLOW_UP_REVIEW = "follow_up_review"
+    GENERIC = "generic"
+
+
+class AuditActorType(str, enum.Enum):
+    SYSTEM = "system"
+    HUMAN = "human"
+    SIMULATOR = "simulator"
+
+
+class AuditEventType(str, enum.Enum):
+    ANALYSIS_COMPLETED = "analysis_completed"
+    ANALYSIS_REVIEWED = "analysis_reviewed"
+    RETRIEVAL_COMPLETED = "retrieval_completed"
+    PLAN_GENERATED = "plan_generated"
+    PLAN_VIEWED = "plan_viewed"
+    PLAN_APPROVED = "plan_approved"
+    PLAN_PARTIALLY_APPROVED = "plan_partially_approved"
+    PLAN_REJECTED = "plan_rejected"
+    EXECUTION_REQUESTED = "execution_requested"
+    ACTION_STARTED = "action_started"
+    ACTION_SUCCEEDED = "action_succeeded"
+    ACTION_FAILED = "action_failed"
+    RETRY_REQUESTED = "retry_requested"
+    REPORT_GENERATED = "report_generated"
+    REPORT_DOWNLOADED = "report_downloaded"
+
+
+class ReportStatus(str, enum.Enum):
+    COMPLETE = "complete"
+    INCOMPLETE = "incomplete"
+    FAILED = "failed"

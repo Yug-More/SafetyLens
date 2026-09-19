@@ -45,6 +45,7 @@ backend/*.sqlite*
 backend/data/uploads/
 backend/data/frames/
 backend/data/procedures/
+backend/data/reports/
 !backend/data/README.md
 
 # Build / caches

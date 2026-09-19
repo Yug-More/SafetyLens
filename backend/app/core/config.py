@@ -59,6 +59,7 @@ class Settings(BaseSettings):
         default="./data/procedures",
         alias="PROCEDURE_DIRECTORY",
     )
+    report_directory: str = Field(default="./data/reports", alias="REPORT_DIRECTORY")
     max_procedure_size_mb: int = Field(default=10, alias="MAX_PROCEDURE_SIZE_MB", ge=1)
     max_procedure_text_chars: int = Field(
         default=200_000,
@@ -130,6 +131,10 @@ class Settings(BaseSettings):
     @property
     def procedure_path(self) -> Path:
         return Path(self.procedure_directory).expanduser().resolve()
+
+    @property
+    def report_path(self) -> Path:
+        return Path(self.report_directory).expanduser().resolve()
 
     @property
     def is_demo_ai(self) -> bool:

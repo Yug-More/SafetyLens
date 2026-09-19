@@ -21,10 +21,10 @@ def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(
         title=settings.app_name,
-        version="0.5.0",
+        version="0.6.0",
         description=(
-            "SafetyLens Stage 5 API — procedure ingestion, lexical retrieval, "
-            "verified citations, and grounded response planning."
+            "SafetyLens Stage 6 API — human approval, simulated action execution, "
+            "append-only audit trail, and downloadable incident PDF reports."
         ),
         lifespan=lifespan,
     )

@@ -175,6 +175,7 @@ export interface ApiPlannedAction {
   responsible_role: string;
   requires_human_approval: boolean;
   is_policy_grounded: boolean;
+  selection_status?: string;
   citations: ApiPlanCitation[];
 }
 
@@ -186,6 +187,15 @@ export interface ApiResponsePlan {
   retrieval_id: string | null;
   retrieval_code: string | null;
   status: "queued" | "completed" | "insufficient_policy" | "failed";
+  approval_status?: "pending" | "approved" | "partially_approved" | "rejected";
+  execution_status?:
+    | "none"
+    | "in_progress"
+    | "executed"
+    | "partially_failed"
+    | "failed"
+    | "cancelled";
+  incident_id?: string | null;
   summary: string | null;
   rationale: string | null;
   provider_name: string;
@@ -198,6 +208,97 @@ export interface ApiResponsePlan {
   error_message: string | null;
   actions: ApiPlannedAction[];
   recommendations_executed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiPlanApproval {
+  id: string;
+  approval_code: string;
+  plan_id: string;
+  plan_code: string | null;
+  incident_id: string | null;
+  incident_code: string | null;
+  status: "pending" | "approved" | "partially_approved" | "rejected";
+  reviewer_name: string;
+  notes: string | null;
+  rejection_reason: string | null;
+  selected_action_ids: string[];
+  correlation_id: string;
+  decided_at: string | null;
+  is_simulated: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiActionExecution {
+  id: string;
+  execution_code: string;
+  plan_id: string;
+  action_id: string;
+  action_title: string | null;
+  approval_id: string;
+  idempotency_key: string;
+  action_type: string;
+  requested_target: string;
+  provider: string;
+  simulation: boolean;
+  status: "pending" | "running" | "completed" | "failed" | "skipped";
+  message: string;
+  started_at: string | null;
+  completed_at: string | null;
+  failure_code: string | null;
+  failure_reason: string | null;
+  external_reference: string | null;
+  attempt_number: number;
+  correlation_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiExecutePlanResponse {
+  plan_id: string;
+  plan_code: string;
+  execution_status: string;
+  simulation: boolean;
+  correlation_id: string;
+  executions: ApiActionExecution[];
+  message: string;
+}
+
+export interface ApiAuditEvent {
+  id: string;
+  event_code: string;
+  incident_id: string | null;
+  analysis_id: string | null;
+  plan_id: string | null;
+  execution_id: string | null;
+  event_type: string;
+  actor_type: string;
+  actor_name: string;
+  occurred_at: string;
+  metadata: Record<string, unknown>;
+  previous_status: string | null;
+  new_status: string | null;
+  correlation_id: string;
+  simulation: boolean;
+}
+
+export interface ApiIncidentReport {
+  id: string;
+  report_code: string;
+  incident_id: string;
+  incident_code: string | null;
+  plan_id: string | null;
+  plan_code: string | null;
+  approval_id: string | null;
+  status: "complete" | "incomplete" | "failed";
+  simulation: boolean;
+  title: string;
+  summary: Record<string, unknown>;
+  incomplete_reason: string | null;
+  download_url: string | null;
+  generated_at: string;
   created_at: string;
   updated_at: string;
 }

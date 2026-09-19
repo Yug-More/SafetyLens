@@ -1,6 +1,6 @@
-# SafetyLens Backend (Stage 5)
+# SafetyLens Backend (Stage 6)
 
-FastAPI service with typed REST contracts, SQLite persistence, video processing, multimodal analysis, procedure ingestion, lexical retrieval, verified citations, and grounded response planning.
+FastAPI service with typed REST contracts, SQLite persistence, video processing, multimodal analysis, procedure retrieval, grounded response planning, human approval, simulated action execution, append-only audit events, and PDF incident reports.
 
 ## Setup
 
@@ -14,58 +14,84 @@ python -m app.seed.run
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-If upgrading an existing local SQLite file after Stage 5 schema changes, delete `safetylens.db` and re-seed (tests always use a fresh in-memory DB).
+If upgrading an existing local SQLite file after Stage 6 schema changes, delete `safetylens.db` and re-seed (tests always use a fresh in-memory DB).
 
-## Stage 5 environment
+## Stage 6 environment
 
 | Variable | Description | Default |
 |---|---|---|
 | `PROCEDURE_DIRECTORY` | Stored procedure originals | `./data/procedures` |
+| `REPORT_DIRECTORY` | Generated PDF reports (gitignored) | `./data/reports` |
 | `MAX_PROCEDURE_SIZE_MB` | Upload size limit | `10` |
-| `MAX_PROCEDURE_TEXT_CHARS` | Extracted text cap | `200000` |
-| `PROCEDURE_CHUNK_MAX_CHARS` | Chunk size target | `900` |
-| `RETRIEVAL_TOP_K` | Max ranked chunks | `8` |
-| `RETRIEVAL_MIN_SCORE` | Minimum lexical score | `0.08` |
 | `PLANNER_PROVIDER` | `demo` or `openai` | `demo` |
 | `PLANNER_MODEL` | Optional real planner model | empty |
 
-Never commit `.env`, uploaded procedures, or databases.
+Never commit `.env`, uploaded media, generated reports, or databases.
 
-## Procedure ingestion
+## Approval workflow
 
-Supported: **PDF, TXT, Markdown**. Validates extension/MIME, size, path traversal, empty/corrupt documents. Extracts text (pypdf for PDF), chunks deterministically by headings/numbered steps/length, stores metadata without absolute paths. Duplicate code or identical content hash is rejected.
+1. Only `completed` grounded response plans can be reviewed.
+2. `insufficient_policy` and `failed` plans cannot be approved or executed.
+3. `POST .../approve` requires `confirmed=true`, selected action IDs from that plan, reviewer name, optional notes.
+4. Partial approval selects a subset of actions; rejection stores an optional reason.
+5. Double approval and approval after execution starts are rejected (`409`).
+6. Demo identity defaults to `demo-reviewer`. Production auth/RBAC is **not** implemented.
 
-Seeded sample: **SOP-FALL-4.2** — Worker Fall and Person-Down Response (sample company procedure, not legal advice).
+## Simulated executor
 
-## Retrieval
+`SimulatedActionExecutor` runs only explicitly approved actions. Results always set `simulation=true` and use safe wording such as “Simulated medical-assistance request created for demonstration.”
 
-Deterministic **lexical** scoring over active procedure chunks (keyword + domain weights). No paid API required. Every returned match includes procedure/chunk identifiers, section/page when present, exact excerpt, score, and method=`lexical`.
+Supported simulated action types include supervisor alert, medical assistance request, incident ticket, evidence preservation, area-isolation recommendation, and follow-up scheduling.
 
-## Citations
+**No real** Slack, email, SMS, emergency services, or ticketing integrations are called.
 
-Plans only persist citations that:
+### Idempotency
 
-1. Exist as stored `ProcedureChunk` rows
-2. Were present in the retrieval match set for that analysis
-3. Snapshot the exact stored chunk text
+Each approved action gets a stable `idempotency_key` scoped to the approval + action. Repeated `POST .../execute` returns existing executions without creating duplicate simulated notifications or tickets. Successful actions are never re-run as new work; failed actions may be retried via `POST /api/executions/{id}/retry`.
 
-Unknown or mismatched citation IDs are rejected (`INVALID_CITATION`).
+## Audit events
 
-## Response plans
+`AuditEvent` rows are append-only through application APIs (no update/delete endpoints). Events cover analysis/plan lifecycle, approval, execution start/success/failure, retries, and report generation/download where practical.
 
-Demo planner maps fall analyses + retrieved SOP-FALL chunks to ordered recommendations (supervisor, medical, area control, evidence, documentation). Status may be `completed`, `insufficient_policy`, or `failed`. Recommendations are never executed in Stage 5.
+This is an **application-level append-only prototype** on SQLite — not a legally immutable compliance ledger.
 
-## Stage 5 API
+## Incident reports
 
-- `POST /api/procedures/upload`
-- `GET /api/procedures`
-- `GET /api/procedures/{id}`
-- `GET /api/procedures/{id}/chunks`
-- `POST /api/analyses/{id}/retrieve-procedures`
-- `POST /api/analyses/{id}/response-plan`
-- `GET /api/response-plans/{id}`
+After analysis, planning, and (typically) simulated execution:
 
-Plus all Stage 1–4 endpoints.
+- `POST /api/incidents/{id}/reports` persists report metadata and generates a PDF with reportlab
+- Incomplete reports are explicitly labeled
+- Regeneration is allowed when underlying execution state changes (`force_regenerate`)
+- Download: `GET /api/reports/{id}/download` returns valid PDF bytes
+- Filenames are sanitized; absolute storage paths are never exposed
+
+## Stage 6 API
+
+- `POST /api/response-plans/{id}/approve`
+- `POST /api/response-plans/{id}/reject`
+- `GET /api/response-plans/{id}/approval`
+- `POST /api/response-plans/{id}/execute`
+- `GET /api/response-plans/{id}/executions`
+- `POST /api/executions/{id}/retry`
+- `GET /api/incidents/{id}/audit`
+- `POST /api/incidents/{id}/reports`
+- `GET /api/incidents/{id}/reports`
+- `GET /api/reports/{id}`
+- `GET /api/reports/{id}/download`
+
+Plus all Stage 1–5 endpoints.
+
+### Example: approve and execute
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/response-plans/PLAN-.../approve \
+  -H 'Content-Type: application/json' \
+  -d '{"selected_action_ids":["..."],"confirmed":true,"reviewer_name":"demo-reviewer","incident_identifier":"INC-2026-0042"}'
+
+curl -X POST http://127.0.0.1:8000/api/response-plans/PLAN-.../execute \
+  -H 'Content-Type: application/json' \
+  -d '{"confirmed":true}'
+```
 
 ## Tests
 
@@ -73,11 +99,13 @@ Plus all Stage 1–4 endpoints.
 pytest
 ```
 
-External AI/planner providers are mocked — no paid calls.
+External AI/planner/action providers are mocked or simulated — no paid or real workplace calls.
 
 ## Limitations
 
-- No approval/execution/notifications (Stage 6)
-- No PDF incident reports (Stage 6)
-- No live detector adapter automation
-- No authentication / RBAC
+- Actions are simulated only
+- Authentication/authorization remain prototype limitations
+- Audit immutability is application-level only
+- No real emergency or workplace systems are contacted
+- No live detector adapter automation (Sean’s track)
+- Stage 7 is not started
