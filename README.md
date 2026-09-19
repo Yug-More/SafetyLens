@@ -1,5 +1,11 @@
 # SafetyLens
 
+> **Submission scope: possible falls only.** See [the release handoff](docs/team/FALL_ONLY_RELEASE.md)
+> and [demo script](docs/DEMO_SCRIPT.md). Real local pose/state-machine detection is separate
+> from default **scripted Demo AI**. Actions are simulated; no emergency alerts are sent.
+> Phone/Camo integration is paused. Broader categories below are the original product vision,
+> not tested capabilities.
+
 ### See danger. Trigger action.
 
 SafetyLens is an AI-powered workplace safety agent that transforms existing security cameras into proactive incident-response systems.

@@ -8,13 +8,20 @@ interface LiveClockProps {
   showSeconds?: boolean;
 }
 
+let currentTimestamp = 0;
+
 function subscribe(onStoreChange: () => void) {
-  const interval = window.setInterval(onStoreChange, 1000);
+  const update = () => {
+    currentTimestamp = Date.now();
+    onStoreChange();
+  };
+  update();
+  const interval = window.setInterval(update, 1000);
   return () => window.clearInterval(interval);
 }
 
 function getSnapshot() {
-  return Date.now();
+  return currentTimestamp;
 }
 
 function getServerSnapshot() {

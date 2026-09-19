@@ -2,12 +2,33 @@ from __future__ import annotations
 
 import json
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi.testclient import TestClient
 
 from app.services.video_processing import choose_event_centered_indices, choose_frame_indices
 from tests.conftest import make_test_video
+from app.schemas.detector import DetectorEventPayload
+from app.services.detector_ingestion import resolve_occurred_at, resolve_clip_event_offset
+
+
+def test_relative_detector_time_is_not_a_unix_date():
+    event = DetectorEventPayload(
+        schema_version="1.0", event_id="relative-time", source_id="recording",
+        occurred_at_seconds=4.6, source_timestamp_seconds=4.6,
+    )
+    assert resolve_occurred_at(event) is None
+    assert resolve_clip_event_offset(event) == 4.6
+
+
+def test_api_datetime_has_utc_offset():
+    event = DetectorEventPayload(
+        schema_version="1.0", event_id="utc-time", source_id="recording",
+        occurred_at=datetime(2026, 9, 19, 20, 0),
+    )
+    assert event.occurred_at.tzinfo == timezone.utc
+    assert event.model_dump(mode="json")["occurred_at"].endswith("Z")
 
 
 def _contract_event(event_id: str = "evt-demo-001") -> dict:
@@ -120,10 +141,7 @@ def test_detector_ingest_duplicate_and_analysis(client: TestClient, tmp_path: Pa
             raise AssertionError(status)
         time.sleep(0.1)
     else:
-        # Analysis may still be running in background; ensure asset remains unique.
-        listed = client.get("/api/detector/events").json()["data"]
-        matching = [item for item in listed if item["event_id"] == "evt-unique-1"]
-        assert len(matching) == 1
+        raise AssertionError(f"Detector analysis did not complete: {status}")
 
 
 def test_invalid_schema_and_malformed_event(client: TestClient, tmp_path: Path):

@@ -6,9 +6,9 @@ import { Check, RotateCcw } from "lucide-react";
 const rehearsalItems = [
   "Open the app and confirm the current API or Offline Demo Mode banner is understood.",
   "Choose a short, permitted demo video before the presentation begins.",
-  "Practice the upload, playback, and frame-timeline explanation.",
-  "Call out seeded procedures and the simulated approval state explicitly.",
-  "End with the roadmap instead of claiming unimplemented AI or action execution.",
+  "Export real fall-detector JSON and import it with the matching video.",
+  "Call out scripted Demo AI, seeded SOPs, and simulated actions explicitly.",
+  "Rehearse retrieval, plan approval, audit review, and PDF download end to end.",
 ];
 
 export function DemoRehearsalChecklist() {

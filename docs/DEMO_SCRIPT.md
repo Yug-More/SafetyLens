@@ -1,54 +1,51 @@
-# SafetyLens Three-Minute Demo Script
+# SafetyLens: three-minute fall-only demo
 
-This script describes the current prototype honestly. Use only consented or licensed demo
-video. Do not claim measured accuracy, savings, sent alerts, or completed emergency actions
-unless the integrated build demonstrates them.
+## 0:00–0:25 — One problem
 
-## 0:00–0:20 — Problem
+“A camera can record someone falling without helping the reviewer decide what to do next.
+We focus on one workflow: flag a possible fall, show the evidence, and help a supervisor
+follow a documented response.”
 
-“Workplaces already have cameras, but most footage is reviewed after an incident. A supervisor
-may need to find a clip, understand what happened, locate the right safety procedure, and
-coordinate a response under pressure. SafetyLens is designed to make that review path faster,
-more explainable, and human-controlled.”
+## 0:25–1:00 — Real detector, narrow claim
 
-## 0:20–0:40 — Solution
+“This is a consented staged fall. A local pose model feeds a state machine that checks
+movement and sustained down posture before emitting a possible-person-down event. Here
+are its timestamp, signals and transitions. Walking out of frame and sitting are our initial
+negative examples—not proof of general accuracy.”
 
-“SafetyLens connects an existing camera workflow to an assistant for evidence review, procedure
-guidance, and proposed next steps. The assistant supports the supervisor; it does not replace
-emergency services or make consequential decisions on its own.”
+Show the detector result beside the recording; import JSON and matching video in Live Monitor.
+Precomputed results are fine: say they were precomputed. Upload itself does not run detection.
 
-## 0:40–2:10 — Current workflow
+## 1:00–1:35 — Review and cited guidance
 
-1. “This is the **Live Monitor**. For this rehearsal, we use a short prerecorded demo clip from
-   Camera 04 in Loading Zone B.”
-2. “I upload the clip. In the current Stage 3 build, the backend validates it, stores it locally
-   for the demo, reads video metadata, and samples representative frames.”
-3. “When the processing job is ready, we can replay the clip and inspect the frame timeline.
-   These are evidence candidates for a reviewer—not a confirmed incident verdict.”
-4. “Next, the **Procedures** page shows the seeded safety-procedure library. Matching a procedure
-   to the uploaded video is planned for a later stage, so we do not present this as automated
-   retrieval today.”
-5. “The **Response Center** illustrates the intended supervisor experience: review evidence,
-   consider a recommended plan, and approve or reject it. Its provider is a seeded demo data
-   source in this build; approval is simulated. No alerts, tickets, equipment controls, or
-   emergency actions are actually sent.”
+“The event brings evidence into the workspace. Default Demo AI is scripted for presentation;
+it does not actually inspect these frames. The real detector is separate. We retrieve the
+seeded fall procedure and generate a cited proposed plan. The reviewer can inspect the source
+instead of trusting an unexplained recommendation.”
 
-## 2:10–2:40 — Architecture
+Choose the matching analysis, retrieve SOP-FALL-4.2 and show a citation. Describe real AI
+instead only if a real provider has genuinely been configured and tested.
 
-“The current implementation is a Next.js operations console connected to a FastAPI service with
-SQLite metadata and OpenCV video processing. The future path adds multimodal verification,
-cited procedure retrieval, and an auditable simulated-action workflow. Keeping those stages
-explicit lets us demonstrate useful groundwork without overstating automation.”
+## 1:35–2:25 — The assistant's value
 
-## 2:40–3:00 — Impact
+“Detection alone leaves someone to locate procedures, decide the response, and document
+what happened. This assistant brings those steps together. A human selects and approves
+actions. Execution here is simulated: no notification or emergency call is sent.”
 
-“SafetyLens aims to turn passive footage into a structured, review-ready safety workflow. The
-value is not an unattended decision—it is helping the right person see relevant evidence,
-understand what still needs verification, and stay in control of the response.”
+Approve plan actions, run simulation, show audit, generate/download PDF. Approval/audit/report
+records are real application artifacts; external actions are not real.
 
-## Presenter reminders
+## 2:25–3:00 — Boundaries and close
 
-- State the video source and consent status if asked.
-- Say “candidate frame” rather than “detected fall” for the current Stage 3 pipeline.
-- Say “seeded demo provider” and “simulated approval” when showing the Response Center.
-- If a live upload fails, explain the API connection state rather than claiming the demo completed.
+“We connect local fall-candidate detection to evidence, cited guidance, human review and an
+auditable record. We used a handful of staged clips from one setup for tuning, so we do not
+claim measured accuracy or lives saved. Next we would test new camera angles and false
+positives. Today the focus is a clear fall-response workflow.”
+
+## Rehearsal and fallback
+
+- Prepare real detector JSON and consented video locally; do not depend on Camo finishing.
+- Test API, retrieval, approval, simulated execution and PDF download before presenting.
+- If import fails, ordinary upload demonstrates downstream workflow only; disclose that.
+- If API fails, use explicitly labeled rehearsal screenshots rather than claiming completion.
+- No injury diagnosis, production monitoring, automated dispatch or other-hazard detection claims.
