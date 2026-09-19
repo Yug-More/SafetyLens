@@ -57,13 +57,14 @@ For the hackathon demonstration, uploading a recorded camera clip simulates the 
 
 ---
 
-## Live Detection Demo
+## Live Sensing Capabilities
 
-SafetyLens continuously tracks body posture and movement. The operator sees a clear green normal state during routine activity and a red alert after a fall is confirmed.
+SafetyLens continuously senses body posture and movement from a live camera feed. Its temporal detector distinguishes normal activity from a sustained person-down event, giving the operator a simple green or red status while preserving the evidence around an incident.
 
-| Normal monitoring | Confirmed fall |
+| Normal activity | Confirmed fall |
 | --- | --- |
 | ![SafetyLens tracking a standing person with a green normal status](docs/assets/demo/normal-standing.png) | ![SafetyLens showing a red fall-detected alert with the person on the floor](docs/assets/demo/fall-detected.png) |
+| Full-body pose tracking follows the person while the detector reports **NORMAL**. | A sustained fall changes the tracked state to **FALL DETECTED** and calls for human review. |
 
 ---
 
