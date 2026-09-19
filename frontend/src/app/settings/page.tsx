@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { facilityInfo } from "@/data/mock";
+import { GuidedDemoPanel } from "@/components/GuidedDemoPanel";
 
 interface SettingRowProps {
   label: string;
@@ -164,18 +165,18 @@ export default function SettingsPage() {
       <section className="rounded-xl border border-border bg-panel p-4 shadow-sm sm:p-6">
         <h2 className="text-base font-semibold text-foreground">Integrations</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Future connections for ticketing, messaging, and storage
+          Future connections for ticketing, messaging, and storage. Stage 7 actions remain simulated.
         </p>
         <Separator className="my-4" />
         <SettingRow
           label="Notification provider"
-          description="Stage 2 placeholder"
+          description="Not connected — simulated alerts only"
         >
           <Input defaultValue="Not connected" aria-label="Notification provider" />
         </SettingRow>
         <SettingRow
           label="Incident ticketing"
-          description="Stage 2 placeholder"
+          description="Not connected — simulated tickets only"
         >
           <Input defaultValue="Not connected" aria-label="Incident ticketing" />
         </SettingRow>
@@ -183,6 +184,8 @@ export default function SettingsPage() {
           <Button onClick={() => saveMock("Integrations")}>Save Integrations</Button>
         </div>
       </section>
+
+      <GuidedDemoPanel />
     </div>
   );
 }

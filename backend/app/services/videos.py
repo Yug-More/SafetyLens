@@ -268,11 +268,19 @@ def process_video_job(video_id: str, job_id: str) -> None:
             db.commit()
 
             update_job(55, "Sampling frames")
+            focus_offset = None
+            try:
+                from app.services.detector_ingestion import get_focus_offset_for_video
+
+                focus_offset = get_focus_offset_for_video(db, video.id)
+            except Exception:  # pragma: no cover - optional detector mapping
+                focus_offset = None
             frames = extract_representative_frames(
                 str(video_path),
                 fps=metadata.fps,
                 frame_count=metadata.frame_count,
                 settings=cfg,
+                focus_offset_seconds=focus_offset,
             )
 
             update_job(80, "Preparing evidence")

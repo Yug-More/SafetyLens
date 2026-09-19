@@ -66,38 +66,43 @@ This event-triggered architecture keeps routine footage local and activates adva
 
 ---
 
-## Current Stage (Stage 6)
+## Current Stage (Stage 7 — hackathon release)
 
-Stage 6 adds human approval, controlled simulated action execution, an append-only audit trail, and downloadable PDF incident reports on top of Stage 5 grounded response plans.
+Stage 7 integrates Sean’s detector event contract, Abhinav’s Demo Guide navigation, guided demo reset, release packaging, and end-to-end reliability for the worker-fall journey.
 
 ### Architecture
 
 ```text
-completed grounded response plan
-   → explicit human approve / reject (selected actions)
-   → SimulatedActionExecutor (idempotent, no real side effects)
-   → append-only AuditEvent timeline
-   → IncidentReport + server-side PDF download
+uploaded video (reliable fallback)
+   OR detector event_id + evidence clip
+      → existing Stage 3 upload / frame prepare
+      → optional event-centered frame sampling
+      → Stage 4 Demo AI analysis
+      → Stage 5 SOP retrieval + cited plan
+      → Stage 6 approval → simulated execution → audit → PDF
 ```
 
 ### Capabilities available now
 
-- Stages 1–5 preserved (dashboard, upload, frames, multimodal analysis, procedure retrieval, citations, response plans)
-- Persistent plan approval: pending, approved, partially approved, rejected
-- Confirmation-gated approval and execution (opening a page never implies approval)
-- Deterministic simulated executor for supervisor alert, medical assistance request, ticket, evidence preserve, isolation recommendation, follow-up
-- Idempotent execution keys; safe retry of failed simulated actions only
-- Append-only audit events (application-level; not a legal compliance ledger)
-- Incident reports with evidence, citations, approvals, execution outcomes, and simulation disclosure
-- Server-side PDF generation (reportlab) with safe filenames
+- Stages 1–6 preserved
+- Detector event ingestion (`POST /api/detector/events`) with schema_version validation
+- `event_id` deduplication mapped to asset / job / analysis / incident
+- Uploaded-video path remains fully functional if the detector is offline
+- Event-centered sampling using `clip_event_offset_seconds` when present
+- Demo Guide (`/demo-help`) linked in shared navigation
+- Guided demo checklist + confirmed demo reset (`POST /api/demo/reset`)
+- Docker Compose packaging for reproducible local release
+- Explicit SIMULATED / Demo AI labeling throughout
 
-### Stage 6 limitations
+### Stage 7 limitations
 
-- All action outcomes are **SIMULATED** — no real Slack, email, SMS, emergency, or ticketing calls
-- Authentication/authorization remain demo-user prototypes (not production RBAC)
-- Audit “immutability” is application-level append-only on SQLite, not tamper-resistant storage
-- Live detector integration remains separate (Sean)
-- Stage 7 live operations / multi-camera work is not started
+- Actions remain **SIMULATED** — no real emergency or workplace systems contacted
+- Detector MediaPipe/video extras require optional local install; unit tests use stdlib only
+- Auth/RBAC remain prototypes
+- Audit append-only is application-level on SQLite
+- No public cloud deployment is claimed by this repository configuration alone
+- Sample SOP text is demonstration content, not legal advice
+- `pose_quality` is landmark reliability — never fall probability
 
 ---
 
@@ -290,7 +295,7 @@ Uploads require the live API. Offline demo fallback does **not** fake successful
 Frontend:
 
 ```bash
-npm run dev
+cd frontend && npm run dev
 npm run build
 npm run lint
 npm run typecheck
@@ -299,17 +304,59 @@ npm run typecheck
 Backend:
 
 ```bash
-pytest
+cd backend && pytest
 python -m app.seed.run
 uvicorn app.main:app --reload
 ```
 
+Detector (Sean’s package):
+
+```bash
+PYTHONPATH=detector/src python -m unittest discover -s detector/tests -v
+```
+
+### Docker release (local)
+
+```bash
+docker compose up --build
+```
+
+- Backend: `http://localhost:8000/api/health`
+- Frontend: `http://localhost:3000`
+- Demo AI / Demo Planner require no API keys
+- Persistent volume: `safetylens-data` for DB, uploads, frames, reports
+- Do not bake secrets into images; pass env vars explicitly
+- Public cloud deployment is **not** claimed unless you host it yourself
+
+### Detector integration
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/detector/events \
+  -F 'event_json={"schema_version":"1.0","event_id":"evt-1","event_type":"possible_person_down","source_id":"demo-camera-04","camera_id":"cam-04","clip_event_offset_seconds":2,"state":"incident","trigger_signals":["rapid_drop"],"pose_quality":0.9,"limitations":[]}' \
+  -F 'clip=@/path/to/clip.mp4;type=video/mp4'
+```
+
+Repeated `event_id` values reuse the existing mapping (no duplicate upload/analysis).
+
+### Demo reset
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/demo/reset \
+  -H 'Content-Type: application/json' \
+  -d '{"confirmed":true}'
+```
+
+Only available when `DEMO_MODE=true`. Clears configured demo media roots and runtime rows, then re-seeds. Does not delete arbitrary paths.
+
 ---
 
-## Planned Future Stages
+## Production roadmap (not claimed complete)
 
-1. **Stage 7** — Multi-camera operations, auth/RBAC, production observability (not started)
-2. Live detector integration remains a separate teammate track
+1. Production authentication and RBAC
+2. Real notification / ticketing adapters behind approval gates
+3. Multi-camera operations and observability
+4. Tamper-resistant audit storage
+5. Measured detector accuracy on consented evaluation sets
 
 ---
 
@@ -355,4 +402,4 @@ The system is designed to:
 
 This project is a hackathon prototype and should not be treated as a certified emergency-response or workplace-safety system. Critical safety decisions should always involve qualified personnel.
 
-Stage 2 uses seeded API data with an optional offline demo fallback. It does not claim that real AI detection, video analysis, notifications, or emergency actions are operational.
+Stage 7 keeps Demo AI / Demo Planner, simulated action execution, and optional detector handoff. It does not claim production accuracy, legal compliance, live emergency dispatch, or that a public deployment is already live.

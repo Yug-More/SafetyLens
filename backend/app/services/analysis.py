@@ -205,6 +205,7 @@ def select_frames_for_analysis(
     frames: list[VideoFrame],
     *,
     max_frames: int,
+    focus_offset_seconds: float | None = None,
 ) -> list[VideoFrame]:
     if not frames:
         return []
@@ -212,7 +213,23 @@ def select_frames_for_analysis(
     if len(ordered) <= max_frames:
         return ordered
     if max_frames == 1:
-        return [ordered[len(ordered) // 2]]
+        if focus_offset_seconds is None:
+            return [ordered[len(ordered) // 2]]
+        nearest = min(
+            ordered,
+            key=lambda item: abs(item.timestamp_seconds - focus_offset_seconds),
+        )
+        return [nearest]
+
+    if focus_offset_seconds is not None:
+        # Prefer frames nearest the detector event offset, keep chronological order.
+        ranked = sorted(
+            ordered,
+            key=lambda item: abs(item.timestamp_seconds - focus_offset_seconds),
+        )
+        selected = sorted(ranked[:max_frames], key=lambda item: item.timestamp_seconds)
+        return selected
+
     # Evenly spaced indices including first and last.
     indices = [
         round(i * (len(ordered) - 1) / (max_frames - 1))
@@ -444,9 +461,18 @@ def run_analysis_job(analysis_id: str, job_id: str) -> None:
         if video is None:
             raise AppError("VIDEO_NOT_FOUND", "Video asset missing for analysis.", 404)
 
+        focus_offset = None
+        try:
+            from app.services.detector_ingestion import get_focus_offset_for_video
+
+            focus_offset = get_focus_offset_for_video(db, video.id)
+        except Exception:  # pragma: no cover
+            focus_offset = None
+
         selected = select_frames_for_analysis(
             list(video.frames),
             max_frames=settings.ai_max_frames,
+            focus_offset_seconds=focus_offset,
         )
         frame_inputs: list[FrameAnalysisInput] = []
         frame_by_code: dict[str, VideoFrame] = {}
