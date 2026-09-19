@@ -1,225 +1,398 @@
 # SafetyLens
 
-### From a possible fall to a documented, human-approved response
+### See danger. Trigger action.
 
-SafetyLens is a fall-response assistant for workplace camera footage. A lightweight local
-detector watches a camera or prerecorded video for a rapid drop followed by a sustained
-person-down posture. When it identifies a possible fall, SafetyLens preserves the evidence,
-connects it to the relevant safety procedure, presents a proposed response for human review,
-and creates an auditable incident report.
+SafetyLens is an AI-powered workplace safety and incident-response platform that transforms existing security cameras from passive recording devices into proactive, human-supervised safety systems.
 
-Built for **The Executable World: A Full-Stack AI Hackathon**.
+When a potential incident occurs, SafetyLens preserves the relevant evidence, analyzes what happened, alerts a safety operator, retrieves the appropriate company procedure, prepares a citation-backed response plan, and executes only the actions approved by a human.
 
-> SafetyLens is a decision-support prototype, not a certified monitoring or emergency-response
-> system. It flags possible falls for human review; it does not diagnose injury or contact
-> emergency services.
+> Built for **The Executable World: A Full-Stack AI Hackathon**
 
-## Demo workflow
+---
+
+## The Problem
+
+Most workplaces already have security cameras, but these cameras primarily record footage for review after an incident.
+
+When an emergency occurs:
+
+- Someone must notice the correct camera at the correct time.
+- Relevant footage must be located and preserved manually.
+- Employees must search for the appropriate safety procedure.
+- Supervisors must coordinate the response across disconnected tools.
+- Incident reports must be prepared afterward.
+
+These delays can increase operational risk, response time, and administrative cost.
+
+## Our Solution
+
+SafetyLens connects camera evidence, multimodal reasoning, company procedures, human approval, and incident reporting into one continuous workflow:
+
+**camera event → AI investigation → operator alert → human review → policy-grounded action → auditable report**
+
+The system automates investigation and response preparation while preserving human authority over incident confirmation and consequential actions.
+
+---
+
+## How It Works
+
+```mermaid
+flowchart TD
+    A["Existing CCTV Cameras"] --> B["Lightweight Event Detection"]
+    B --> C["Evidence Clip Preserved"]
+    C --> D["Multimodal Analysis"]
+    D --> E["Operator Alerted"]
+    E --> F["SOP and Draft Plan Prepared"]
+    F --> G{"Human Review"}
+    G -->|Reject| H["Close as False Alarm"]
+    G -->|More Information| I["Request Additional Review"]
+    G -->|Confirm| J["Approve Selected Actions"]
+    J --> K["Run Approved Actions"]
+    K --> L["Audit Trail and PDF Report"]
+```
+
+A lightweight detector can monitor camera feeds continuously. More expensive multimodal analysis is invoked only when a suspicious event requires deeper investigation, making the architecture more scalable than analyzing every full video stream continuously.
+
+For the hackathon demonstration, uploading a recorded camera clip simulates the event handoff from an existing facility camera.
+
+---
+
+## Core Features
+
+### Intelligent Camera Monitoring
+
+- Multi-camera workplace monitoring interface
+- Camera and location management
+- Uploaded-video and detector-event ingestion
+- Automatic evidence preparation and frame extraction
+- Event-driven analysis instead of continuous multimodal processing
+
+### Explainable Incident Analysis
+
+- Structured incident classification
+- Severity and confidence assessment
+- Evidence timestamps
+- Key visual observations
+- Clear uncertainty and human-review requirements
+- Support for inconclusive evidence
+
+### Immediate Operator Review
+
+- Persistent in-application notifications
+- Active-incident badge and alert banner
+- Direct navigation to the correct incident
+- Durable video and analysis context
+- No repeated record selection
+
+### Policy-Grounded Response Planning
+
+- Company procedure ingestion
+- Relevant SOP retrieval
+- Exact citation verification
+- Recommended actions connected to policy evidence
+- Safe handling when company policy is insufficient
+
+### Human Approval Controls
+
+Operators can:
+
+- Confirm an incident
+- Reject it as a false alarm
+- Request more information
+- Select individual response actions
+- Approve or reject recommended actions
+- Add reviewer notes
+
+No consequential action can execute without explicit human approval.
+
+### Simulated Action Execution
+
+The hackathon demonstration supports safely simulated actions such as:
+
+- Alerting a floor supervisor
+- Requesting medical assistance
+- Preserving incident evidence
+- Creating an incident ticket
+- Isolating a hazardous area
+- Scheduling follow-up review
+
+Every simulated action is clearly labelled **SIMULATED**.
+
+### Audit and Reporting
+
+- Append-only application audit events
+- Reviewer identity and timestamps
+- Approval and execution history
+- Automatic incident-report generation
+- Downloadable PDF reports
+- Evidence, policy citations, decisions, and actions in one report
+
+---
+
+## Verified Demo Scenario
+
+The primary demonstrated scenario is a possible person-down event in a warehouse aisle.
+
+1. A recorded Camera 03 event is submitted to SafetyLens.
+2. The video is automatically prepared and analyzed.
+3. SafetyLens identifies a possible person-down event.
+4. The safety operator receives an immediate alert.
+5. The Incident Command Center opens the correct video and evidence.
+6. The relevant person-down procedure is prepared.
+7. The operator confirms or rejects the incident.
+8. Selected actions require explicit approval.
+9. Approved actions execute in simulation.
+10. SafetyLens records the audit trail and generates a PDF report.
+
+The architecture is designed to extend to additional safety scenarios such as PPE noncompliance, fire or smoke risks, and restricted-zone entry. These scenarios require appropriate visual models, camera positioning, and organization-specific procedures.
+
+---
+
+## System Architecture
 
 ```mermaid
 flowchart LR
-    A[Camera or video] --> B[Local pose detector]
-    B --> C[Temporal fall state machine]
-    C --> D[Evidence clip and event]
-    D --> E[Procedure retrieval]
-    E --> F[Human review and approval]
-    F --> G[Simulated actions]
-    G --> H[Audit trail and PDF report]
+    A["Camera or Video"] --> B["Detector / Upload Pipeline"]
+    B --> C["Frame Processing"]
+    C --> D["AI Analysis"]
+    D --> E["Workflow Orchestrator"]
+    E --> F["Operator Notification"]
+    E --> G["Procedure Retrieval"]
+    G --> H["Response Plan"]
+    F --> I["Human Review"]
+    H --> I
+    I --> J["Approved Execution"]
+    J --> K["Audit and Report"]
 ```
 
-The submission focuses on one complete scenario: **a possible worker fall**. Routine frames
-remain local to the detector. Only an event and its short evidence clip enter the review
-workflow.
+### Cost-Efficient Design
 
-## What works
+SafetyLens does not require an expensive multimodal model to inspect every frame continuously.
 
-- Live detection from a webcam or a phone exposed as a Windows camera through Camo
-- Prerecorded MP4, MOV, and WebM analysis
-- Explainable temporal states: monitoring, suspected, confirming, incident, and cooldown
-- One event per fall episode, with short pose-loss tolerance and duplicate suppression
-- Pre-event and post-event evidence buffering
-- Detector-event ingestion with version validation and `event_id` deduplication
-- Event-centered frame extraction and evidence review
-- Retrieval of the seeded fall-response procedure with source citations
-- Human approval or rejection of individual response actions
-- Clearly labeled simulated execution, audit history, and downloadable PDF reports
-- Local Docker Compose setup with persistent application data
+- Lightweight detection monitors routine activity.
+- A short evidence buffer preserves the relevant moment.
+- Multimodal analysis runs only after an event trigger.
+- Human review prevents uncertain predictions from becoming automatic actions.
 
-## System architecture
+---
 
-| Component | Responsibility | Technology |
-| --- | --- | --- |
-| Detector | Pose estimation, motion metrics, temporal state machine, evidence buffer | Python, MediaPipe, OpenCV |
-| API | Video processing, event ingestion, procedures, approvals, audit, reports | FastAPI, SQLAlchemy, SQLite |
-| Web console | Evidence review and response workflow | Next.js, React, TypeScript, Tailwind CSS |
+## Technology Stack
 
-The default analysis and planning providers are deterministic local demo providers so the full
-workflow runs without credentials. Their output is visibly identified as simulated. The fall
-candidate itself comes from the local pose detector and state machine.
+### Frontend
 
-## Quick start with Docker
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
 
-Requirements: Docker Desktop and Docker Compose.
+### Backend
+
+- FastAPI
+- Python
+- SQLAlchemy
+- SQLite
+- Pydantic
+
+### Video and AI
+
+- OpenCV video processing
+- Extracted evidence frames
+- Configurable multimodal provider
+- Deterministic Demo AI provider
+- MediaPipe-based detector prototype
+
+### Infrastructure
+
+- Docker and Docker Compose
+- REST APIs
+- Server-side PDF generation
+- Environment-based provider configuration
+
+---
+
+## Repository Structure
+
+```text
+SafetyLens/
+├── backend/                 # FastAPI API, database, AI and workflows
+│   ├── app/
+│   │   ├── ai/              # AI provider abstraction
+│   │   ├── api/             # API routes
+│   │   ├── models/          # SQLAlchemy models
+│   │   ├── schemas/         # Pydantic schemas
+│   │   ├── services/        # Application services
+│   │   └── seed/            # Demo seed data
+│   └── tests/
+├── detector/                # Lightweight detector prototype
+├── frontend/                # Next.js operator dashboard
+├── docs/                    # Team and demonstration documentation
+└── docker-compose.yml
+```
+
+---
+
+## Local Setup
+
+### Prerequisites
+
+- Python 3.12+
+- Node.js 20+
+- npm
+- FFmpeg
+- Git
+
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/Yug-More/SafetyLens.git
 cd SafetyLens
-docker compose up --build
 ```
 
-Open:
-
-- Web console: http://localhost:3000
-- API documentation: http://localhost:8000/docs
-- Health check: http://localhost:8000/api/health
-
-## Local development
-
-Requirements: Python 3.11 or 3.12, Node.js 20.9+, npm, and Git.
-
-### Backend
-
-PowerShell:
-
-```powershell
-cd backend
-py -3.12 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-Copy-Item .env.example .env
-python -m app.seed.run
-python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
-```
-
-macOS/Linux:
+### 2. Start the Backend
 
 ```bash
 cd backend
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install -r requirements.txt
+pip install -r requirements.txt
 cp .env.example .env
 python -m app.seed.run
-python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-### Frontend
+Backend API:
 
-In a second terminal:
+```text
+http://127.0.0.1:8000
+```
+
+Interactive API documentation:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+### 3. Start the Frontend
+
+Open another terminal:
 
 ```bash
 cd frontend
 npm install
-```
-
-Copy `frontend/.env.example` to `frontend/.env.local`, then run:
-
-```bash
+cp .env.example .env.local
 npm run dev
 ```
 
-Open http://localhost:3000.
+Frontend:
 
-## Run the fall detector
-
-Install the detector and download the MediaPipe model once:
-
-```powershell
-python -m pip install -e ".\detector[video]"
-New-Item -ItemType Directory -Path detector\models -Force
-curl.exe -L --output detector\models\pose_landmarker_lite.task "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task"
+```text
+http://localhost:3000
 ```
 
-### Prerecorded video
+---
 
-From the repository root:
+## Demo Configuration
 
-```powershell
-$env:PYTHONPATH = "detector/src"
-python -m safetylens_detector.video "C:\path\to\fall.mov" `
-  --model detector/models/pose_landmarker_lite.task `
-  --sample-fps 12 `
-  --output detector/output/fall-result.json
+For a reliable local demonstration, configure the backend to use safe demo providers:
+
+```env
+DEMO_MODE=true
+AI_PROVIDER=demo
+AI_DEMO_MODE=true
+PLANNER_PROVIDER=demo
 ```
 
-The result contains pose coverage, state transitions, signals, and any
-`possible_person_down` event. In **Live Monitor → Detector handoff**, choose the JSON and the
-same source video to continue through the web workflow.
+The Demo AI provider is deterministic and intended for rehearsing the verified person-down workflow. It must not be represented as a production visual model.
 
-### Live phone camera with Camo on Windows
+Real provider credentials should remain in local environment files and must never be committed.
 
-Connect the phone in Camo Studio and confirm its preview is visible. Then run:
+---
 
-```powershell
-$env:PYTHONPATH = "detector/src"
-python -m safetylens_detector.live `
-  --source 1 `
-  --source-id camo-phone `
-  --model detector/models/pose_landmarker_lite.task `
-  --sample-fps 12 `
-  --mirror
-```
+## Running the Demo
 
-Press `Q` in the preview window to stop. If Camo is assigned a different Windows camera
-index, try `--source 0` or `--source 2`. Completed incidents save a short MP4 evidence clip
-under `detector/events/`.
+1. Open **Live Monitor**.
+2. Upload a short person-down demonstration clip.
+3. Assign it to **Camera 03 — Warehouse Aisle**.
+4. SafetyLens automatically prepares and analyzes the evidence.
+5. Wait for the operator notification.
+6. Click **Review Incident**.
+7. Review the video, evidence, severity, and confidence.
+8. Confirm, reject, or request more information.
+9. Review the prepared SOP and cited response plan.
+10. Select and approve appropriate actions.
+11. Run the approved **SIMULATED** actions.
+12. View the audit trail and download the PDF report.
 
-The live preview currently displays alerts and saves evidence locally. For the most reliable
-judging path, run a consented prerecorded clip, export its detector JSON, and import the JSON
-with the matching video in the web console.
+---
 
-## Validation
+## Testing
 
-```powershell
-# Backend
+### Backend
+
+```bash
 cd backend
-.\.venv\Scripts\python.exe -m pytest -q
+source .venv/bin/activate
+pytest
+```
 
-# Detector, from repository root
-$env:PYTHONPATH = "detector/src"
-.\backend\.venv\Scripts\python.exe -m unittest discover -s detector/tests
+### Detector
 
-# Frontend
+```bash
+cd detector
+PYTHONPATH=src python -m unittest discover -s tests -v
+```
+
+### Frontend
+
+```bash
 cd frontend
 npm run lint
-npm run typecheck
+npx tsc --noEmit
 npm run build
 ```
 
-Our small consented tuning set contains three staged falls, one walk-out-of-frame clip, and
-one sitting clip. The current configuration produced one candidate for each staged fall and
-none for the two negative examples at 8, 12, and 15 sampled FPS. Because the same person and
-setting were used during tuning, these results are a functional demo check—not an accuracy
-benchmark.
+---
 
-## Repository layout
+## Safety and Limitations
 
-```text
-SafetyLens/
-├── detector/        # Local pose detector, state machine, live/video runners, tests
-├── backend/         # FastAPI application, database models, services, tests
-├── frontend/        # Next.js operations console
-├── docs/            # Demo script, QA notes, and integration documentation
-└── docker-compose.yml
-```
+SafetyLens is a hackathon prototype and is not a replacement for trained safety personnel, emergency services, or certified life-safety equipment.
 
-## Known boundaries
+- AI results require human review.
+- Confidence does not represent medical certainty.
+- Pose quality is not fall probability.
+- External actions are simulated in the demonstration.
+- The application does not contact emergency services.
+- The current audit trail is application-level, not a certified compliance ledger.
+- Detection reliability depends on camera angle, resolution, lighting, occlusion, and model quality.
+- Production deployment would require secure authentication, role-based access, encrypted communication, monitoring, and organization-specific validation.
 
-- Single-person tracking per camera
-- Camera angle, occlusion, intentional floor activity, and unfamiliar environments can affect results
-- Pose quality measures landmark reliability; it is not fall probability
-- The bundled procedure is sample demonstration content, not legal or medical advice
-- Approval records and reports are real application artifacts; external actions remain simulated
-- Live Camo detection is local and does not yet automatically submit its saved clip to the dashboard
+---
+
+## Future Development
+
+- Production RTSP and ONVIF camera connections
+- Real-time edge inference
+- Specialized fire, smoke, and PPE models
+- Multi-site facility management
+- Secure role-based access control
+- Slack, Teams, SMS, and ticketing integrations
+- Enterprise procedure and policy management
+- Privacy controls and configurable video retention
+- Production-grade audit and compliance infrastructure
+
+---
 
 ## Team
 
-- **Yug More** — [Yug-More](https://github.com/Yug-More)
-- **Abhinav GS** — [Abhinavgs1](https://github.com/Abhinavgs1)
-- **Sean Aminov** — [SeanAminov](https://github.com/SeanAminov)
+- **Yug More** — [GitHub](https://github.com/Yug-More)
+- **Abhinav GS** — [GitHub](https://github.com/Abhinavgs1)
+- **Sean Aminov** — [GitHub](https://github.com/SeanAminov)
 
-## Responsible use
+---
 
-Use only consented or appropriately licensed footage. Keep consequential decisions with a
-qualified human reviewer. Do not rely on SafetyLens as the sole means of detecting or responding
-to an emergency.
+## Closing
+
+SafetyLens turns workplace cameras into an intelligent, explainable, and human-controlled incident-response layer.
+
+**See danger. Trigger action.**
