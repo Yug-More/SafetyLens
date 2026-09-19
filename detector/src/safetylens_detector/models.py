@@ -59,8 +59,13 @@ class DetectorConfig:
     maximum_observation_gap_seconds: float = 0.75
     rapid_drop_velocity: float = 0.65
     horizontal_angle_degrees: float = 58.0
+    minimum_horizontal_bbox_ratio: float = 1.25
+    down_bbox_width_height_ratio: float = 1.35
+    minimum_tilt_for_bbox_down_degrees: float = 25.0
     recovery_angle_degrees: float = 35.0
-    horizontal_hold_seconds: float = 0.60
+    maximum_recovery_bbox_ratio: float = 1.20
+    horizontal_hold_seconds: float = 0.50
+    down_posture_gap_tolerance_seconds: float = 0.20
     low_motion_threshold: float = 0.18
     low_motion_hold_seconds: float = 1.20
     suspicion_timeout_seconds: float = 2.50
@@ -77,8 +82,13 @@ class DetectorConfig:
             "maximum_observation_gap_seconds": self.maximum_observation_gap_seconds,
             "rapid_drop_velocity": self.rapid_drop_velocity,
             "horizontal_angle_degrees": self.horizontal_angle_degrees,
+            "minimum_horizontal_bbox_ratio": self.minimum_horizontal_bbox_ratio,
+            "down_bbox_width_height_ratio": self.down_bbox_width_height_ratio,
+            "minimum_tilt_for_bbox_down_degrees": self.minimum_tilt_for_bbox_down_degrees,
             "recovery_angle_degrees": self.recovery_angle_degrees,
+            "maximum_recovery_bbox_ratio": self.maximum_recovery_bbox_ratio,
             "horizontal_hold_seconds": self.horizontal_hold_seconds,
+            "down_posture_gap_tolerance_seconds": self.down_posture_gap_tolerance_seconds,
             "low_motion_threshold": self.low_motion_threshold,
             "low_motion_hold_seconds": self.low_motion_hold_seconds,
             "suspicion_timeout_seconds": self.suspicion_timeout_seconds,
@@ -122,4 +132,3 @@ class DetectorResult:
     metrics: PoseMetrics | None
     event: DetectionEvent | None = None
     reasons: tuple[str, ...] = field(default_factory=tuple)
-

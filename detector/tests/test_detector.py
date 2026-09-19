@@ -79,7 +79,7 @@ class DetectorEngineTests(unittest.TestCase):
         self.assertEqual(len(events), 1)
         self.assertEqual(events[0].event_type, "possible_person_down")
         self.assertEqual(events[0].state, DetectorState.INCIDENT)
-        self.assertIn("horizontal_persistence", events[0].trigger_signals)
+        self.assertIn("down_posture_persistence", events[0].trigger_signals)
         self.assertIn("rapid_drop", events[0].trigger_signals)
         json.dumps(events[0].to_dict())
 
@@ -168,6 +168,102 @@ class DetectorEngineTests(unittest.TestCase):
 
         recovered = self.engine.process(pose(4.0))
         self.assertEqual(recovered.state, DetectorState.MONITORING)
+
+    def test_rapid_drop_and_wide_tilted_box_confirm_curled_fall(self) -> None:
+        def curled(timestamp: float, center_y: float) -> PoseObservation:
+            points = {
+                "left_shoulder": (0.30, center_y - 0.08),
+                "right_shoulder": (0.36, center_y - 0.03),
+                "left_hip": (0.55, center_y + 0.08),
+                "right_hip": (0.61, center_y + 0.13),
+                "left_knee": (0.76, center_y + 0.02),
+                "right_knee": (0.80, center_y + 0.08),
+            }
+            return PoseObservation(
+                timestamp_seconds=timestamp,
+                source_timestamp_seconds=timestamp,
+                source_id="test-camera",
+                track_id="person-1",
+                landmarks={
+                    name: Landmark(x, y, 0.99) for name, (x, y) in points.items()
+                },
+            )
+
+        sequence = [pose(0.0, center_y=0.35), curled(0.2, 0.65)]
+        sequence.extend(curled(t, 0.65) for t in (0.4, 0.6, 0.8, 1.0))
+        results = [self.engine.process(item) for item in sequence]
+        events = [result.event for result in results if result.event]
+        self.assertEqual(len(events), 1)
+        self.assertIn("wide_tilted_body_box", events[0].trigger_signals)
+
+    def test_wide_upright_pose_does_not_count_as_down(self) -> None:
+        landmarks = {
+            "left_shoulder": Landmark(0.2, 0.2, 0.99),
+            "right_shoulder": Landmark(0.8, 0.2, 0.99),
+            "left_hip": Landmark(0.45, 0.6, 0.99),
+            "right_hip": Landmark(0.55, 0.6, 0.99),
+        }
+        results = [
+            self.engine.process(
+                PoseObservation(
+                    timestamp_seconds=index * 0.2,
+                    track_id="person-1",
+                    landmarks=landmarks,
+                )
+            )
+            for index in range(6)
+        ]
+        self.assertTrue(all(result.event is None for result in results))
+        self.assertEqual(results[-1].state, DetectorState.MONITORING)
+
+    def test_curled_floor_pose_is_not_treated_as_recovery(self) -> None:
+        engine = DetectorEngine(
+            DetectorConfig(horizontal_hold_seconds=0.2, cooldown_seconds=0.4)
+        )
+        frames = [pose(0.0)] + [
+            pose(t, horizontal=True, center_y=0.70) for t in (0.2, 0.4, 0.6)
+        ]
+        results = [engine.process(item) for item in frames]
+        self.assertEqual(sum(result.event is not None for result in results), 1)
+
+        curled_landmarks = {
+            "left_shoulder": Landmark(0.30, 0.60, 0.99),
+            "right_shoulder": Landmark(0.35, 0.62, 0.99),
+            "left_hip": Landmark(0.36, 0.72, 0.99),
+            "right_hip": Landmark(0.41, 0.74, 0.99),
+            "left_knee": Landmark(0.65, 0.70, 0.99),
+            "right_knee": Landmark(0.70, 0.74, 0.99),
+        }
+        curled = engine.process(
+            PoseObservation(
+                timestamp_seconds=1.2,
+                track_id="person-1",
+                landmarks=curled_landmarks,
+            )
+        )
+        self.assertEqual(curled.state, DetectorState.COOLDOWN)
+
+    def test_short_down_posture_dropout_does_not_reset_confirmation(self) -> None:
+        ambiguous = PoseObservation(
+            timestamp_seconds=0.5,
+            track_id="person-1",
+            landmarks={
+                "left_shoulder": Landmark(0.38, 0.38, 0.99),
+                "right_shoulder": Landmark(0.42, 0.42, 0.99),
+                "left_hip": Landmark(0.58, 0.58, 0.99),
+                "right_hip": Landmark(0.62, 0.62, 0.99),
+            },
+        )
+        sequence = [
+            pose(0.0),
+            pose(0.2, horizontal=True, center_y=0.70),
+            pose(0.4, horizontal=True, center_y=0.70),
+            ambiguous,
+            pose(0.6, horizontal=True, center_y=0.70),
+            pose(0.8, horizontal=True, center_y=0.70),
+        ]
+        results = [self.engine.process(item) for item in sequence]
+        self.assertEqual(sum(result.event is not None for result in results), 1)
 
 
 if __name__ == "__main__":
