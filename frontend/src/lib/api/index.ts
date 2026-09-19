@@ -24,6 +24,8 @@ import type {
   ApiIncidentReport,
   ApiDetectorEvent,
   ApiDemoResetResponse,
+  ApiWorkflowStatus,
+  ApiOperatorNotification,
   ApiSeverity,
   ApiSystemStatus,
   ApiVideoAsset,
@@ -148,7 +150,7 @@ export function approveResponsePlan(
     selected_action_ids: body.selectedActionIds,
     reviewer_name: body.reviewerName ?? "demo-reviewer",
     notes: body.notes ?? null,
-    incident_identifier: body.incidentIdentifier ?? "INC-2026-0042",
+    incident_identifier: body.incidentIdentifier ?? null,
     confirmed: body.confirmed,
   });
 }
@@ -254,12 +256,11 @@ export function ingestDetectorEvent(request: {
 }) {
   const formData = new FormData();
   formData.append("event_json", JSON.stringify(request.event));
-  formData.append("location", request.location ?? "Loading Zone B");
+  formData.append("location", request.location ?? "Warehouse Aisle");
   formData.append("auto_analyze", String(request.autoAnalyze ?? true));
-  formData.append(
-    "incident_identifier",
-    request.incidentIdentifier ?? "INC-2026-0042"
-  );
+  if (request.incidentIdentifier) {
+    formData.append("incident_identifier", request.incidentIdentifier);
+  }
   if (request.clip) {
     formData.append("clip", request.clip);
   }
@@ -323,4 +324,28 @@ export function submitAnalysisReview(
     reviewer_name: request.reviewerName ?? "demo-reviewer",
     notes: request.notes ?? null,
   });
+}
+
+export function prepareAnalysisResponse(analysisIdentifier: string) {
+  return apiPostJson<ApiWorkflowStatus>(
+    `/api/analyses/${analysisIdentifier}/prepare-response`
+  );
+}
+
+export function fetchWorkflowStatus(analysisIdentifier: string) {
+  return apiGetItem<ApiWorkflowStatus>(
+    `/api/analyses/${analysisIdentifier}/workflow`
+  );
+}
+
+export function fetchOperatorNotifications(includeDismissed = false) {
+  return apiGetCollection<ApiOperatorNotification>("/api/notifications", {
+    include_dismissed: includeDismissed,
+  });
+}
+
+export function dismissOperatorNotification(notificationIdentifier: string) {
+  return apiPostJson<ApiOperatorNotification>(
+    `/api/notifications/${notificationIdentifier}/dismiss`
+  );
 }

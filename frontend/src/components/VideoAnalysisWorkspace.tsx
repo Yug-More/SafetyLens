@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { AlertTriangle, CheckCircle2, RefreshCw, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { buildResponseHref } from "@/lib/incident-context";
 import { FrameTimeline, VideoPlayerPanel } from "@/components/FrameTimeline";
 import {
   fetchAnalysis,
@@ -29,16 +31,29 @@ import type {
 } from "@/types/video";
 import { cn } from "cn";
 
+export interface VideoWorkspaceState {
+  processing: boolean;
+  ready: boolean;
+  analyzing: boolean;
+  failed: boolean;
+  incidentDetected: boolean;
+  analysisId: string | null;
+  videoAssetCode: string | null;
+  cameraId: string | null;
+}
+
 interface VideoAnalysisWorkspaceProps {
   assetCode: string;
   jobCode: string;
   onReady?: (video: VideoAsset) => void;
+  onStateChange?: (state: VideoWorkspaceState) => void;
 }
 
 export function VideoAnalysisWorkspace({
   assetCode,
   jobCode,
   onReady,
+  onStateChange,
 }: VideoAnalysisWorkspaceProps) {
   const [video, setVideo] = useState<VideoAsset | null>(null);
   const [job, setJob] = useState<ProcessingJobView | null>(null);
@@ -54,10 +69,15 @@ export function VideoAnalysisWorkspace({
   const [reviewSaving, setReviewSaving] = useState(false);
   const [reviewError, setReviewError] = useState<string | null>(null);
   const onReadyRef = useRef(onReady);
+  const onStateChangeRef = useRef(onStateChange);
 
   useEffect(() => {
     onReadyRef.current = onReady;
   }, [onReady]);
+
+  useEffect(() => {
+    onStateChangeRef.current = onStateChange;
+  }, [onStateChange]);
 
   useEffect(() => {
     let cancelled = false;
@@ -216,6 +236,40 @@ export function VideoAnalysisWorkspace({
   const ready = job?.status === "completed" && video?.status === "ready";
   const analysisDone =
     analysis?.status === "completed" || analysis?.status === "needs_review";
+  const processing = Boolean(job && !ready && !failed);
+  const incidentDetected = Boolean(analysis?.incidentDetected);
+
+  useEffect(() => {
+    onStateChangeRef.current?.({
+      processing,
+      ready,
+      analyzing,
+      failed,
+      incidentDetected,
+      analysisId: analysis?.id || null,
+      videoAssetCode: video?.assetCode ?? assetCode,
+      cameraId: video?.cameraId ?? null,
+    });
+  }, [
+    processing,
+    ready,
+    analyzing,
+    failed,
+    incidentDetected,
+    analysis?.id,
+    video?.assetCode,
+    video?.cameraId,
+    assetCode,
+  ]);
+
+  const reviewHref =
+    incidentDetected && analysis
+      ? buildResponseHref({
+          analysis_id: analysis.analysisCode ?? analysis.id,
+          video_id: video?.assetCode ?? assetCode,
+          camera_id: video?.cameraId,
+        })
+      : null;
 
   return (
     <div className="space-y-4">
@@ -386,6 +440,31 @@ export function VideoAnalysisWorkspace({
 
               {analysisDone ? (
                 <>
+                  {incidentDetected && reviewHref ? (
+                    <div
+                      className="rounded-lg border border-red-500/40 bg-red-500/10 p-3"
+                      role="alert"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-medium text-red-100">
+                            Incident detected — human review required
+                          </p>
+                          <p className="mt-1 text-xs text-red-200/80">
+                            Continue in Response Center to retrieve procedures and approve
+                            simulated actions.
+                          </p>
+                        </div>
+                        <Button
+                          size="sm"
+                          render={<Link href={reviewHref} />}
+                        >
+                          Review Incident
+                        </Button>
+                      </div>
+                    </div>
+                  ) : null}
+
                   <div className="grid gap-3 sm:grid-cols-3">
                     <Metric
                       label="Incident detected"

@@ -11,6 +11,7 @@ from app.api.routes import (
     procedures,
     system,
     videos,
+    workflow,
 )
 
 api_router = APIRouter()
@@ -24,3 +25,4 @@ api_router.include_router(videos.router)
 api_router.include_router(analysis.router)
 api_router.include_router(execution.router)
 api_router.include_router(detector.router)
+api_router.include_router(workflow.router)

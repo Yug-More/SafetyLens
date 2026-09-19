@@ -1,16 +1,20 @@
 "use client";
 
+import { Suspense } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { PolicyResponseWorkspace } from "@/components/PolicyResponseWorkspace";
+import { PanelSkeleton } from "@/components/ConnectionBanner";
 
 export default function ResponsePage() {
   return (
     <div className="mx-auto max-w-7xl space-y-6">
       <PageHeader
-        title="Response Center"
-        subtitle="Review the selected uploaded-video analysis, retrieve verified procedures, and approve simulated actions"
+        title="Incident Command Center"
+        subtitle="Review AI-detected incidents, confirm findings, and approve simulated response actions"
       />
-      <PolicyResponseWorkspace />
+      <Suspense fallback={<PanelSkeleton className="min-h-96" />}>
+        <PolicyResponseWorkspace />
+      </Suspense>
     </div>
   );
 }
