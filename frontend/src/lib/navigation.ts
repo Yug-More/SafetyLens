@@ -2,7 +2,6 @@ import {
   LayoutDashboard,
   Monitor,
   AlertTriangle,
-  ShieldCheck,
   FileText,
   BarChart3,
   Settings,
@@ -20,7 +19,6 @@ export const navigationItems: NavItem[] = [
   { title: "Overview", href: "/", icon: LayoutDashboard },
   { title: "Live Monitor", href: "/monitor", icon: Monitor },
   { title: "Incidents", href: "/incidents", icon: AlertTriangle },
-  { title: "Response Center", href: "/response", icon: ShieldCheck },
   { title: "Procedures", href: "/procedures", icon: FileText },
   { title: "Reports", href: "/reports", icon: BarChart3 },
   { title: "Demo Guide", href: "/demo-help", icon: Clapperboard },
@@ -30,6 +28,9 @@ export const navigationItems: NavItem[] = [
 export function getPageTitle(pathname: string): string {
   if (pathname === "/") {
     return "Overview";
+  }
+  if (pathname.startsWith("/response")) {
+    return "Incident Command";
   }
 
   const match = navigationItems.find((item) => item.href === pathname);
