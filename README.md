@@ -39,7 +39,7 @@ The system can:
 - Capture the relevant video evidence
 - Determine what happened
 - Evaluate severity and confidence
-- Retrieve the appropriate safety procedure
+- Retrieve the relevant company procedure
 - Recommend the correct response
 - Request human approval
 - Execute approved actions
@@ -50,71 +50,66 @@ SafetyLens transforms cameras from passive recording devices into proactive safe
 
 ---
 
-## How It Works
-
-SafetyLens uses a two-stage AI pipeline.
-
-### Stage 1: Continuous Edge Monitoring
-
-A lightweight computer-vision model runs locally or near the camera.
-
-It continuously checks for warning signals such as:
-
-- A worker suddenly falling
-- A person remaining motionless
-- Smoke or visible fire
-- Missing personal protective equipment
-- Entry into a restricted area
-- Unsafe proximity to machinery
-- Vehicle and pedestrian near misses
-- Spills or blocked pathways
-
-Because the model is lightweight, it can operate continuously without sending all video footage to an expensive cloud AI model.
-
-### Stage 2: Advanced Incident Analysis
-
-When the lightweight detector identifies a possible incident, SafetyLens captures a short video segment containing the moments before and after the event.
-
-Only this relevant event clip is sent to a multimodal AI model.
-
-The advanced AI then:
-
-1. Verifies whether an incident occurred
-2. Identifies the incident type
-3. Assigns a severity level
-4. Produces a confidence score
-5. Explains the supporting visual evidence
-6. Retrieves the relevant company procedure
-7. Recommends the appropriate response
-8. Requests human approval for critical actions
-
----
-
 ## Workflow
 
 ```mermaid
 flowchart LR
-    A[Camera Feed] --> B[Edge Detection]
-    B -->|Normal activity| A
-    B -->|Possible incident| C[AI Verification]
-    C --> D[SOP Retrieval]
+    A[Camera Feed] --> B[Incident Detection]
+    B --> C[AI Verification]
+    C --> D[Safety Procedure Retrieval]
     D --> E[Human Approval]
-    E --> F[Alert, Ticket, and Report]
+    E --> F[Action Execution]
+    F --> G[Incident Report]
 ```
 
 This event-triggered architecture keeps routine footage local and activates advanced AI only when necessary, making SafetyLens more affordable, private, and scalable.
 
 ---
 
+## Current Stage (Stage 1)
+
+Stage 1 delivers a polished **frontend foundation** with realistic mock data for a safety-operations command center.
+
+### Frontend capabilities available now
+
+- Persistent operations shell (sidebar, mobile drawer, top navigation)
+- Overview dashboard with metrics, live monitor placeholder, active incident, timeline, system status, and activity feed
+- Live Monitor, Incidents, Response Center, Procedures, Reports, and Settings routes
+- Typed mock data for cameras, incidents, procedures, actions, services, and activity
+- Mock interactions (toasts, confirmation dialogs) with no backend calls
+- Dark enterprise operations visual design optimized for supervisors
+
+### Stage 1 limitations
+
+- No backend, database, or authentication
+- No real video processing or live camera streams
+- No multimodal AI integration
+- No real notifications, action execution, or persistent settings
+- All incidents, metrics, and procedures are mock data clearly labeled for demo use
+
+---
+
+## How It Works (Full Product Vision)
+
+SafetyLens uses a two-stage AI pipeline.
+
+### Continuous Edge Monitoring
+
+A lightweight computer-vision model runs locally or near the camera and checks for warning signals such as worker falls, missing PPE, restricted-area entry, smoke/fire, and blocked exits.
+
+### Advanced Incident Analysis
+
+When a possible incident is detected, SafetyLens captures a short event clip and sends only that clip to a multimodal AI model to verify the event, assign severity/confidence, explain evidence, retrieve the procedure, and recommend actions for human approval.
+
+---
+
 ## Demo Scenario
 
-For the hackathon demonstration, a prerecorded workplace video simulates a live camera feed from:
+For the hackathon demonstration, a prerecorded workplace video will eventually simulate a live camera feed from:
 
 **Camera 04 — Loading Zone B**
 
-The video captures a worker falling inside a warehouse.
-
-SafetyLens detects the event and generates the following structured incident:
+Stage 1 already presents the resulting structured incident in the UI:
 
 ```json
 {
@@ -128,225 +123,56 @@ SafetyLens detects the event and generates the following structured incident:
     "Alert the floor supervisor",
     "Request medical assistance",
     "Stop nearby machinery",
-    "Preserve the incident footage"
+    "Preserve the incident footage",
+    "Create an incident report"
   ]
 }
 ```
-
-SafetyLens then retrieves the relevant emergency-response procedure and displays it alongside the visual evidence.
-
-A supervisor reviews the information and selects **Approve Actions**.
-
-SafetyLens then:
-
-- Alerts the floor supervisor
-- Creates an incident ticket
-- Preserves the relevant video segment
-- Records the completed actions
-- Generates a downloadable incident report
-- Adds the event to the incident timeline
-
----
-
-## Key Features
-
-### Intelligent Video Monitoring
-
-- Uploaded video or simulated live-camera feed
-- Lightweight event detection
-- Automatic event timestamp identification
-- Relevant frame and video-clip extraction
-
-### Multimodal Incident Analysis
-
-- Incident classification
-- Severity evaluation
-- Confidence scoring
-- Visual-evidence explanation
-- Multi-frame verification
-
-### Safety Procedure Retrieval
-
-- Upload company safety documents
-- Search for the relevant procedure
-- Display the exact supporting passage
-- Connect recommended actions to company policy
-
-### Human-in-the-Loop Response
-
-- Review detected evidence
-- Approve, modify, or reject recommendations
-- Prevent automatic execution of critical actions
-- Record the supervisor’s final decision
-
-### Action Execution
-
-- Send a supervisor alert
-- Create an incident ticket
-- Preserve relevant evidence
-- Display live execution status
-- Generate a completed incident report
-
-### Explainability and Auditability
-
-- Show why the incident was detected
-- Display the confidence level
-- Connect actions to specific SOP passages
-- Record timestamps, approvals, and completed actions
-- Maintain a searchable incident history
-
----
-
-## Application Screens
-
-### 1. Live Monitor
-
-Displays:
-
-- Simulated or live camera feed
-- Camera name and location
-- Monitoring status
-- Event-detection overlay
-- Active incident notification
-
-### 2. Incident Timeline
-
-Displays:
-
-- Incident timestamp
-- Screenshot or video clip
-- Incident type
-- Severity
-- Confidence score
-- AI-generated explanation
-
-### 3. Response Center
-
-Displays:
-
-- Supporting visual evidence
-- Relevant safety-procedure passage
-- Recommended actions
-- Human approval controls
-- Live execution status
-
-### 4. Incident Report
-
-Displays:
-
-- Incident summary
-- Location and timestamp
-- Supporting evidence
-- Relevant safety procedure
-- Approved actions
-- Completed actions
-- Audit history
-- Downloadable report
-
----
-
-## System Architecture
-
-```mermaid
-flowchart TD
-    V[Video Input] --> F[Frame Extraction]
-    F --> M[Multimodal Analysis]
-    M --> J[Structured Incident JSON]
-    J --> R[Safety Procedure Retrieval]
-    R --> H[Response Center]
-    H -->|Approved| X[Action Executor]
-    H -->|Rejected| Y[Dismiss and Record]
-    X --> L[Incident Log and Report]
-    Y --> L
-```
-
----
-
-## Technical Architecture
-
-| Component | Responsibility |
-|---|---|
-| Video ingestion | Receives uploaded videos or live camera streams |
-| Edge detector | Continuously identifies possible incidents |
-| Event buffer | Preserves footage before and after the detected event |
-| Frame extractor | Selects representative frames for AI analysis |
-| Multimodal AI | Verifies and explains the incident |
-| Knowledge retrieval | Finds the relevant safety-procedure passage |
-| Response agent | Produces a recommended action plan |
-| Approval interface | Keeps a human in control of critical actions |
-| Action executor | Sends alerts and creates incident records |
-| Audit layer | Stores evidence, decisions, actions, and timestamps |
 
 ---
 
 ## Technology Stack
 
-### Frontend
+### Frontend (Stage 1 — implemented)
 
-- Next.js
+- Next.js (App Router)
 - React
 - TypeScript
 - Tailwind CSS
+- shadcn/ui
+- Lucide React
+- Recharts (reports analytics)
+- Local typed mock data
 
-### Backend
+### Planned backend and AI stack
 
-- Python
-- FastAPI
-- REST APIs or server-sent events
-
-### Computer Vision
-
-- OpenCV
-- Lightweight object or pose detection
-- Multi-frame event verification
-- Optional object tracking
-
-### AI Reasoning
-
+- Python / FastAPI
+- OpenCV and lightweight detection
 - Multimodal vision-language model
-- Structured incident extraction
-- Severity and confidence evaluation
-- Natural-language explanations
-
-### Knowledge Retrieval
-
-- Company safety-procedure documents
-- Text embeddings
-- Vector search
-- Retrieval-augmented generation
-
-### Data and Infrastructure
-
-- PostgreSQL, sponsor database, or Supabase
-- Docker
-- Cloud deployment
-- Object storage for incident evidence
+- Procedure retrieval / RAG
+- PostgreSQL or equivalent
+- Object storage for evidence
 
 ---
 
 ## Project Structure
 
 ```text
-safetylens/
-├── frontend/
-│   ├── app/
-│   ├── components/
-│   ├── public/
-│   └── services/
-├── backend/
-│   ├── api/
-│   ├── detection/
-│   ├── reasoning/
-│   ├── retrieval/
-│   ├── actions/
-│   └── reports/
-├── data/
-│   ├── sample-videos/
-│   └── safety-procedures/
-├── docs/
+SafetyLens/
+├── frontend/                 # Next.js Stage 1 application
+│   ├── src/
+│   │   ├── app/              # Routes and layouts
+│   │   ├── components/       # Shell + domain UI components
+│   │   ├── data/             # Typed mock data
+│   │   ├── lib/              # Utilities and navigation config
+│   │   └── types/            # Shared TypeScript types
+│   ├── .env.example
+│   └── package.json
 ├── README.md
-└── LICENSE
+└── LICENSE                   # Planned
 ```
+
+Backend, detection, retrieval, and sample-data directories will be added in later stages.
 
 ---
 
@@ -354,76 +180,63 @@ safetylens/
 
 ### Prerequisites
 
-Install the following tools:
-
 - Node.js 18 or later
-- Python 3.10 or later
+- npm
 - Git
-- An API key for the selected multimodal AI provider
 
-### 1. Clone the Repository
+No API key is required to run the Stage 1 frontend.
+
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Yug-More/SafetyLens.git
 cd SafetyLens
 ```
 
-### 2. Install Frontend Dependencies
+### 2. Install frontend dependencies
 
 ```bash
 cd frontend
 npm install
 ```
 
-### 3. Install Backend Dependencies
+### 3. Optional environment file
 
 ```bash
-cd ../backend
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+cp .env.example .env.local
 ```
 
-On Windows:
+Stage 1 does not require any values to be set. `.env` files are ignored by Git.
+
+### 4. Run the frontend
 
 ```bash
-venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-### 4. Configure Environment Variables
-
-Create a `.env` file based on `.env.example`.
-
-```env
-AI_API_KEY=your_api_key
-DATABASE_URL=your_database_url
-VECTOR_DATABASE_URL=your_vector_database_url
-```
-
-Do not commit API keys or credentials to GitHub.
-
-### 5. Start the Backend
-
-```bash
-cd backend
-uvicorn main:app --reload
-```
-
-### 6. Start the Frontend
-
-Open another terminal:
-
-```bash
-cd frontend
 npm run dev
 ```
 
-Open the application at:
+Open:
 
 ```text
 http://localhost:3000
 ```
+
+### Useful commands
+
+```bash
+npm run dev      # development server
+npm run build    # production build
+npm run start    # serve production build
+npm run lint     # ESLint
+npx tsc --noEmit # TypeScript check
+```
+
+---
+
+## Planned Future Stages
+
+1. **Stage 2** — Video upload / simulated live feed, edge detection hooks, multimodal verification API
+2. **Stage 3** — Procedure retrieval, response approval execution, notifications, incident reports
+3. **Stage 4** — Multi-camera operations, auth/RBAC, persistence, production observability
 
 ---
 
@@ -441,40 +254,6 @@ SafetyLens answers:
 
 > **What happened, how serious is it, which procedure applies, what should happen next, and were the required actions completed?**
 
-SafetyLens does not stop at detection. It creates a complete and accountable incident-response workflow.
-
----
-
-## Cost-Efficient Design
-
-SafetyLens does not send every second of video to an advanced AI model.
-
-Instead:
-
-1. A lightweight detector monitors the video continuously.
-2. The advanced model activates only when a possible incident occurs.
-3. Only a short, relevant event clip is analyzed.
-4. Routine footage can remain local.
-
-For example, if a camera records 24 hours of footage but only one 20-second segment requires advanced analysis, SafetyLens avoids sending approximately **99.98% of the footage** to the expensive multimodal model.
-
----
-
-## Handling Difficult Camera Conditions
-
-Before relying on an AI prediction, SafetyLens can evaluate:
-
-- Video resolution
-- Lighting conditions
-- Motion blur
-- Camera angle
-- Person size within the frame
-- Occlusion
-- Frame rate
-- Detection consistency across multiple frames
-
-If the visual evidence is weak, SafetyLens lowers its confidence and requests human review rather than presenting an uncertain conclusion as fact.
-
 ---
 
 ## Responsible AI
@@ -488,64 +267,6 @@ The system is designed to:
 - Allow supervisors to modify or reject recommendations
 - Record decisions for later review
 - Minimize unnecessary video transmission
-- Support configurable access and retention policies
-- Avoid presenting uncertain predictions as confirmed facts
-
----
-
-## Hackathon Scope
-
-The hackathon prototype focuses on one polished end-to-end workflow:
-
-> **Camera → Detection → Explanation → SOP → Approval → Action → Report**
-
-The prototype uses prerecorded video to simulate a facility camera feed.
-
-A production deployment would add:
-
-- Direct RTSP camera connections
-- Continuous edge inference
-- Multi-camera monitoring
-- Enterprise authentication
-- Role-based permissions
-- Real notification integrations
-- Custom-trained safety models
-- Production observability and evaluation
-
----
-
-## Future Applications
-
-SafetyLens can eventually detect and respond to:
-
-- Worker falls
-- Smoke and fire
-- Missing helmets or safety vests
-- Restricted-area entry
-- Spills and blocked pathways
-- Unsafe machinery interactions
-- Forklift and pedestrian near misses
-- Suspicious activity and theft
-- Patient falls in hospitals
-- Emergency situations on campuses
-
-The platform can support:
-
-- Factories
-- Warehouses
-- Hospitals
-- Construction sites
-- Universities
-- Retail stores
-- Logistics centers
-
----
-
-## Product Vision
-
-SafetyLens aims to become the intelligent safety layer connecting workplace cameras, company procedures, communication systems, and incident-management tools.
-
-Every organization already has cameras, procedures, and communication tools. SafetyLens connects them when it matters most.
 
 ---
 
@@ -561,8 +282,4 @@ Every organization already has cameras, procedures, and communication tools. Saf
 
 This project is a hackathon prototype and should not be treated as a certified emergency-response or workplace-safety system. Critical safety decisions should always involve qualified personnel.
 
----
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
+Stage 1 uses mock data only. It does not claim that real AI detection, video analysis, notifications, or emergency actions are operational.
