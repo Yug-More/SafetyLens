@@ -303,8 +303,11 @@ export function fetchAIProvider() {
   return apiGetItem<ApiAIProviderInfo>("/api/ai/provider");
 }
 
-export function startVideoAnalysis(identifier: string) {
-  return apiPostJson<ApiAnalyzeVideoResponse>(`/api/videos/${identifier}/analyze`);
+export function startVideoAnalysis(identifier: string, forceNew = false) {
+  const query = forceNew ? "?force_new=true" : "";
+  return apiPostJson<ApiAnalyzeVideoResponse>(
+    `/api/videos/${identifier}/analyze${query}`
+  );
 }
 
 export function fetchAnalysis(identifier: string) {

@@ -243,6 +243,107 @@ def select_frames_for_analysis(
     return [ordered[index] for index in unique_indices]
 
 
+def _analyze_response_from_analysis(analysis: IncidentAnalysis) -> AnalyzeVideoResponse:
+    return AnalyzeVideoResponse(
+        analysis_code=analysis.analysis_code,
+        job_code=analysis.processing_job.job_code if analysis.processing_job else "",
+        status=AnalysisStatus(analysis.status),
+        provider_name=analysis.provider_name,
+        is_demo=analysis.is_demo,
+        is_simulated=analysis.is_simulated,
+        message=(
+            "Existing analysis reused (idempotent)."
+            if analysis.status
+            in {
+                AnalysisStatus.COMPLETED.value,
+                AnalysisStatus.NEEDS_REVIEW.value,
+                AnalysisStatus.QUEUED.value,
+                AnalysisStatus.RUNNING.value,
+            }
+            else (
+                "Analysis queued. Demo AI will produce a simulated structured result."
+                if analysis.is_demo
+                else "Analysis queued with the configured multimodal provider."
+            )
+        ),
+    )
+
+
+def ensure_analysis_for_video(
+    db: Session,
+    video_identifier: str,
+    *,
+    force_new: bool = False,
+    settings: Settings | None = None,
+) -> tuple[AnalyzeVideoResponse, bool]:
+    """Idempotently ensure an analysis exists for a ready video.
+
+    Returns (response, should_run_job). When should_run_job is True the caller
+    must schedule/run run_analysis_job for the new analysis.
+    """
+    cfg = settings or get_settings()
+    video = _get_video_or_404(db, video_identifier)
+
+    if video.status != VideoStatus.READY.value:
+        raise AppError(
+            "VIDEO_NOT_READY",
+            "Video must finish processing before analysis can start.",
+            status_code=409,
+        )
+
+    frames = list(video.frames)
+    if not frames:
+        raise AppError(
+            "FRAMES_REQUIRED",
+            "No extracted frames are available for analysis.",
+            status_code=409,
+        )
+
+    if not force_new:
+        active = db.scalars(
+            select(IncidentAnalysis)
+            .options(selectinload(IncidentAnalysis.processing_job))
+            .where(
+                IncidentAnalysis.video_asset_id == video.id,
+                IncidentAnalysis.status.in_(
+                    [AnalysisStatus.QUEUED.value, AnalysisStatus.RUNNING.value]
+                ),
+            )
+            .order_by(IncidentAnalysis.created_at.desc())
+        ).first()
+        if active is not None:
+            return _analyze_response_from_analysis(active), False
+
+        completed = db.scalars(
+            select(IncidentAnalysis)
+            .options(selectinload(IncidentAnalysis.processing_job))
+            .where(
+                IncidentAnalysis.video_asset_id == video.id,
+                IncidentAnalysis.status.in_(
+                    [
+                        AnalysisStatus.COMPLETED.value,
+                        AnalysisStatus.NEEDS_REVIEW.value,
+                    ]
+                ),
+            )
+            .order_by(IncidentAnalysis.created_at.desc())
+        ).first()
+        if completed is not None:
+            if completed.incident_detected:
+                try:
+                    from app.services.workflow import prepare_response_for_analysis
+
+                    prepare_response_for_analysis(db, completed.analysis_code)
+                except Exception:
+                    logger.exception(
+                        "Idempotent prepare failed for %s", completed.analysis_code
+                    )
+            return _analyze_response_from_analysis(completed), False
+
+    response = start_analysis(db, video_identifier, settings=cfg)
+    return response, True
+
+
 def start_analysis(
     db: Session,
     video_identifier: str,
