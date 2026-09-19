@@ -41,6 +41,11 @@ coverage/
 backend/*.db
 backend/*.sqlite*
 
+# Uploaded media and extracted frames
+backend/data/uploads/
+backend/data/frames/
+!backend/data/README.md
+
 # Build / caches
 dist/
 build/

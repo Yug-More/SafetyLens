@@ -1,4 +1,4 @@
-import { apiGetCollection, apiGetItem } from "@/lib/api/client";
+import { apiGetCollection, apiGetItem, apiPostMultipart } from "@/lib/api/client";
 import type {
   ApiActivityEvent,
   ApiCamera,
@@ -9,8 +9,14 @@ import type {
   ApiIncidentDetail,
   ApiIncidentStatus,
   ApiProcedure,
+  ApiProcessingJob,
   ApiSeverity,
   ApiSystemStatus,
+  ApiVideoAsset,
+  ApiVideoFrame,
+  ApiVideoStatus,
+  ApiVideoUploadResponse,
+  VideoUploadRequest,
 } from "@/lib/api/types";
 
 export function fetchHealth() {
@@ -74,4 +80,36 @@ export function fetchSystemStatus() {
 
 export function fetchDemoInfo() {
   return apiGetItem<ApiDemoInfo>("/api/demo/info");
+}
+
+export function uploadVideo(request: VideoUploadRequest) {
+  const formData = new FormData();
+  formData.append("file", request.file);
+  formData.append("location", request.location);
+  if (request.cameraId) {
+    formData.append("camera_id", request.cameraId);
+  }
+  return apiPostMultipart<ApiVideoUploadResponse>("/api/videos/upload", formData);
+}
+
+export function fetchVideos(params?: {
+  status?: ApiVideoStatus | string;
+  camera_id?: string;
+  search?: string;
+  limit?: number;
+  offset?: number;
+}) {
+  return apiGetCollection<ApiVideoAsset>("/api/videos", params);
+}
+
+export function fetchVideo(identifier: string) {
+  return apiGetItem<ApiVideoAsset>(`/api/videos/${identifier}`);
+}
+
+export function fetchVideoFrames(identifier: string) {
+  return apiGetCollection<ApiVideoFrame>(`/api/videos/${identifier}/frames`);
+}
+
+export function fetchProcessingJob(identifier: string) {
+  return apiGetItem<ApiProcessingJob>(`/api/processing-jobs/${identifier}`);
 }

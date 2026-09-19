@@ -66,37 +66,47 @@ This event-triggered architecture keeps routine footage local and activates adva
 
 ---
 
-## Current Stage (Stage 2)
+## Current Stage (Stage 3)
 
-Stage 2 adds a FastAPI backend with SQLite persistence, seeded demo data, typed API contracts, and frontend API integration with visible offline-demo fallback.
+Stage 3 adds a secure video upload and processing pipeline on top of the Stage 2 API foundation.
 
 ### Architecture
 
 ```text
-frontend (Next.js)  --REST-->  backend (FastAPI + SQLite)
-        |                              |
-   UI + fallback data            seeded demo records
+frontend (Next.js)
+   | upload + poll
+   v
+backend (FastAPI)
+   | stream to disk
+   v
+SQLite metadata + OpenCV frame sampling
+   |
+   +--> data/uploads (UUID videos)
+   +--> data/frames  (JPEG candidates)
 ```
+
+### Workflow
+
+Upload video → validate → store securely → extract metadata → sample frames → track job progress → preview video → review evidence-candidate frames
 
 ### Capabilities available now
 
 - Stage 1 operations console UI (preserved)
-- FastAPI endpoints for health, dashboard, cameras, incidents, procedures, system status, and demo info
-- SQLite persistence with idempotent seeding for Redwood Distribution Center
-- Frontend typed API client and mapping layer
-- Loading skeletons, retryable errors, empty states, and Offline Demo Mode banner
-- Backend pytest suite using an isolated temporary database
+- Stage 2 API, SQLite seed data, and frontend integration
+- Multipart video upload with streaming size limits
+- OpenCV metadata extraction and representative frame sampling
+- Processing job progress polling
+- Video library, recorded demo playback, and frame timeline
+- Loading / error / empty / offline-demo states (uploads require live API)
 
-### Stage 2 limitations
+### Stage 3 limitations
 
-- No video processing or live camera streams
-- No multimodal AI verification
-- No embeddings / RAG procedure retrieval
+- No multimodal AI verification or fall classification
+- No SOP retrieval driven by uploaded video
 - No real notifications or approval execution
 - No report generation
 - No authentication / RBAC
-
-Live monitoring, AI verification, and notifications remain simulated.
+- Uploaded frames are evidence **candidates**, not confirmed incident proof
 
 ---
 
@@ -260,7 +270,23 @@ API_PORT=8000
 DATABASE_URL=sqlite:///./safetylens.db
 FRONTEND_ORIGINS=http://localhost:3000
 DEMO_MODE=true
+UPLOAD_DIRECTORY=./data/uploads
+FRAME_DIRECTORY=./data/frames
+MAX_VIDEO_SIZE_MB=100
+MAX_VIDEO_DURATION_SECONDS=120
+FRAME_SAMPLE_COUNT=10
 ```
+
+### Video upload
+
+1. Start backend and frontend.
+2. Open **Live Monitor**.
+3. Choose **Upload Demo Video**.
+4. Select a short MP4/MOV/WebM clip (10–30 seconds recommended).
+5. Confirm location (default Loading Zone B) and Camera 04.
+6. Watch processing progress, then review playback and frame timeline.
+
+Uploads require the live API. Offline demo fallback does **not** fake successful uploads.
 
 ### Fallback behavior
 
@@ -291,9 +317,9 @@ uvicorn app.main:app --reload
 
 ## Planned Future Stages
 
-1. **Stage 3** — Video upload / simulated live feed, edge detection hooks, multimodal verification API
-2. **Stage 4** — Approval execution, notifications, incident report generation
-3. **Stage 5** — Multi-camera operations, auth/RBAC, production observability
+1. **Stage 4** — Multimodal AI verification, incident classification, confidence/evidence explanations
+2. **Stage 5** — Approval execution, notifications, incident report generation
+3. **Stage 6** — Multi-camera operations, auth/RBAC, production observability
 
 ---
 

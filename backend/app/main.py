@@ -7,11 +7,13 @@ from app.api.routes import api_router
 from app.core.config import get_settings
 from app.core.errors import register_exception_handlers
 from app.database.session import init_db
+from app.services.storage import ensure_storage_directories
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     init_db()
+    ensure_storage_directories()
     yield
 
 
@@ -19,10 +21,10 @@ def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(
         title=settings.app_name,
-        version="0.2.0",
+        version="0.3.0",
         description=(
-            "SafetyLens Stage 2 API — camera, incident, procedure, and "
-            "dashboard contracts with demo-mode SQLite persistence."
+            "SafetyLens Stage 3 API — video upload, metadata extraction, "
+            "frame sampling, and processing jobs preparing evidence for Stage 4 AI."
         ),
         lifespan=lifespan,
     )
@@ -30,7 +32,7 @@ def create_app() -> FastAPI:
         CORSMiddleware,
         allow_origins=settings.cors_origins,
         allow_credentials=True,
-        allow_methods=["GET", "OPTIONS"],
+        allow_methods=["GET", "POST", "OPTIONS"],
         allow_headers=["*"],
     )
     register_exception_handlers(app)

@@ -48,3 +48,22 @@ class ActionPriority(str, enum.Enum):
     CRITICAL = "critical"
     HIGH = "high"
     STANDARD = "standard"
+
+
+class VideoStatus(str, enum.Enum):
+    UPLOADING = "uploading"
+    UPLOADED = "uploaded"
+    PROCESSING = "processing"
+    READY = "ready"
+    FAILED = "failed"
+
+
+class JobStatus(str, enum.Enum):
+    QUEUED = "queued"
+    PROCESSING = "processing"
+    COMPLETED = "completed"
+    FAILED = "failed"
+
+
+class JobType(str, enum.Enum):
+    VIDEO_PREPARE = "video_prepare"
