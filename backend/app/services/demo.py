@@ -16,23 +16,28 @@ def get_demo_info() -> DemoInfo:
         facility="Redwood Distribution Center",
         scenario="Camera 04 — Loading Zone B worker-fall review",
         description=(
-            "Stage 5 demo with seeded operations data, multimodal analysis via "
-            f"{provider.label}, lexical procedure retrieval, and {planner}."
+            "Stage 7 integrated demo: uploaded-video fallback and optional detector "
+            f"handoff, {provider.label}, lexical SOP retrieval, grounded plans, "
+            f"human approval, simulated execution, audit timeline, and PDF reports "
+            f"({planner})."
         ),
         simulated_capabilities=[
             "Camera inventory and connection status",
             "Video upload, frame sampling, and multimodal analysis",
-            "Company procedure upload (PDF/TXT/Markdown) and chunking",
-            "Deterministic lexical retrieval with verified citations",
-            "Grounded response plans (recommendations only)",
-            "Human review of AI analysis before critical actions",
+            "Detector event ingestion with event_id deduplication",
+            "Company procedure upload and verified citations",
+            "Grounded response plans with human approval",
+            "Simulated action execution (no real notifications)",
+            "Append-only audit timeline and PDF incident reports",
+            "Safe demo reset of seeded/runtime demo state",
         ],
         limitations=[
-            "Live camera monitoring remains simulated unless Sean's detector is integrated.",
+            "Detector pose_quality is landmark reliability — never fall probability.",
+            "All executed actions are SIMULATED; no emergency services are contacted.",
             f"Analysis provider: {provider.label}. Planner: {planner}.",
-            "Response plans are recommendations only — Stage 5 does not execute actions.",
+            "Audit immutability is application-level on SQLite, not a compliance ledger.",
+            "Authentication / RBAC remain prototype limitations.",
             "Sample SOP text is demonstration content, not legal advice.",
-            "Approval execution, notifications, and PDF reports arrive in Stage 6.",
-            "No authentication / RBAC.",
+            "Webcam/RTSP live cameras are optional prototypes; known-video replay is the reliable demo path.",
         ],
     )

@@ -190,3 +190,14 @@ class ReportStatus(str, enum.Enum):
     COMPLETE = "complete"
     INCOMPLETE = "incomplete"
     FAILED = "failed"
+
+
+class DetectorIngestionStatus(str, enum.Enum):
+    RECEIVED = "received"
+    UPLOADING = "uploading"
+    PROCESSING = "processing"
+    READY = "ready"
+    ANALYZING = "analyzing"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    DETECTOR_UNAVAILABLE = "detector_unavailable"
