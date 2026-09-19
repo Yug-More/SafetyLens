@@ -35,6 +35,7 @@ def derive_pose_metrics(
     quality = fmean(item.visibility if item else 0.0 for item in torso)
 
     angle: float | None = None
+    shoulder_center_y: float | None = None
     ratio: float | None = None
     downward_velocity: float | None = None
     mean_motion: float | None = None
@@ -42,6 +43,7 @@ def derive_pose_metrics(
     if all(torso):
         left_shoulder, right_shoulder, left_hip, right_hip = torso
         shoulder_center = _midpoint(left_shoulder, right_shoulder)  # type: ignore[arg-type]
+        shoulder_center_y = shoulder_center[1]
         hip_center = _midpoint(left_hip, right_hip)  # type: ignore[arg-type]
         torso_length = _distance(shoulder_center, hip_center)
         if torso_length > 1e-6:
@@ -80,9 +82,9 @@ def derive_pose_metrics(
     return PoseMetrics(
         timestamp_seconds=current.timestamp_seconds,
         pose_quality=quality,
+        shoulder_center_y=shoulder_center_y,
         torso_angle_degrees_from_vertical=angle,
         bbox_width_height_ratio=ratio,
         downward_hip_velocity_body_lengths_per_second=downward_velocity,
         mean_landmark_motion_body_lengths_per_second=mean_motion,
     )
-

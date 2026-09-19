@@ -13,11 +13,14 @@ class TrackState:
     suspected_at: float | None = None
     horizontal_since: float | None = None
     horizontal_last_seen: float | None = None
+    overhead_since: float | None = None
+    overhead_last_seen: float | None = None
     low_motion_since: float | None = None
     incident_at: float | None = None
     recovered_after_incident: bool = False
     rapid_drop_seen: bool = False
     armed: bool = True
+    baseline_shoulder_y: float | None = None
 
 
 class FallStateMachine:
@@ -50,6 +53,14 @@ class FallStateMachine:
             return previous_state, track.state, None, ("insufficient_pose_quality",)
 
         timestamp = observation.timestamp_seconds
+        if track.baseline_shoulder_y is None and metrics.shoulder_center_y is not None:
+            track.baseline_shoulder_y = metrics.shoulder_center_y
+        overhead_displacement = (
+            metrics.shoulder_center_y is not None
+            and track.baseline_shoulder_y is not None
+            and metrics.shoulder_center_y - track.baseline_shoulder_y
+            >= self.config.overhead_shoulder_drop_ratio
+        )
         wide_tilted_pose = (
             metrics.bbox_width_height_ratio is not None
             and metrics.bbox_width_height_ratio >= self.config.down_bbox_width_height_ratio
@@ -65,6 +76,8 @@ class FallStateMachine:
         )
         horizontal = horizontal_angle_with_body_box or wide_tilted_pose
         upright = (
+            not overhead_displacement
+            and
             metrics.bbox_width_height_ratio is not None
             and metrics.bbox_width_height_ratio <= self.config.maximum_recovery_bbox_ratio
             and metrics.torso_angle_degrees_from_vertical
@@ -78,25 +91,45 @@ class FallStateMachine:
             metrics.mean_landmark_motion_body_lengths_per_second is not None
             and metrics.mean_landmark_motion_body_lengths_per_second <= self.config.low_motion_threshold
         )
+        overhead_settled = (
+            overhead_displacement
+            and metrics.mean_landmark_motion_body_lengths_per_second is not None
+            and metrics.mean_landmark_motion_body_lengths_per_second
+            <= self.config.overhead_settled_motion_threshold
+        )
+        candidate_down = horizontal or overhead_displacement
 
         if track.state in {DetectorState.NO_PERSON, DetectorState.LOW_VISIBILITY}:
             track.state = DetectorState.MONITORING if track.armed else DetectorState.COOLDOWN
 
         if track.state == DetectorState.MONITORING:
-            if rapid_drop or horizontal:
+            if metrics.shoulder_center_y is not None and not rapid_drop:
+                track.baseline_shoulder_y = min(
+                    track.baseline_shoulder_y
+                    if track.baseline_shoulder_y is not None
+                    else metrics.shoulder_center_y,
+                    metrics.shoulder_center_y,
+                )
+            if rapid_drop or candidate_down:
                 track.state = DetectorState.SUSPECTED
                 track.suspected_at = timestamp
                 track.rapid_drop_seen = rapid_drop
                 track.horizontal_since = timestamp if horizontal else None
                 track.horizontal_last_seen = timestamp if horizontal else None
+                track.overhead_since = timestamp if overhead_settled else None
+                track.overhead_last_seen = timestamp if overhead_settled else None
                 track.low_motion_since = timestamp if horizontal and low_motion else None
 
         elif track.state == DetectorState.SUSPECTED:
             track.rapid_drop_seen = track.rapid_drop_seen or rapid_drop
-            if horizontal:
+            if candidate_down:
                 track.state = DetectorState.CONFIRMING
-                track.horizontal_since = track.horizontal_since or timestamp
-                track.horizontal_last_seen = timestamp
+                if horizontal:
+                    track.horizontal_since = track.horizontal_since or timestamp
+                    track.horizontal_last_seen = timestamp
+                if overhead_settled:
+                    track.overhead_since = track.overhead_since or timestamp
+                    track.overhead_last_seen = timestamp
                 track.low_motion_since = timestamp if low_motion else None
             elif track.suspected_at is not None and timestamp - track.suspected_at > self.config.suspicion_timeout_seconds:
                 track.state = DetectorState.MONITORING
@@ -117,18 +150,39 @@ class FallStateMachine:
                 ):
                     track.horizontal_since = None
                     track.horizontal_last_seen = None
+                if overhead_settled:
+                    track.overhead_since = track.overhead_since or timestamp
+                    track.overhead_last_seen = timestamp
+                elif (
+                    track.overhead_last_seen is None
+                    or timestamp - track.overhead_last_seen
+                    > self.config.down_posture_gap_tolerance_seconds
+                ):
+                    track.overhead_since = None
+                    track.overhead_last_seen = None
                 if horizontal and low_motion:
                     track.low_motion_since = track.low_motion_since or timestamp
                 else:
                     track.low_motion_since = None
 
                 horizontal_duration = timestamp - track.horizontal_since if track.horizontal_since is not None else 0
+                overhead_duration = (
+                    timestamp - track.overhead_since
+                    if track.overhead_since is not None
+                    else 0
+                )
                 low_motion_duration = timestamp - track.low_motion_since if track.low_motion_since is not None else 0
                 if (
-                    horizontal_duration >= self.config.horizontal_hold_seconds
-                    and (
+                    (
+                        horizontal_duration >= self.config.horizontal_hold_seconds
+                        and (
+                            track.rapid_drop_seen
+                            or low_motion_duration >= self.config.low_motion_hold_seconds
+                        )
+                    )
+                    or (
                         track.rapid_drop_seen
-                        or low_motion_duration >= self.config.low_motion_hold_seconds
+                        and overhead_duration >= self.config.overhead_hold_seconds
                     )
                 ):
                     track.state = DetectorState.INCIDENT
@@ -142,6 +196,7 @@ class FallStateMachine:
                             low_motion_duration >= self.config.low_motion_hold_seconds
                         ),
                         bbox_posture=wide_tilted_pose,
+                        overhead_displacement=overhead_displacement,
                     )
                     return previous_state, track.state, event, event.trigger_signals
 
@@ -166,6 +221,7 @@ class FallStateMachine:
                 (rapid_drop, "rapid_drop"),
                 (horizontal, "horizontal_posture"),
                 (wide_tilted_pose, "wide_tilted_body_box"),
+                (overhead_displacement, "downward_body_displacement"),
                 (low_motion, "low_motion"),
             )
             if condition
@@ -187,12 +243,15 @@ class FallStateMachine:
         rapid_drop: bool,
         low_motion_confirmed: bool,
         bbox_posture: bool,
+        overhead_displacement: bool,
     ) -> DetectionEvent:
         signals = ["down_posture_persistence"]
         if rapid_drop:
             signals.insert(0, "rapid_drop")
         if bbox_posture:
             signals.append("wide_tilted_body_box")
+        if overhead_displacement:
+            signals.append("downward_body_displacement")
         if low_motion_confirmed:
             signals.append("low_motion_persistence")
         return DetectionEvent(
@@ -219,6 +278,8 @@ class FallStateMachine:
         track.suspected_at = None
         track.horizontal_since = None
         track.horizontal_last_seen = None
+        track.overhead_since = None
+        track.overhead_last_seen = None
         track.low_motion_since = None
         track.rapid_drop_seen = False
 

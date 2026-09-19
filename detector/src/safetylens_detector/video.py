@@ -45,11 +45,14 @@ def analyze_video(
     model_path: str | Path,
     *,
     sample_fps: float = 12.0,
+    missing_pose_grace_seconds: float = 0.50,
     source_id: str | None = None,
     config: DetectorConfig | None = None,
 ) -> VideoAnalysis:
     if sample_fps <= 0:
         raise ValueError("sample_fps must be positive.")
+    if missing_pose_grace_seconds < 0:
+        raise ValueError("missing_pose_grace_seconds must be non-negative.")
     try:
         import cv2
     except ImportError as error:
@@ -75,6 +78,8 @@ def analyze_video(
     events: list[DetectionEvent] = []
     decoded = analyzed = detected = missing = 0
     next_sample_seconds = 0.0
+    missing_since: float | None = None
+    track_marked_missing = False
     started = perf_counter()
 
     try:
@@ -97,9 +102,19 @@ def analyze_video(
                 )
                 if observation is None:
                     missing += 1
-                    result = engine.mark_missing("person-1")
+                    missing_since = timestamp if missing_since is None else missing_since
+                    if (
+                        not track_marked_missing
+                        and timestamp - missing_since >= missing_pose_grace_seconds
+                    ):
+                        result = engine.mark_missing("person-1")
+                        track_marked_missing = True
+                    else:
+                        continue
                 else:
                     detected += 1
+                    missing_since = None
+                    track_marked_missing = False
                     result = engine.process(observation)
                 if result.state != result.previous_state:
                     transitions.append(
@@ -137,6 +152,7 @@ def main() -> int:
     parser.add_argument("video", type=Path)
     parser.add_argument("--model", type=Path, required=True)
     parser.add_argument("--sample-fps", type=float, default=12.0)
+    parser.add_argument("--missing-pose-grace-seconds", type=float, default=0.50)
     parser.add_argument("--source-id")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
@@ -145,6 +161,7 @@ def main() -> int:
         args.video,
         args.model,
         sample_fps=args.sample_fps,
+        missing_pose_grace_seconds=args.missing_pose_grace_seconds,
         source_id=args.source_id,
     )
     rendered = json.dumps(analysis.to_dict(), indent=2)
