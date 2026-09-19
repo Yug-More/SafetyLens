@@ -96,3 +96,33 @@ class ReviewDecision(str, enum.Enum):
 class AIProviderName(str, enum.Enum):
     DEMO = "demo"
     OPENAI = "openai"
+
+
+class ProcedureSourceFormat(str, enum.Enum):
+    TXT = "txt"
+    MARKDOWN = "markdown"
+    PDF = "pdf"
+    SEED = "seed"
+
+
+class RetrievalMethod(str, enum.Enum):
+    LEXICAL = "lexical"
+    HYBRID = "hybrid"
+
+
+class RetrievalStatus(str, enum.Enum):
+    COMPLETED = "completed"
+    INSUFFICIENT = "insufficient"
+    FAILED = "failed"
+
+
+class ResponsePlanStatus(str, enum.Enum):
+    QUEUED = "queued"
+    COMPLETED = "completed"
+    INSUFFICIENT_POLICY = "insufficient_policy"
+    FAILED = "failed"
+
+
+class PlannerProviderName(str, enum.Enum):
+    DEMO = "demo"
+    OPENAI = "openai"

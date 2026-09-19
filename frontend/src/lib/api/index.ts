@@ -12,7 +12,11 @@ import type {
   ApiIncidentDetail,
   ApiIncidentStatus,
   ApiProcedure,
+  ApiProcedureChunk,
+  ApiProcedureRetrieval,
+  ApiProcedureUploadResponse,
   ApiProcessingJob,
+  ApiResponsePlan,
   ApiSeverity,
   ApiSystemStatus,
   ApiVideoAsset,
@@ -20,6 +24,7 @@ import type {
   ApiVideoStatus,
   ApiVideoUploadResponse,
   AnalysisReviewRequest,
+  ProcedureUploadRequest,
   VideoUploadRequest,
 } from "@/lib/api/types";
 
@@ -76,6 +81,50 @@ export function fetchProcedures(params?: {
 
 export function fetchProcedure(identifier: string) {
   return apiGetItem<ApiProcedure>(`/api/procedures/${identifier}`);
+}
+
+export function fetchProcedureChunks(identifier: string) {
+  return apiGetCollection<ApiProcedureChunk>(`/api/procedures/${identifier}/chunks`);
+}
+
+export function uploadProcedure(request: ProcedureUploadRequest) {
+  const formData = new FormData();
+  formData.append("file", request.file);
+  formData.append("procedure_code", request.procedureCode);
+  formData.append("title", request.title);
+  formData.append("category", request.category);
+  formData.append("version", request.version);
+  if (request.sourceName) {
+    formData.append("source_name", request.sourceName);
+  }
+  if (request.isSample !== undefined) {
+    formData.append("is_sample", String(request.isSample));
+  }
+  return apiPostMultipart<ApiProcedureUploadResponse>("/api/procedures/upload", formData);
+}
+
+export function retrieveProceduresForAnalysis(
+  analysisIdentifier: string,
+  query?: string
+) {
+  return apiPostJson<ApiProcedureRetrieval>(
+    `/api/analyses/${analysisIdentifier}/retrieve-procedures`,
+    query ? { query } : {}
+  );
+}
+
+export function generateResponsePlan(
+  analysisIdentifier: string,
+  retrievalId?: string
+) {
+  return apiPostJson<ApiResponsePlan>(
+    `/api/analyses/${analysisIdentifier}/response-plan`,
+    retrievalId ? { retrieval_id: retrievalId } : {}
+  );
+}
+
+export function fetchResponsePlan(identifier: string) {
+  return apiGetItem<ApiResponsePlan>(`/api/response-plans/${identifier}`);
 }
 
 export function fetchSystemStatus() {

@@ -105,6 +105,123 @@ export interface ApiProcedure {
   created_at: string;
   updated_at: string;
   steps: string[];
+  effective_date?: string | null;
+  source_filename?: string | null;
+  source_format?: string | null;
+  chunk_count?: number;
+  is_sample?: boolean;
+}
+
+export interface ApiProcedureChunk {
+  id: string;
+  chunk_code: string;
+  chunk_order: number;
+  section_heading: string | null;
+  page_number: number | null;
+  content: string;
+  procedure_id: string;
+  procedure_code: string | null;
+  procedure_title: string | null;
+  procedure_version: string | null;
+}
+
+export interface ApiRetrievalMatch {
+  procedure_id: string;
+  procedure_code: string;
+  procedure_title: string;
+  procedure_version: string;
+  chunk_id: string;
+  chunk_code: string;
+  chunk_order: number;
+  section_heading: string | null;
+  page_number: number | null;
+  excerpt: string;
+  score: number;
+  method: string;
+  rank: number;
+}
+
+export interface ApiProcedureRetrieval {
+  id: string;
+  retrieval_code: string;
+  analysis_id: string;
+  analysis_code: string | null;
+  query_text: string;
+  method: string;
+  status: "completed" | "insufficient" | "failed";
+  match_count: number;
+  message: string | null;
+  matches: ApiRetrievalMatch[];
+  created_at: string;
+}
+
+export interface ApiPlanCitation {
+  id: string;
+  chunk_id: string;
+  chunk_code: string | null;
+  procedure_code: string | null;
+  procedure_title: string | null;
+  section_heading: string | null;
+  page_number: number | null;
+  excerpt: string;
+}
+
+export interface ApiPlannedAction {
+  id: string;
+  action_order: number;
+  title: string;
+  description: string;
+  priority: ApiActionPriority;
+  responsible_role: string;
+  requires_human_approval: boolean;
+  is_policy_grounded: boolean;
+  citations: ApiPlanCitation[];
+}
+
+export interface ApiResponsePlan {
+  id: string;
+  plan_code: string;
+  analysis_id: string;
+  analysis_code: string | null;
+  retrieval_id: string | null;
+  retrieval_code: string | null;
+  status: "queued" | "completed" | "insufficient_policy" | "failed";
+  summary: string | null;
+  rationale: string | null;
+  provider_name: string;
+  provider_model: string | null;
+  is_demo: boolean;
+  is_simulated: boolean;
+  provider_label: string;
+  limitations: string[];
+  error_code: string | null;
+  error_message: string | null;
+  actions: ApiPlannedAction[];
+  recommendations_executed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiProcedureUploadResponse {
+  id: string;
+  procedure_code: string;
+  title: string;
+  version: string;
+  source_format: string;
+  source_filename: string;
+  chunk_count: number;
+  is_sample: boolean;
+  message: string;
+}
+
+export interface ProcedureUploadRequest {
+  file: File;
+  procedureCode: string;
+  title: string;
+  category: string;
+  version: string;
+  sourceName?: string;
+  isSample?: boolean;
 }
 
 export interface ApiIncidentDetail {

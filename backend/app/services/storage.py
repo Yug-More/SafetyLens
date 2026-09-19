@@ -22,6 +22,7 @@ def ensure_storage_directories(settings: Settings | None = None) -> None:
     cfg = settings or get_settings()
     cfg.upload_path.mkdir(parents=True, exist_ok=True)
     cfg.frame_path.mkdir(parents=True, exist_ok=True)
+    cfg.procedure_path.mkdir(parents=True, exist_ok=True)
 
 
 def sanitize_original_filename(filename: str | None) -> str:
