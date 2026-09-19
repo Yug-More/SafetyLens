@@ -1,6 +1,7 @@
 """Lightweight temporal person-down detection for SafetyLens."""
 
 from .engine import DetectorEngine
+from .evidence_buffer import EvidenceCapture, EvidenceWindowBuffer, FrameSample
 from .metrics import derive_pose_metrics
 from .models import (
     DetectionEvent,
@@ -19,8 +20,10 @@ __all__ = [
     "DetectorResult",
     "DetectorState",
     "Landmark",
+    "EvidenceCapture",
+    "EvidenceWindowBuffer",
+    "FrameSample",
     "PoseMetrics",
     "PoseObservation",
     "derive_pose_metrics",
 ]
-
