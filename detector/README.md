@@ -68,6 +68,23 @@ The JSON result includes pose coverage, state transitions, and any emitted `poss
 
 Brief pose-estimation dropouts are tolerated for 0.5 seconds by default. A longer absence transitions the track to `no_person`; this prevents a single missed frame during a fall from erasing the candidate while still handling someone walking out of view.
 
+## Run live camera detection
+
+Use a Windows webcam index or a phone-camera stream URL:
+
+```powershell
+$env:PYTHONPATH = "detector/src"
+python -m safetylens_detector.live `
+  --source 0 `
+  --model detector/models/pose_landmarker_lite.task `
+  --sample-fps 12 `
+  --mirror
+```
+
+The preview displays the temporal state and a red incident alert. Press `Q` to stop. Completed incidents save a 3-second pre-event plus 3-second post-event MP4 under the ignored `detector/events` directory. The source may also be an OpenCV-compatible HTTP/RTSP URL, for example `--source "http://PHONE_IP:PORT/video"`.
+
+For a phone exposed to Windows as a webcam, try `--source 1`, then `2`, while keeping `--source 0` for the built-in camera. The pose model and state machine still run locally on the laptop; only camera frames cross from the phone.
+
 ## Next milestone
 
 1. Tune thresholds against positive and negative demo clips.
