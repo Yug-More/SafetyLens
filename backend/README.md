@@ -1,151 +1,83 @@
-# SafetyLens Backend (Stage 4)
+# SafetyLens Backend (Stage 5)
 
-FastAPI service providing typed REST contracts, SQLite persistence, seeded demo data, video processing, and multimodal incident analysis on extracted frames.
-
-## Requirements
-
-- Python 3.11+
-- pip
-- Virtual environment support
+FastAPI service with typed REST contracts, SQLite persistence, video processing, multimodal analysis, procedure ingestion, lexical retrieval, verified citations, and grounded response planning.
 
 ## Setup
 
 ```bash
 cd backend
 python3 -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
-```
-
-## Environment
-
-| Variable | Description | Default |
-|---|---|---|
-| `APP_NAME` | API display name | `SafetyLens API` |
-| `ENVIRONMENT` | Runtime environment | `development` |
-| `API_HOST` | Bind host | `127.0.0.1` |
-| `API_PORT` | Bind port | `8000` |
-| `DATABASE_URL` | SQLAlchemy URL | `sqlite:///./safetylens.db` |
-| `FRONTEND_ORIGINS` | Comma-separated CORS origins | `http://localhost:3000` |
-| `DEMO_MODE` | Marks responses as demo | `true` |
-| `UPLOAD_DIRECTORY` | Stored upload directory | `./data/uploads` |
-| `FRAME_DIRECTORY` | Extracted frame directory | `./data/frames` |
-| `MAX_VIDEO_SIZE_MB` | Upload size limit | `100` |
-| `MAX_VIDEO_DURATION_SECONDS` | Max clip duration | `120` |
-| `FRAME_SAMPLE_COUNT` | Representative frames to sample | `10` |
-| `AI_PROVIDER` | `demo` or `openai` | `demo` |
-| `AI_DEMO_MODE` | Labels demo-oriented behavior | `true` |
-| `OPENAI_API_KEY` | Required only for `openai` | empty |
-| `VISION_MODEL` | Required only for `openai` | empty |
-| `AI_REQUEST_TIMEOUT_SECONDS` | Provider timeout | `45` |
-| `AI_MAX_RETRIES` | Provider retries | `2` |
-| `AI_MAX_FRAMES` | Max frames sent to a provider | `8` |
-| `AI_MAX_IMAGE_DIMENSION` | Max encode dimension | `1280` |
-
-Do not commit `.env`. Keep `.env.example` tracked. Never put API keys in the repository.
-
-Default `AI_PROVIDER=demo` runs deterministic local analysis with no credentials. Set `AI_PROVIDER=openai` plus `OPENAI_API_KEY` and `VISION_MODEL` only when intentionally using a real provider.
-
-## Storage
-
-Runtime directories are created automatically:
-
-- `data/uploads/` — UUID-named uploaded videos
-- `data/frames/` — JPEG evidence-candidate frames
-
-These directories are gitignored. See `data/README.md` for local demo-source guidance.
-
-Supported formats: **MP4, MOV, WebM**.
-
-Prefer short clips (10–30 seconds) for demos.
-
-## Database initialization and seeding
-
-Tables are created automatically on API startup (including Stage 4 analysis tables). Seed Stage 2 demo data with:
-
-```bash
 python -m app.seed.run
-```
-
-The seed command is idempotent.
-
-## Video-processing and analysis workflow
-
-1. Client uploads multipart video + location (+ optional camera_id)
-2. Backend stores the file, extracts metadata, and samples frames
-3. When the video is `ready`, client calls `POST /api/videos/{asset_code}/analyze`
-4. Background job selects up to `AI_MAX_FRAMES` frames and runs the configured provider
-5. Structured results, evidence (frame codes + timestamps), and a pending review are stored
-6. Client polls `GET /api/analyses/{analysis_code}` and may submit human review
-
-Demo AI is explicitly labeled simulated. Real providers are labeled separately. Detector pose/heuristic scores are never treated as fall probability.
-
-## Start the server
-
-```bash
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-Interactive docs:
+If upgrading an existing local SQLite file after Stage 5 schema changes, delete `safetylens.db` and re-seed (tests always use a fresh in-memory DB).
 
-- Swagger UI: http://localhost:8000/docs
-- Health: http://localhost:8000/api/health
+## Stage 5 environment
+
+| Variable | Description | Default |
+|---|---|---|
+| `PROCEDURE_DIRECTORY` | Stored procedure originals | `./data/procedures` |
+| `MAX_PROCEDURE_SIZE_MB` | Upload size limit | `10` |
+| `MAX_PROCEDURE_TEXT_CHARS` | Extracted text cap | `200000` |
+| `PROCEDURE_CHUNK_MAX_CHARS` | Chunk size target | `900` |
+| `RETRIEVAL_TOP_K` | Max ranked chunks | `8` |
+| `RETRIEVAL_MIN_SCORE` | Minimum lexical score | `0.08` |
+| `PLANNER_PROVIDER` | `demo` or `openai` | `demo` |
+| `PLANNER_MODEL` | Optional real planner model | empty |
+
+Never commit `.env`, uploaded procedures, or databases.
+
+## Procedure ingestion
+
+Supported: **PDF, TXT, Markdown**. Validates extension/MIME, size, path traversal, empty/corrupt documents. Extracts text (pypdf for PDF), chunks deterministically by headings/numbered steps/length, stores metadata without absolute paths. Duplicate code or identical content hash is rejected.
+
+Seeded sample: **SOP-FALL-4.2** — Worker Fall and Person-Down Response (sample company procedure, not legal advice).
+
+## Retrieval
+
+Deterministic **lexical** scoring over active procedure chunks (keyword + domain weights). No paid API required. Every returned match includes procedure/chunk identifiers, section/page when present, exact excerpt, score, and method=`lexical`.
+
+## Citations
+
+Plans only persist citations that:
+
+1. Exist as stored `ProcedureChunk` rows
+2. Were present in the retrieval match set for that analysis
+3. Snapshot the exact stored chunk text
+
+Unknown or mismatched citation IDs are rejected (`INVALID_CITATION`).
+
+## Response plans
+
+Demo planner maps fall analyses + retrieved SOP-FALL chunks to ordered recommendations (supervisor, medical, area control, evidence, documentation). Status may be `completed`, `insufficient_policy`, or `failed`. Recommendations are never executed in Stage 5.
+
+## Stage 5 API
+
+- `POST /api/procedures/upload`
+- `GET /api/procedures`
+- `GET /api/procedures/{id}`
+- `GET /api/procedures/{id}/chunks`
+- `POST /api/analyses/{id}/retrieve-procedures`
+- `POST /api/analyses/{id}/response-plan`
+- `GET /api/response-plans/{id}`
+
+Plus all Stage 1–4 endpoints.
 
 ## Tests
-
-Tests use an isolated in-memory SQLite database and temporary media directories. They never modify development uploads or `safetylens.db`. External AI providers are mocked — no paid API calls.
 
 ```bash
 pytest
 ```
 
-## Key endpoints
+External AI/planner providers are mocked — no paid calls.
 
-### Stage 2
+## Limitations
 
-- `GET /api/health`
-- `GET /api/dashboard/summary`
-- `GET /api/dashboard/activity`
-- `GET /api/cameras`
-- `GET /api/cameras/{camera_id}`
-- `GET /api/incidents`
-- `GET /api/incidents/{incident_identifier}`
-- `GET /api/procedures`
-- `GET /api/procedures/{procedure_identifier}`
-- `GET /api/system/status`
-- `GET /api/demo/info`
-
-### Stage 3
-
-- `POST /api/videos/upload`
-- `GET /api/videos`
-- `GET /api/videos/{video_identifier}`
-- `GET /api/videos/{video_identifier}/frames`
-- `GET /api/videos/{video_identifier}/content`
-- `GET /api/processing-jobs/{job_identifier}`
-- `GET /api/frames/{frame_identifier}/content`
-
-### Stage 4
-
-- `GET /api/ai/provider`
-- `POST /api/videos/{video_identifier}/analyze`
-- `GET /api/videos/{video_identifier}/analyses`
-- `GET /api/analyses/{analysis_identifier}`
-- `POST /api/analyses/{analysis_identifier}/review`
-
-## Troubleshooting OpenCV on macOS
-
-- Use `opencv-python-headless` from `requirements.txt`
-- If VideoWriter tests fail, confirm codec `mp4v` is available
-- If uploads fail with `UNREADABLE_VIDEO`, verify the file opens in QuickTime/VLC
-- Reinstall with `pip install --force-reinstall opencv-python-headless`
-
-## Stage 4 limitations
-
-- No SOP retrieval from analysis (Stage 5)
-- No approval execution / notifications / PDF reports (Stage 6)
-- No authentication
-- No deletion endpoints
-- No distributed job queue (in-process BackgroundTasks only)
-- Live detector integration uses the existing upload + analyze contract when Sean’s clips are ready
+- No approval/execution/notifications (Stage 6)
+- No PDF incident reports (Stage 6)
+- No live detector adapter automation
+- No authentication / RBAC

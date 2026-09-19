@@ -37,6 +37,13 @@ export interface SafetyProcedure {
   steps: string[];
   lastUpdated: string;
   documentPages: number;
+  procedureCode?: string;
+  version?: string;
+  sourceFilename?: string | null;
+  sourceFormat?: string | null;
+  chunkCount?: number;
+  isSample?: boolean;
+  isActive?: boolean;
 }
 
 export interface SystemService {

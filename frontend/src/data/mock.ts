@@ -165,7 +165,7 @@ export const recommendedActions: RecommendedAction[] = [
 export const procedures: SafetyProcedure[] = [
   {
     id: "proc-fall",
-    title: "Worker Fall Response",
+    title: "Worker Fall and Person-Down Response",
     section: "Section 4.2",
     category: "Emergency Response",
     description:

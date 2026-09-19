@@ -63,7 +63,7 @@ export default function ProceduresPage() {
       <PageHeader
         title="Procedures"
         subtitle="Company safety procedure library for Redwood Distribution Center"
-        actions={<ProcedureUploadButton />}
+        actions={<ProcedureUploadButton onUploaded={reload} />}
       />
 
       <div className="rounded-xl border border-border bg-panel p-4">

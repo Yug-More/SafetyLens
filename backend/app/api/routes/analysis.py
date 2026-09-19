@@ -11,7 +11,14 @@ from app.schemas.analysis import (
     IncidentAnalysisRead,
 )
 from app.schemas.common import CollectionResponse, ItemResponse
+from app.schemas.procedure import (
+    GenerateResponsePlanRequest,
+    ProcedureRetrievalRead,
+    ResponsePlanRead,
+    RetrieveProceduresRequest,
+)
 from app.services import analysis as analysis_service
+from app.services import procedures as procedure_service
 
 router = APIRouter(tags=["analysis"])
 
@@ -83,3 +90,53 @@ def submit_analysis_review(
     return ItemResponse(
         data=analysis_service.submit_review(db, analysis_identifier, payload)
     )
+
+
+@router.post(
+    "/api/analyses/{analysis_identifier}/retrieve-procedures",
+    response_model=ItemResponse[ProcedureRetrievalRead],
+)
+def retrieve_procedures(
+    analysis_identifier: str,
+    payload: RetrieveProceduresRequest | None = None,
+    db: Session = Depends(get_db),
+) -> ItemResponse[ProcedureRetrievalRead]:
+    request = payload or RetrieveProceduresRequest()
+    return ItemResponse(
+        data=procedure_service.retrieve_procedures_for_analysis(
+            db,
+            analysis_identifier,
+            user_query=request.query,
+        )
+    )
+
+
+@router.post(
+    "/api/analyses/{analysis_identifier}/response-plan",
+    response_model=ItemResponse[ResponsePlanRead],
+    status_code=201,
+)
+def create_response_plan(
+    analysis_identifier: str,
+    payload: GenerateResponsePlanRequest | None = None,
+    db: Session = Depends(get_db),
+) -> ItemResponse[ResponsePlanRead]:
+    request = payload or GenerateResponsePlanRequest()
+    return ItemResponse(
+        data=procedure_service.generate_response_plan(
+            db,
+            analysis_identifier,
+            retrieval_id=request.retrieval_id,
+        )
+    )
+
+
+@router.get(
+    "/api/response-plans/{plan_identifier}",
+    response_model=ItemResponse[ResponsePlanRead],
+)
+def get_response_plan(
+    plan_identifier: str,
+    db: Session = Depends(get_db),
+) -> ItemResponse[ResponsePlanRead]:
+    return ItemResponse(data=procedure_service.get_response_plan(db, plan_identifier))
