@@ -5,6 +5,7 @@ import type {
   ApiCamera,
   ApiDashboardSummary,
   ApiIncident,
+  ApiIncidentAnalysis,
   ApiIncidentDetail,
   ApiIncidentStatus,
   ApiProcedure,
@@ -26,7 +27,12 @@ import type {
   SafetyProcedure,
   SystemService,
 } from "@/types";
-import type { ProcessingJobView, VideoAsset, VideoFrameItem } from "@/types/video";
+import type {
+  IncidentAnalysisView,
+  ProcessingJobView,
+  VideoAsset,
+  VideoFrameItem,
+} from "@/types/video";
 
 export function formatRelativeTime(iso: string): string {
   try {
@@ -104,12 +110,21 @@ export function mapProcedure(procedure: ApiProcedure): SafetyProcedure {
   return {
     id: procedure.id,
     title: procedure.title,
-    section: `Version ${procedure.version}`,
+    section: `${procedure.procedure_code} · v${procedure.version}`,
     category: procedure.category,
-    description: `${procedure.source_name} · ${procedure.procedure_code}`,
+    description: `${procedure.source_name}${
+      procedure.is_sample ? " · sample company procedure" : ""
+    }`,
     steps: procedure.steps.length > 0 ? procedure.steps : [procedure.content],
     lastUpdated: procedure.updated_at.slice(0, 10),
-    documentPages: Math.max(1, Math.ceil(procedure.content.length / 400)),
+    documentPages: Math.max(1, procedure.chunk_count ?? Math.ceil(procedure.content.length / 400)),
+    procedureCode: procedure.procedure_code,
+    version: procedure.version,
+    sourceFilename: procedure.source_filename ?? null,
+    sourceFormat: procedure.source_format ?? null,
+    chunkCount: procedure.chunk_count ?? 0,
+    isSample: procedure.is_sample ?? false,
+    isActive: procedure.is_active,
   };
 }
 
@@ -243,5 +258,52 @@ export function mapProcessingJob(job: ApiProcessingJob): ProcessingJobView {
     currentStep: job.current_step,
     errorCode: job.error_code,
     errorMessage: job.error_message,
+  };
+}
+
+export function mapIncidentAnalysis(
+  analysis: ApiIncidentAnalysis
+): IncidentAnalysisView {
+  return {
+    id: analysis.id,
+    analysisCode: analysis.analysis_code,
+    videoAssetCode: analysis.video_asset_code,
+    status: analysis.status,
+    providerName: analysis.provider_name,
+    isDemo: analysis.is_demo,
+    isSimulated: analysis.is_simulated,
+    providerLabel:
+      analysis.provider_label ??
+      (analysis.is_demo ? "Demo AI (simulated)" : analysis.provider_name),
+    incidentDetected: analysis.incident_detected,
+    incidentType: analysis.incident_type,
+    summary: analysis.summary,
+    detailedAnalysis: analysis.detailed_analysis,
+    severity: analysis.severity,
+    confidence: analysis.confidence,
+    recommendedActions: analysis.recommended_actions ?? [],
+    limitations: analysis.limitations ?? [],
+    inconclusive: analysis.inconclusive,
+    errorCode: analysis.error_code,
+    errorMessage: analysis.error_message,
+    evidence: (analysis.evidence ?? []).map((item) => ({
+      id: item.id,
+      frameId: item.frame_id,
+      frameCode: item.frame_code,
+      timestampSeconds: item.timestamp_seconds,
+      observation: item.observation,
+      relevance: item.relevance,
+      contentUrl: resolveMediaUrl(item.content_url),
+    })),
+    review: analysis.review
+      ? {
+          id: analysis.review.id,
+          decision: analysis.review.decision,
+          reviewerName: analysis.review.reviewer_name,
+          notes: analysis.review.notes,
+          reviewedAt: analysis.review.reviewed_at,
+        }
+      : null,
+    humanApprovalRequired: analysis.human_approval_required,
   };
 }

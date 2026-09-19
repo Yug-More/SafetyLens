@@ -23,13 +23,24 @@ from app.services.storage import ensure_storage_directories
 def temp_media(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     uploads = tmp_path / "uploads"
     frames = tmp_path / "frames"
+    procedures = tmp_path / "procedures"
     uploads.mkdir()
     frames.mkdir()
+    procedures.mkdir()
     monkeypatch.setenv("UPLOAD_DIRECTORY", str(uploads))
     monkeypatch.setenv("FRAME_DIRECTORY", str(frames))
+    monkeypatch.setenv("PROCEDURE_DIRECTORY", str(procedures))
+    monkeypatch.setenv("REPORT_DIRECTORY", str(tmp_path / "reports"))
+    (tmp_path / "reports").mkdir()
+    monkeypatch.setenv("DETECTOR_EVENTS_DIRECTORY", str(tmp_path / "detector-events"))
+    (tmp_path / "detector-events").mkdir()
     monkeypatch.setenv("MAX_VIDEO_SIZE_MB", "5")
     monkeypatch.setenv("MAX_VIDEO_DURATION_SECONDS", "30")
     monkeypatch.setenv("FRAME_SAMPLE_COUNT", "8")
+    monkeypatch.setenv("AI_PROVIDER", "demo")
+    monkeypatch.setenv("AI_DEMO_MODE", "true")
+    monkeypatch.setenv("PLANNER_PROVIDER", "demo")
+    monkeypatch.setenv("MAX_PROCEDURE_SIZE_MB", "5")
     get_settings.cache_clear()
     ensure_storage_directories()
     yield tmp_path
@@ -69,6 +80,8 @@ def client(
 ) -> Generator[TestClient, None, None]:
     TestingSessionLocal = sessionmaker(bind=db_engine, autoflush=False, autocommit=False)
     monkeypatch.setattr("app.services.videos.SessionLocal", TestingSessionLocal)
+    monkeypatch.setattr("app.services.analysis.SessionLocal", TestingSessionLocal)
+    monkeypatch.setattr("app.services.detector_ingestion.SessionLocal", TestingSessionLocal)
 
     app = create_app()
 

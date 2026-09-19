@@ -98,6 +98,31 @@ export async function apiGetCollection<T>(
   return (await response.json()) as ApiCollectionResponse<T>;
 }
 
+export async function apiPostJson<T>(
+  path: string,
+  body?: unknown,
+  init?: RequestInit
+): Promise<T> {
+  const response = await fetch(buildUrl(path), {
+    ...init,
+    method: "POST",
+    body: body === undefined ? undefined : JSON.stringify(body),
+    headers: {
+      Accept: "application/json",
+      ...(body === undefined ? {} : { "Content-Type": "application/json" }),
+      ...(init?.headers ?? {}),
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw await parseError(response);
+  }
+
+  const payload = (await response.json()) as ApiItemResponse<T>;
+  return payload.data;
+}
+
 export async function apiPostMultipart<T>(
   path: string,
   formData: FormData,

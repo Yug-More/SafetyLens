@@ -7,6 +7,8 @@ import { PageHeader } from "@/components/PageHeader";
 import { CameraMonitor, CameraCard } from "@/components/CameraMonitor";
 import { VideoUploadDialog } from "@/components/VideoUploadDialog";
 import { VideoAnalysisWorkspace } from "@/components/VideoAnalysisWorkspace";
+import { DetectorHandoffPanel } from "@/components/DetectorHandoffPanel";
+import { GuidedDemoPanel } from "@/components/GuidedDemoPanel";
 import { Button } from "@/components/ui/button";
 import {
   ConnectionBanner,
@@ -157,6 +159,23 @@ function MonitorPageContent() {
             Upload Demo Video
           </Button>
         }
+      />
+
+      <GuidedDemoPanel />
+
+      <DetectorHandoffPanel
+        onOpenAsset={(assetCode, jobCode) => {
+          setLocalUpload({
+            asset_code: assetCode,
+            job_code: jobCode ?? "JOB-PENDING",
+            status: "uploaded",
+            original_filename: "detector-clip.mp4",
+            location: "Loading Zone B",
+            created_at: new Date().toISOString(),
+          });
+          setSelectedVideoUrl(null);
+          reloadLibrary();
+        }}
       />
 
       <div className="grid gap-4 rounded-xl border border-border bg-panel p-4 text-sm sm:grid-cols-3">

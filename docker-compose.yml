@@ -1,0 +1,47 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      APP_NAME: SafetyLens API
+      ENVIRONMENT: production
+      DEMO_MODE: "true"
+      AI_PROVIDER: demo
+      AI_DEMO_MODE: "true"
+      PLANNER_PROVIDER: demo
+      FRONTEND_ORIGINS: http://localhost:3000
+      DATABASE_URL: sqlite:////data/safetylens.db
+      UPLOAD_DIRECTORY: /data/uploads
+      FRAME_DIRECTORY: /data/frames
+      PROCEDURE_DIRECTORY: /data/procedures
+      REPORT_DIRECTORY: /data/reports
+      DETECTOR_EVENTS_DIRECTORY: /data/detector-events
+    volumes:
+      - safetylens-data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_DEMO_FALLBACK: "true"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  safetylens-data:
