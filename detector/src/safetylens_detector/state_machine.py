@@ -12,6 +12,7 @@ class TrackState:
     last_timestamp: float | None = None
     suspected_at: float | None = None
     horizontal_since: float | None = None
+    horizontal_last_seen: float | None = None
     low_motion_since: float | None = None
     incident_at: float | None = None
     recovered_after_incident: bool = False
@@ -49,8 +50,26 @@ class FallStateMachine:
             return previous_state, track.state, None, ("insufficient_pose_quality",)
 
         timestamp = observation.timestamp_seconds
-        horizontal = metrics.torso_angle_degrees_from_vertical >= self.config.horizontal_angle_degrees
-        upright = metrics.torso_angle_degrees_from_vertical <= self.config.recovery_angle_degrees
+        wide_tilted_pose = (
+            metrics.bbox_width_height_ratio is not None
+            and metrics.bbox_width_height_ratio >= self.config.down_bbox_width_height_ratio
+            and metrics.torso_angle_degrees_from_vertical
+            >= self.config.minimum_tilt_for_bbox_down_degrees
+        )
+        horizontal_angle_with_body_box = (
+            metrics.bbox_width_height_ratio is not None
+            and metrics.bbox_width_height_ratio
+            >= self.config.minimum_horizontal_bbox_ratio
+            and metrics.torso_angle_degrees_from_vertical
+            >= self.config.horizontal_angle_degrees
+        )
+        horizontal = horizontal_angle_with_body_box or wide_tilted_pose
+        upright = (
+            metrics.bbox_width_height_ratio is not None
+            and metrics.bbox_width_height_ratio <= self.config.maximum_recovery_bbox_ratio
+            and metrics.torso_angle_degrees_from_vertical
+            <= self.config.recovery_angle_degrees
+        )
         rapid_drop = (
             metrics.downward_hip_velocity_body_lengths_per_second is not None
             and metrics.downward_hip_velocity_body_lengths_per_second >= self.config.rapid_drop_velocity
@@ -69,6 +88,7 @@ class FallStateMachine:
                 track.suspected_at = timestamp
                 track.rapid_drop_seen = rapid_drop
                 track.horizontal_since = timestamp if horizontal else None
+                track.horizontal_last_seen = timestamp if horizontal else None
                 track.low_motion_since = timestamp if horizontal and low_motion else None
 
         elif track.state == DetectorState.SUSPECTED:
@@ -76,6 +96,7 @@ class FallStateMachine:
             if horizontal:
                 track.state = DetectorState.CONFIRMING
                 track.horizontal_since = track.horizontal_since or timestamp
+                track.horizontal_last_seen = timestamp
                 track.low_motion_since = timestamp if low_motion else None
             elif track.suspected_at is not None and timestamp - track.suspected_at > self.config.suspicion_timeout_seconds:
                 track.state = DetectorState.MONITORING
@@ -88,8 +109,14 @@ class FallStateMachine:
             else:
                 if horizontal:
                     track.horizontal_since = track.horizontal_since or timestamp
-                else:
+                    track.horizontal_last_seen = timestamp
+                elif (
+                    track.horizontal_last_seen is None
+                    or timestamp - track.horizontal_last_seen
+                    > self.config.down_posture_gap_tolerance_seconds
+                ):
                     track.horizontal_since = None
+                    track.horizontal_last_seen = None
                 if horizontal and low_motion:
                     track.low_motion_since = track.low_motion_since or timestamp
                 else:
@@ -99,12 +126,23 @@ class FallStateMachine:
                 low_motion_duration = timestamp - track.low_motion_since if track.low_motion_since is not None else 0
                 if (
                     horizontal_duration >= self.config.horizontal_hold_seconds
-                    and low_motion_duration >= self.config.low_motion_hold_seconds
+                    and (
+                        track.rapid_drop_seen
+                        or low_motion_duration >= self.config.low_motion_hold_seconds
+                    )
                 ):
                     track.state = DetectorState.INCIDENT
                     track.incident_at = timestamp
                     track.armed = False
-                    event = self._event(observation, metrics, track.rapid_drop_seen)
+                    event = self._event(
+                        observation,
+                        metrics,
+                        rapid_drop=track.rapid_drop_seen,
+                        low_motion_confirmed=(
+                            low_motion_duration >= self.config.low_motion_hold_seconds
+                        ),
+                        bbox_posture=wide_tilted_pose,
+                    )
                     return previous_state, track.state, event, event.trigger_signals
 
         elif track.state == DetectorState.INCIDENT:
@@ -127,6 +165,7 @@ class FallStateMachine:
             for condition, reason in (
                 (rapid_drop, "rapid_drop"),
                 (horizontal, "horizontal_posture"),
+                (wide_tilted_pose, "wide_tilted_body_box"),
                 (low_motion, "low_motion"),
             )
             if condition
@@ -146,10 +185,16 @@ class FallStateMachine:
         observation: PoseObservation,
         metrics: PoseMetrics,
         rapid_drop: bool,
+        low_motion_confirmed: bool,
+        bbox_posture: bool,
     ) -> DetectionEvent:
-        signals = ["horizontal_persistence", "low_motion_persistence"]
+        signals = ["down_posture_persistence"]
         if rapid_drop:
             signals.insert(0, "rapid_drop")
+        if bbox_posture:
+            signals.append("wide_tilted_body_box")
+        if low_motion_confirmed:
+            signals.append("low_motion_persistence")
         return DetectionEvent(
             schema_version="1.0",
             event_id=str(uuid4()),
@@ -162,12 +207,18 @@ class FallStateMachine:
             trigger_signals=tuple(signals),
             pose_quality=metrics.pose_quality,
             metrics=metrics,
+            limitations=(
+                "single_person_pose_heuristic",
+                "not_a_medical_diagnosis",
+                "requires_human_verification",
+            ),
         )
 
     @staticmethod
     def _clear_candidate(track: TrackState) -> None:
         track.suspected_at = None
         track.horizontal_since = None
+        track.horizontal_last_seen = None
         track.low_motion_since = None
         track.rapid_drop_seen = False
 

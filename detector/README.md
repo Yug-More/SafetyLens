@@ -12,7 +12,7 @@ no_person -> monitoring -> suspected -> confirming -> incident -> cooldown
                   +-------------+-------------------------+
 ```
 
-Low-quality or missing landmarks enter `low_visibility`. Tracking resumes only from fresh observations. A cooldown requires an upright recovery before rearming, preventing repeated alerts while a person remains on the floor.
+Low-quality or missing landmarks enter `low_visibility`. Tracking resumes only from fresh observations. A cooldown requires an upright recovery before rearming, preventing repeated alerts while a person remains on the floor. Confirmation has two paths: a rapid drop followed by persistent down posture, or persistent down posture followed by sustained low motion. Down posture uses torso angle plus a guarded wide-body-box signal so curled floor poses are not missed.
 
 ## Run tests
 
@@ -40,10 +40,36 @@ python -m safetylens_detector.replay path\to\poses.jsonl
 
 Each landmark is `[x, y, visibility]`. The replay prints state transitions and complete event JSON. Values produced here are heuristic signals, not calibrated probability.
 
+## Analyze a prerecorded video
+
+Install the optional local-video runtime into a Python 3.11 or 3.12 environment:
+
+```powershell
+python -m pip install -e "detector[video]"
+```
+
+Download the MediaPipe Pose Landmarker Lite task to the ignored `detector/models` directory:
+
+```powershell
+New-Item -ItemType Directory -Path detector/models -Force
+curl.exe -L --output detector/models/pose_landmarker_lite.task "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task"
+```
+
+Run a clip through pose estimation and the temporal state machine:
+
+```powershell
+$env:PYTHONPATH = "detector/src"
+python -m safetylens_detector.video path\to\clip.mov `
+  --model detector/models/pose_landmarker_lite.task `
+  --sample-fps 12
+```
+
+The JSON result includes pose coverage, state transitions, and any emitted `possible_person_down` events. The first implementation tracks one person per camera and processes frames locally. `12 FPS` is the default because the state machine uses elapsed timestamps rather than frame counts.
+
 ## Next milestone
 
-1. Benchmark candidate pose providers on the actual laptop.
-2. Connect prerecorded video and webcam to the same observation pipeline.
+1. Tune thresholds against positive and negative demo clips.
+2. Connect webcam input to the same observation pipeline.
 3. Encode buffered frames into an incident clip.
 4. Export the event clip through Yug's existing `POST /api/videos/upload` workflow.
 
