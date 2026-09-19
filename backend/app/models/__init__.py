@@ -7,6 +7,14 @@ from app.models.evidence import Evidence
 from app.models.incident import Incident
 from app.models.incident_analysis import IncidentAnalysis
 from app.models.procedure import SafetyProcedure
+from app.models.procedure_policy import (
+    PlanCitation,
+    PlannedAction,
+    ProcedureChunk,
+    ProcedureRetrieval,
+    ProcedureRetrievalMatch,
+    ResponsePlan,
+)
 from app.models.processing_job import ProcessingJob
 from app.models.system_service import SystemService
 from app.models.video import VideoAsset
@@ -22,6 +30,12 @@ __all__ = [
     "Incident",
     "IncidentAnalysis",
     "SafetyProcedure",
+    "ProcedureChunk",
+    "ProcedureRetrieval",
+    "ProcedureRetrievalMatch",
+    "ResponsePlan",
+    "PlannedAction",
+    "PlanCitation",
     "SystemService",
     "VideoAsset",
     "ProcessingJob",

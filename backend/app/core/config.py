@@ -55,6 +55,32 @@ class Settings(BaseSettings):
     )
     ai_demo_mode: bool = Field(default=True, alias="AI_DEMO_MODE")
 
+    procedure_directory: str = Field(
+        default="./data/procedures",
+        alias="PROCEDURE_DIRECTORY",
+    )
+    max_procedure_size_mb: int = Field(default=10, alias="MAX_PROCEDURE_SIZE_MB", ge=1)
+    max_procedure_text_chars: int = Field(
+        default=200_000,
+        alias="MAX_PROCEDURE_TEXT_CHARS",
+        ge=1000,
+    )
+    procedure_chunk_max_chars: int = Field(
+        default=900,
+        alias="PROCEDURE_CHUNK_MAX_CHARS",
+        ge=200,
+        le=4000,
+    )
+    retrieval_top_k: int = Field(default=8, alias="RETRIEVAL_TOP_K", ge=1, le=25)
+    retrieval_min_score: float = Field(
+        default=0.08,
+        alias="RETRIEVAL_MIN_SCORE",
+        ge=0.0,
+        le=1.0,
+    )
+    planner_provider: str = Field(default="demo", alias="PLANNER_PROVIDER")
+    planner_model: str | None = Field(default=None, alias="PLANNER_MODEL")
+
     @field_validator("frontend_origins")
     @classmethod
     def validate_origins(cls, value: str) -> str:
@@ -73,6 +99,14 @@ class Settings(BaseSettings):
             raise ValueError("AI_PROVIDER must be 'demo' or 'openai'")
         return cleaned
 
+    @field_validator("planner_provider")
+    @classmethod
+    def normalize_planner(cls, value: str) -> str:
+        cleaned = value.strip().lower()
+        if cleaned not in {"demo", "openai"}:
+            raise ValueError("PLANNER_PROVIDER must be 'demo' or 'openai'")
+        return cleaned
+
     @property
     def cors_origins(self) -> list[str]:
         return [origin.strip() for origin in self.frontend_origins.split(",") if origin.strip()]
@@ -80,6 +114,10 @@ class Settings(BaseSettings):
     @property
     def max_video_size_bytes(self) -> int:
         return self.max_video_size_mb * 1024 * 1024
+
+    @property
+    def max_procedure_size_bytes(self) -> int:
+        return self.max_procedure_size_mb * 1024 * 1024
 
     @property
     def upload_path(self) -> Path:
@@ -90,8 +128,16 @@ class Settings(BaseSettings):
         return Path(self.frame_directory).expanduser().resolve()
 
     @property
+    def procedure_path(self) -> Path:
+        return Path(self.procedure_directory).expanduser().resolve()
+
+    @property
     def is_demo_ai(self) -> bool:
         return self.ai_provider == "demo"
+
+    @property
+    def is_demo_planner(self) -> bool:
+        return self.planner_provider == "demo"
 
 
 @lru_cache

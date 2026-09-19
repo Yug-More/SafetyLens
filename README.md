@@ -66,44 +66,36 @@ This event-triggered architecture keeps routine footage local and activates adva
 
 ---
 
-## Current Stage (Stage 4)
+## Current Stage (Stage 5)
 
-Stage 4 adds multimodal incident analysis on uploaded video frames, with a Demo AI provider by default and an optional real OpenAI vision provider.
+Stage 5 adds company procedure ingestion, deterministic local retrieval with verified citations, and grounded response-plan generation on top of Stage 4 analysis.
 
 ### Architecture
 
 ```text
-frontend (Next.js)
-   | upload → poll frames → analyze → review
-   v
-backend (FastAPI)
-   | AI provider abstraction (demo | openai)
-   v
-selected JPEG frames → structured IncidentAnalysisResult
-   |
-   +--> SQLite analysis + evidence + human review
+completed analysis
+   → lexical retrieval over stored procedure chunks
+   → verified citations (exact stored text)
+   → Demo/optional planner → ResponsePlan (recommendations only)
 ```
-
-### Workflow
-
-Upload video → extract frames → **Analyze frames** → structured severity/confidence/evidence → human review → (Stages 5–6 later: SOP retrieval and approved actions)
 
 ### Capabilities available now
 
-- Everything from Stages 1–3 (dashboard, API, upload, frame timeline)
-- AI provider abstraction with explicit demo vs real labeling
-- Deterministic Demo AI (no API key) and optional OpenAI vision provider
-- `POST /api/videos/{asset_code}/analyze` and analysis/review endpoints
-- Evidence timestamps that seek the uploaded video player
-- Human review decisions required before treating analysis as confirmed
+- Stages 1–4 preserved (dashboard, upload, frames, multimodal analysis, human analysis review)
+- Procedure upload: PDF, TXT, Markdown with size/path safeguards
+- Deterministic chunking with section/page metadata when available
+- Local lexical retrieval (no paid API required); method labeled in responses
+- Grounded response plans where every policy action cites verified chunks
+- `insufficient_policy` when evidence is missing (no invented policy claims)
+- UI labeling: Demo vs real planner; **Recommended, not executed**
 
-### Stage 4 limitations
+### Stage 5 limitations
 
-- No SOP retrieval from analysis (Stage 5)
-- No approval execution / notifications / PDF reports (Stage 6)
-- Sean’s live detector is not required; uploaded videos analyze independently
-- Detector pose/heuristic scores are never treated as fall probability
-- No authentication / RBAC
+- No human approval of response actions (Stage 6)
+- No action execution, alerts, tickets, or emergency contact (Stage 6)
+- No PDF incident reports or full audit execution trail (Stage 6)
+- Live detector integration remains separate (Sean)
+- Sample SOP text is demonstration content, not legal advice
 
 ---
 
