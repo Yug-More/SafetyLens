@@ -70,11 +70,23 @@ function OperatorNotificationAlert({
         </div>
         <div className="min-w-0">
           <p className="text-sm font-semibold text-red-100">{notification.title}</p>
-          <p className="mt-1 text-xs text-red-200/90">{notification.message}</p>
-          <p className="mt-1 text-[11px] text-red-200/70">
+          <p className="mt-1 text-xs text-red-200/90">
             {notification.camera_name ?? "Unknown camera"} · {notification.location}
-            {notification.severity ? ` · ${notification.severity} severity` : ""}
-            {" · "}
+          </p>
+          <p className="mt-1 text-xs text-red-200/80">
+            {notification.severity
+              ? `${notification.severity.charAt(0).toUpperCase()}${notification.severity.slice(1)} severity`
+              : "Severity pending"}
+            {notification.confidence != null
+              ? ` · ${Math.round(
+                  notification.confidence <= 1
+                    ? notification.confidence * 100
+                    : notification.confidence
+                )}% confidence`
+              : ""}
+            {" · Review required"}
+          </p>
+          <p className="mt-1 text-[11px] text-red-200/60">
             {formatRelativeTime(notification.detected_at)}
           </p>
         </div>
@@ -217,8 +229,16 @@ function MonitorPageContent() {
       return "monitoring";
     }
     if (workspaceState?.incidentDetected) return "incident";
-    if (workspaceState?.analyzing) return "analyzing";
+    if (
+      workspaceState?.analyzing ||
+      workspaceState?.pipelineStage === "analyzing" ||
+      workspaceState?.pipelineStage === "matching_procedure" ||
+      workspaceState?.pipelineStage === "preparing_response"
+    ) {
+      return "analyzing";
+    }
     if (workspaceState?.processing) return "processing";
+    if (workspaceState?.pipelineStage === "human_review_required") return "incident";
     return "monitoring";
   }
 
@@ -340,7 +360,7 @@ function MonitorPageContent() {
             }}
           >
             <Upload data-icon="inline-start" />
-            Upload Demo Video
+            Upload Demo Event
           </Button>
         }
       />
@@ -350,14 +370,11 @@ function MonitorPageContent() {
           <AlertTriangle className="mt-0.5 size-4 shrink-0 text-sky-400" aria-hidden="true" />
           <span>
             Lightweight detection monitors every feed. Multimodal AI is invoked only when an
-            event requires deeper analysis.
+            event requires deeper analysis. For this demonstration, uploading a clip simulates
+            the event handoff from an existing facility camera.
           </span>
         </p>
       </div>
-
-      <GuidedDemoPanel defaultCollapsed />
-
-      <DetectorHandoffPanel onOpenAsset={handleOpenAsset} />
 
       <div className="grid gap-4 rounded-xl border border-border bg-panel p-4 text-sm sm:grid-cols-3">
         <div>
@@ -365,15 +382,15 @@ function MonitorPageContent() {
           <p className="mt-1 font-medium text-foreground">{data.facility.name}</p>
         </div>
         <div>
-          <p className="text-muted-foreground">Demo upload camera</p>
+          <p className="text-muted-foreground">Event camera</p>
           <p className="mt-1 font-medium text-foreground">
             {uploadCamera?.name ?? "Camera 03"} —{" "}
             {uploadCamera?.location ?? DEFAULT_UPLOAD_LOCATION}
           </p>
         </div>
         <div>
-          <p className="text-muted-foreground">Connection state</p>
-          <p className="mt-1 font-medium text-emerald-300">All feeds online</p>
+          <p className="text-muted-foreground">System status</p>
+          <p className="mt-1 font-medium text-emerald-300">Operational</p>
         </div>
       </div>
 
@@ -436,102 +453,97 @@ function MonitorPageContent() {
               reloadLibrary();
               void reloadNotifications();
             }}
-            onStateChange={setWorkspaceState}
+            onStateChange={(state) => {
+              setWorkspaceState(state);
+              if (
+                state.pipelineStage === "human_review_required" ||
+                state.incidentDetected
+              ) {
+                void reloadNotifications();
+              }
+            }}
           />
         </div>
       ) : null}
 
-      <section className="rounded-xl border border-border bg-panel p-4 shadow-sm">
-        <div className="mb-3">
-          <h2 className="text-base font-semibold text-foreground">Video Library</h2>
-          <p className="text-sm text-muted-foreground">
-            Uploaded recordings prepared for Stage 4 AI analysis
-          </p>
-        </div>
+      <details className="rounded-xl border border-border bg-panel/70 p-4">
+        <summary className="cursor-pointer text-sm font-medium text-muted-foreground">
+          Developer tools
+        </summary>
+        <div className="mt-4 space-y-4">
+          <GuidedDemoPanel defaultCollapsed />
+          <DetectorHandoffPanel onOpenAsset={handleOpenAsset} />
 
-        {libraryLoading ? <PanelSkeleton className="min-h-32" /> : null}
-
-        {!libraryLoading && librarySource === "error" ? (
-          <EmptyState
-            title="Video library unavailable"
-            description={
-              libraryError ??
-              `Unable to load videos from ${getApiBaseUrl()}. Uploads require the live API.`
-            }
-            actionLabel="Retry"
-            onAction={reloadLibrary}
-          />
-        ) : null}
-
-        {!libraryLoading && librarySource !== "error" && videos.length === 0 ? (
-          <EmptyState
-            title="No uploaded videos yet"
-            description="Upload a short MP4, MOV, or WebM clip to extract metadata and frames."
-            actionLabel="Upload Demo Video"
-            onAction={() => setUploadOpen(true)}
-          />
-        ) : null}
-
-        {!libraryLoading && videos.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-sm">
-              <thead className="border-b border-border text-xs tracking-wide text-muted-foreground uppercase">
-                <tr>
-                  <th className="px-3 py-2 font-medium">Filename</th>
-                  <th className="px-3 py-2 font-medium">Location</th>
-                  <th className="px-3 py-2 font-medium">Camera</th>
-                  <th className="px-3 py-2 font-medium">Duration</th>
-                  <th className="px-3 py-2 font-medium">Resolution</th>
-                  <th className="px-3 py-2 font-medium">Status</th>
-                  <th className="px-3 py-2 font-medium">Uploaded</th>
-                  <th className="px-3 py-2 font-medium">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {videos.map((video) => (
-                  <tr key={video.id} className="border-b border-border/70 last:border-0">
-                    <td className="px-3 py-2">
-                      <p className="font-medium text-foreground">{video.originalFilename}</p>
-                      <p className="font-mono text-[11px] text-muted-foreground">
-                        {video.assetCode}
-                      </p>
-                    </td>
-                    <td className="px-3 py-2 text-muted-foreground">{video.location}</td>
-                    <td className="px-3 py-2 text-muted-foreground">
-                      {video.cameraName ?? "—"}
-                    </td>
-                    <td className="px-3 py-2 text-muted-foreground">
-                      {video.durationSeconds != null
-                        ? `${video.durationSeconds.toFixed(1)}s`
-                        : "—"}
-                    </td>
-                    <td className="px-3 py-2 text-muted-foreground">
-                      {video.width && video.height
-                        ? `${video.width}×${video.height}`
-                        : "—"}
-                    </td>
-                    <td className="px-3 py-2 capitalize text-muted-foreground">
-                      {video.status}
-                    </td>
-                    <td className="px-3 py-2 text-muted-foreground">
-                      {formatRelativeTime(video.createdAt)}
-                    </td>
-                    <td className="px-3 py-2">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleSelectVideo(video)}
-                      >
-                        View
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div>
+            <h2 className="text-sm font-semibold text-foreground">Video library</h2>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Historical uploads — not required for the primary demo flow
+            </p>
           </div>
-        ) : null}
-      </section>
+
+          {libraryLoading ? <PanelSkeleton className="min-h-24" /> : null}
+
+          {!libraryLoading && librarySource === "error" ? (
+            <EmptyState
+              title="Video library unavailable"
+              description={
+                libraryError ??
+                `Unable to load videos from ${getApiBaseUrl()}. Uploads require the live API.`
+              }
+              actionLabel="Retry"
+              onAction={reloadLibrary}
+            />
+          ) : null}
+
+          {!libraryLoading && librarySource !== "error" && videos.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No uploaded clips yet.</p>
+          ) : null}
+
+          {!libraryLoading && videos.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-left text-sm">
+                <thead className="border-b border-border text-xs tracking-wide text-muted-foreground uppercase">
+                  <tr>
+                    <th className="px-3 py-2 font-medium">Filename</th>
+                    <th className="px-3 py-2 font-medium">Location</th>
+                    <th className="px-3 py-2 font-medium">Camera</th>
+                    <th className="px-3 py-2 font-medium">Status</th>
+                    <th className="px-3 py-2 font-medium">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {videos.map((video) => (
+                    <tr key={video.id} className="border-b border-border/70 last:border-0">
+                      <td className="px-3 py-2">
+                        <p className="font-medium text-foreground">{video.originalFilename}</p>
+                        <p className="font-mono text-[11px] text-muted-foreground">
+                          {video.assetCode}
+                        </p>
+                      </td>
+                      <td className="px-3 py-2 text-muted-foreground">{video.location}</td>
+                      <td className="px-3 py-2 text-muted-foreground">
+                        {video.cameraName ?? "—"}
+                      </td>
+                      <td className="px-3 py-2 capitalize text-muted-foreground">
+                        {video.status}
+                      </td>
+                      <td className="px-3 py-2">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleSelectVideo(video)}
+                        >
+                          View
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+        </div>
+      </details>
 
       <VideoUploadDialog
         open={uploadOpen}

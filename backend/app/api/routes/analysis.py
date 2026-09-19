@@ -37,14 +37,18 @@ def analyze_video(
     video_identifier: str,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
+    force_new: bool = Query(default=False),
 ) -> ItemResponse[AnalyzeVideoResponse]:
-    response = analysis_service.start_analysis(db, video_identifier)
-    analysis = analysis_service.get_analysis(db, response.analysis_code)
-    background_tasks.add_task(
-        analysis_service.run_analysis_job,
-        analysis.id,
-        analysis.processing_job_id,
+    response, should_run = analysis_service.ensure_analysis_for_video(
+        db, video_identifier, force_new=force_new
     )
+    if should_run:
+        analysis = analysis_service.get_analysis(db, response.analysis_code)
+        background_tasks.add_task(
+            analysis_service.run_analysis_job,
+            analysis.id,
+            analysis.processing_job_id,
+        )
     return ItemResponse(data=response)
 
 
