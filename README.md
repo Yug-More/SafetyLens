@@ -66,26 +66,37 @@ This event-triggered architecture keeps routine footage local and activates adva
 
 ---
 
-## Current Stage (Stage 1)
+## Current Stage (Stage 2)
 
-Stage 1 delivers a polished **frontend foundation** with realistic mock data for a safety-operations command center.
+Stage 2 adds a FastAPI backend with SQLite persistence, seeded demo data, typed API contracts, and frontend API integration with visible offline-demo fallback.
 
-### Frontend capabilities available now
+### Architecture
 
-- Persistent operations shell (sidebar, mobile drawer, top navigation)
-- Overview dashboard with metrics, live monitor placeholder, active incident, timeline, system status, and activity feed
-- Live Monitor, Incidents, Response Center, Procedures, Reports, and Settings routes
-- Typed mock data for cameras, incidents, procedures, actions, services, and activity
-- Mock interactions (toasts, confirmation dialogs) with no backend calls
-- Dark enterprise operations visual design optimized for supervisors
+```text
+frontend (Next.js)  --REST-->  backend (FastAPI + SQLite)
+        |                              |
+   UI + fallback data            seeded demo records
+```
 
-### Stage 1 limitations
+### Capabilities available now
 
-- No backend, database, or authentication
-- No real video processing or live camera streams
-- No multimodal AI integration
-- No real notifications, action execution, or persistent settings
-- All incidents, metrics, and procedures are mock data clearly labeled for demo use
+- Stage 1 operations console UI (preserved)
+- FastAPI endpoints for health, dashboard, cameras, incidents, procedures, system status, and demo info
+- SQLite persistence with idempotent seeding for Redwood Distribution Center
+- Frontend typed API client and mapping layer
+- Loading skeletons, retryable errors, empty states, and Offline Demo Mode banner
+- Backend pytest suite using an isolated temporary database
+
+### Stage 2 limitations
+
+- No video processing or live camera streams
+- No multimodal AI verification
+- No embeddings / RAG procedure retrieval
+- No real notifications or approval execution
+- No report generation
+- No authentication / RBAC
+
+Live monitoring, AI verification, and notifications remain simulated.
 
 ---
 
@@ -159,20 +170,31 @@ Stage 1 already presents the resulting structured incident in the UI:
 
 ```text
 SafetyLens/
-├── frontend/                 # Next.js Stage 1 application
+├── frontend/                 # Next.js operations console
 │   ├── src/
 │   │   ├── app/              # Routes and layouts
 │   │   ├── components/       # Shell + domain UI components
-│   │   ├── data/             # Typed mock data
-│   │   ├── lib/              # Utilities and navigation config
-│   │   └── types/            # Shared TypeScript types
+│   │   ├── data/             # Fallback / mock data
+│   │   ├── hooks/            # API resource hooks
+│   │   ├── lib/api/          # Typed API client + mappers
+│   │   └── types/            # UI view types
 │   ├── .env.example
 │   └── package.json
-├── README.md
-└── LICENSE                   # Planned
+├── backend/                  # FastAPI Stage 2 service
+│   ├── app/
+│   │   ├── api/routes/       # REST endpoints
+│   │   ├── core/             # Settings, enums, errors
+│   │   ├── database/         # SQLAlchemy session
+│   │   ├── models/           # ORM models
+│   │   ├── schemas/          # Pydantic contracts
+│   │   ├── services/         # Query services
+│   │   └── seed/             # Idempotent demo seed
+│   ├── tests/
+│   ├── requirements.txt
+│   ├── .env.example
+│   └── README.md
+└── README.md
 ```
-
-Backend, detection, retrieval, and sample-data directories will be added in later stages.
 
 ---
 
@@ -181,10 +203,11 @@ Backend, detection, retrieval, and sample-data directories will be added in late
 ### Prerequisites
 
 - Node.js 18 or later
+- Python 3.11 or later
 - npm
 - Git
 
-No API key is required to run the Stage 1 frontend.
+No API keys are required for Stage 2.
 
 ### 1. Clone the repository
 
@@ -193,50 +216,84 @@ git clone https://github.com/Yug-More/SafetyLens.git
 cd SafetyLens
 ```
 
-### 2. Install frontend dependencies
+### 2. Start the backend
+
+```bash
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+python -m app.seed.run
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+API docs: http://localhost:8000/docs
+
+### 3. Start the frontend
 
 ```bash
 cd frontend
 npm install
-```
-
-### 3. Optional environment file
-
-```bash
 cp .env.example .env.local
-```
-
-Stage 1 does not require any values to be set. `.env` files are ignored by Git.
-
-### 4. Run the frontend
-
-```bash
 npm run dev
 ```
 
-Open:
+Open http://localhost:3000
 
-```text
-http://localhost:3000
+### Environment variables
+
+Frontend (`.env.local`):
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_DEMO_FALLBACK=true
 ```
+
+Backend (`.env`):
+
+```env
+APP_NAME=SafetyLens API
+ENVIRONMENT=development
+API_HOST=127.0.0.1
+API_PORT=8000
+DATABASE_URL=sqlite:///./safetylens.db
+FRONTEND_ORIGINS=http://localhost:3000
+DEMO_MODE=true
+```
+
+### Fallback behavior
+
+- API available → UI uses live API data
+- API unavailable and `NEXT_PUBLIC_DEMO_FALLBACK=true` → centralized fallback data with a visible **Offline Demo Mode** banner (and a development console warning)
+- API unavailable and fallback disabled → professional connection error with retry
 
 ### Useful commands
 
+Frontend:
+
 ```bash
-npm run dev      # development server
-npm run build    # production build
-npm run start    # serve production build
-npm run lint     # ESLint
-npx tsc --noEmit # TypeScript check
+npm run dev
+npm run build
+npm run lint
+npm run typecheck
+```
+
+Backend:
+
+```bash
+pytest
+python -m app.seed.run
+uvicorn app.main:app --reload
 ```
 
 ---
 
 ## Planned Future Stages
 
-1. **Stage 2** — Video upload / simulated live feed, edge detection hooks, multimodal verification API
-2. **Stage 3** — Procedure retrieval, response approval execution, notifications, incident reports
-3. **Stage 4** — Multi-camera operations, auth/RBAC, persistence, production observability
+1. **Stage 3** — Video upload / simulated live feed, edge detection hooks, multimodal verification API
+2. **Stage 4** — Approval execution, notifications, incident report generation
+3. **Stage 5** — Multi-camera operations, auth/RBAC, production observability
 
 ---
 
@@ -282,4 +339,4 @@ The system is designed to:
 
 This project is a hackathon prototype and should not be treated as a certified emergency-response or workplace-safety system. Critical safety decisions should always involve qualified personnel.
 
-Stage 1 uses mock data only. It does not claim that real AI detection, video analysis, notifications, or emergency actions are operational.
+Stage 2 uses seeded API data with an optional offline demo fallback. It does not claim that real AI detection, video analysis, notifications, or emergency actions are operational.
