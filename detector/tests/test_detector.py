@@ -265,6 +265,38 @@ class DetectorEngineTests(unittest.TestCase):
         results = [self.engine.process(item) for item in sequence]
         self.assertEqual(sum(result.event is not None for result in results), 1)
 
+    def test_overhead_fall_uses_persistent_body_displacement(self) -> None:
+        def overhead(timestamp: float, shoulder_y: float) -> PoseObservation:
+            return PoseObservation(
+                timestamp_seconds=timestamp,
+                track_id="person-1",
+                landmarks={
+                    "left_shoulder": Landmark(0.45, shoulder_y, 0.99),
+                    "right_shoulder": Landmark(0.55, shoulder_y, 0.99),
+                    "left_hip": Landmark(0.46, shoulder_y + 0.25, 0.99),
+                    "right_hip": Landmark(0.54, shoulder_y + 0.25, 0.99),
+                    "left_knee": Landmark(0.46, shoulder_y + 0.40, 0.99),
+                    "right_knee": Landmark(0.54, shoulder_y + 0.40, 0.99),
+                },
+            )
+
+        frames = [overhead(0.0, 0.20)] + [
+            overhead(t, 0.34)
+            for t in (0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6)
+        ]
+        events = [
+            result.event for result in map(self.engine.process, frames) if result.event
+        ]
+        self.assertEqual(len(events), 1)
+        self.assertIn("downward_body_displacement", events[0].trigger_signals)
+
+    def test_small_seated_displacement_does_not_count_as_overhead_fall(self) -> None:
+        frames = [pose(0.0, center_y=0.40)] + [
+            pose(t, center_y=0.48) for t in (0.2, 0.4, 0.6, 0.8, 1.0, 1.2)
+        ]
+        results = [self.engine.process(item) for item in frames]
+        self.assertTrue(all(result.event is None for result in results))
+
 
 if __name__ == "__main__":
     unittest.main()

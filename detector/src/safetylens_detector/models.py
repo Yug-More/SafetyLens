@@ -47,6 +47,7 @@ class PoseObservation:
 class PoseMetrics:
     timestamp_seconds: float
     pose_quality: float
+    shoulder_center_y: float | None
     torso_angle_degrees_from_vertical: float | None
     bbox_width_height_ratio: float | None
     downward_hip_velocity_body_lengths_per_second: float | None
@@ -62,6 +63,9 @@ class DetectorConfig:
     minimum_horizontal_bbox_ratio: float = 1.25
     down_bbox_width_height_ratio: float = 1.35
     minimum_tilt_for_bbox_down_degrees: float = 25.0
+    overhead_shoulder_drop_ratio: float = 0.12
+    overhead_settled_motion_threshold: float = 0.75
+    overhead_hold_seconds: float = 1.20
     recovery_angle_degrees: float = 35.0
     maximum_recovery_bbox_ratio: float = 1.20
     horizontal_hold_seconds: float = 0.50
@@ -85,6 +89,9 @@ class DetectorConfig:
             "minimum_horizontal_bbox_ratio": self.minimum_horizontal_bbox_ratio,
             "down_bbox_width_height_ratio": self.down_bbox_width_height_ratio,
             "minimum_tilt_for_bbox_down_degrees": self.minimum_tilt_for_bbox_down_degrees,
+            "overhead_shoulder_drop_ratio": self.overhead_shoulder_drop_ratio,
+            "overhead_settled_motion_threshold": self.overhead_settled_motion_threshold,
+            "overhead_hold_seconds": self.overhead_hold_seconds,
             "recovery_angle_degrees": self.recovery_angle_degrees,
             "maximum_recovery_bbox_ratio": self.maximum_recovery_bbox_ratio,
             "horizontal_hold_seconds": self.horizontal_hold_seconds,

@@ -12,7 +12,7 @@ no_person -> monitoring -> suspected -> confirming -> incident -> cooldown
                   +-------------+-------------------------+
 ```
 
-Low-quality or missing landmarks enter `low_visibility`. Tracking resumes only from fresh observations. A cooldown requires an upright recovery before rearming, preventing repeated alerts while a person remains on the floor. Confirmation has two paths: a rapid drop followed by persistent down posture, or persistent down posture followed by sustained low motion. Down posture uses torso angle plus a guarded wide-body-box signal so curled floor poses are not missed.
+Low-quality or missing landmarks enter `low_visibility`. Tracking resumes only from fresh observations. A cooldown requires an upright recovery before rearming, preventing repeated alerts while a person remains on the floor. Confirmation has two paths: a rapid drop followed by persistent down posture, or persistent down posture followed by sustained low motion. Down posture combines torso angle, a guarded wide-body-box signal for curled poses, and relative shoulder displacement for high/overhead cameras where lying lengthwise can still appear vertical in image coordinates.
 
 ## Run tests
 
@@ -65,6 +65,8 @@ python -m safetylens_detector.video path\to\clip.mov `
 ```
 
 The JSON result includes pose coverage, state transitions, and any emitted `possible_person_down` events. The first implementation tracks one person per camera and processes frames locally. `12 FPS` is the default because the state machine uses elapsed timestamps rather than frame counts.
+
+Brief pose-estimation dropouts are tolerated for 0.5 seconds by default. A longer absence transitions the track to `no_person`; this prevents a single missed frame during a fall from erasing the candidate while still handling someone walking out of view.
 
 ## Next milestone
 
