@@ -13,6 +13,8 @@ from app.core.config import Settings, get_settings
 from app.core.enums import (
     ActionPriority,
     AnalysisStatus,
+    PlanApprovalStatus,
+    PlanExecutionStatus,
     ProcedureSourceFormat,
     ResponsePlanStatus,
     RetrievalMethod,
@@ -483,6 +485,7 @@ def _plan_to_read(plan: ResponsePlan) -> ResponsePlanRead:
                 responsible_role=action.responsible_role,
                 requires_human_approval=action.requires_human_approval,
                 is_policy_grounded=action.is_policy_grounded,
+                selection_status=getattr(action, "selection_status", "recommended") or "recommended",
                 citations=citations,
             )
         )
@@ -497,6 +500,12 @@ def _plan_to_read(plan: ResponsePlan) -> ResponsePlanRead:
             limitations = json.loads(plan.limitations_json)
         except json.JSONDecodeError:
             limitations = []
+    executed = getattr(plan, "execution_status", "none") in {
+        "executed",
+        "partially_failed",
+        "failed",
+        "in_progress",
+    }
     return ResponsePlanRead(
         id=plan.id,
         plan_code=plan.plan_code,
@@ -505,6 +514,9 @@ def _plan_to_read(plan: ResponsePlan) -> ResponsePlanRead:
         retrieval_id=plan.retrieval_id,
         retrieval_code=plan.retrieval.retrieval_code if plan.retrieval else None,
         status=ResponsePlanStatus(plan.status),
+        approval_status=PlanApprovalStatus(getattr(plan, "approval_status", "pending") or "pending"),
+        execution_status=PlanExecutionStatus(getattr(plan, "execution_status", "none") or "none"),
+        incident_id=getattr(plan, "incident_id", None),
         summary=plan.summary,
         rationale=plan.rationale,
         provider_name=plan.provider_name,
@@ -516,7 +528,7 @@ def _plan_to_read(plan: ResponsePlan) -> ResponsePlanRead:
         error_code=plan.error_code,
         error_message=plan.error_message,
         actions=actions,
-        recommendations_executed=False,
+        recommendations_executed=executed,
         created_at=plan.created_at,
         updated_at=plan.updated_at,
     )
@@ -641,6 +653,8 @@ def generate_response_plan(
             limitations_json=json.dumps(["Planner provider failure"]),
             error_code="PLANNER_FAILED",
             error_message=str(exc),
+            approval_status=PlanApprovalStatus.PENDING.value,
+            execution_status=PlanExecutionStatus.NONE.value,
         )
         db.add(plan)
         db.commit()
@@ -664,6 +678,8 @@ def generate_response_plan(
         is_demo=draft.is_demo,
         is_simulated=draft.is_simulated,
         limitations_json=json.dumps(draft.limitations),
+        approval_status=PlanApprovalStatus.PENDING.value,
+        execution_status=PlanExecutionStatus.NONE.value,
     )
     db.add(plan)
     db.flush()
@@ -694,6 +710,7 @@ def generate_response_plan(
             responsible_role=action_draft.responsible_role,
             requires_human_approval=action_draft.requires_human_approval,
             is_policy_grounded=action_draft.is_policy_grounded,
+            selection_status="recommended",
         )
         db.add(action)
         db.flush()
@@ -706,6 +723,22 @@ def generate_response_plan(
                     excerpt=excerpt,
                 )
             )
+
+    from app.core.enums import AuditActorType, AuditEventType
+    from app.services import audit as audit_service
+
+    audit_service.append_audit_event(
+        db,
+        event_type=AuditEventType.PLAN_GENERATED,
+        actor_type=AuditActorType.SYSTEM,
+        actor_name=draft.provider_name,
+        correlation_id=plan.plan_code,
+        analysis_id=plan.analysis_id,
+        plan_id=plan.id,
+        metadata={"plan_code": plan.plan_code, "status": plan.status},
+        new_status=plan.status,
+        simulation=draft.is_simulated,
+    )
 
     db.commit()
     return get_response_plan(db, plan.plan_code)

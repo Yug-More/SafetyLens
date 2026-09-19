@@ -4,6 +4,7 @@ from app.models.analysis_evidence import AnalysisEvidence
 from app.models.analysis_review import AnalysisReview
 from app.models.camera import Camera
 from app.models.evidence import Evidence
+from app.models.execution import ActionExecution, AuditEvent, IncidentReport, PlanApproval
 from app.models.incident import Incident
 from app.models.incident_analysis import IncidentAnalysis
 from app.models.procedure import SafetyProcedure
@@ -36,6 +37,10 @@ __all__ = [
     "ResponsePlan",
     "PlannedAction",
     "PlanCitation",
+    "PlanApproval",
+    "ActionExecution",
+    "AuditEvent",
+    "IncidentReport",
     "SystemService",
     "VideoAsset",
     "ProcessingJob",

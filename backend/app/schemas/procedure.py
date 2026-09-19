@@ -4,6 +4,8 @@ from pydantic import Field, field_validator
 
 from app.core.enums import (
     ActionPriority,
+    PlanApprovalStatus,
+    PlanExecutionStatus,
     ResponsePlanStatus,
     RetrievalMethod,
     RetrievalStatus,
@@ -117,6 +119,7 @@ class PlannedActionRead(APIModel):
     responsible_role: str
     requires_human_approval: bool
     is_policy_grounded: bool
+    selection_status: str = "recommended"
     citations: list[PlanCitationRead] = Field(default_factory=list)
 
 
@@ -128,6 +131,9 @@ class ResponsePlanRead(APIModel):
     retrieval_id: str | None = None
     retrieval_code: str | None = None
     status: ResponsePlanStatus
+    approval_status: PlanApprovalStatus = PlanApprovalStatus.PENDING
+    execution_status: PlanExecutionStatus = PlanExecutionStatus.NONE
+    incident_id: str | None = None
     summary: str | None = None
     rationale: str | None = None
     provider_name: str

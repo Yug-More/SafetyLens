@@ -102,14 +102,38 @@ class ResponsePlan(Base, IdMixin, TimestampMixin):
     limitations_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     error_code: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     error_message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    approval_status: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+        default="pending",
+        index=True,
+    )
+    execution_status: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+        default="none",
+        index=True,
+    )
+    incident_id: Mapped[Optional[str]] = mapped_column(
+        String(36),
+        ForeignKey("incidents.id"),
+        nullable=True,
+        index=True,
+    )
 
     analysis = relationship("IncidentAnalysis")
     retrieval = relationship("ProcedureRetrieval")
+    incident = relationship("Incident")
     actions = relationship(
         "PlannedAction",
         back_populates="plan",
         cascade="all, delete-orphan",
         order_by="PlannedAction.action_order",
+    )
+    approvals = relationship(
+        "PlanApproval",
+        back_populates="plan",
+        cascade="all, delete-orphan",
     )
 
 
@@ -129,10 +153,21 @@ class PlannedAction(Base, IdMixin, TimestampMixin):
     responsible_role: Mapped[str] = mapped_column(String(120), nullable=False)
     requires_human_approval: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     is_policy_grounded: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    selection_status: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+        default="recommended",
+    )
+    # recommended | approved | rejected | unselected
 
     plan = relationship("ResponsePlan", back_populates="actions")
     citations = relationship(
         "PlanCitation",
+        back_populates="action",
+        cascade="all, delete-orphan",
+    )
+    executions = relationship(
+        "ActionExecution",
         back_populates="action",
         cascade="all, delete-orphan",
     )

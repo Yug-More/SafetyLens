@@ -66,36 +66,38 @@ This event-triggered architecture keeps routine footage local and activates adva
 
 ---
 
-## Current Stage (Stage 5)
+## Current Stage (Stage 6)
 
-Stage 5 adds company procedure ingestion, deterministic local retrieval with verified citations, and grounded response-plan generation on top of Stage 4 analysis.
+Stage 6 adds human approval, controlled simulated action execution, an append-only audit trail, and downloadable PDF incident reports on top of Stage 5 grounded response plans.
 
 ### Architecture
 
 ```text
-completed analysis
-   → lexical retrieval over stored procedure chunks
-   → verified citations (exact stored text)
-   → Demo/optional planner → ResponsePlan (recommendations only)
+completed grounded response plan
+   → explicit human approve / reject (selected actions)
+   → SimulatedActionExecutor (idempotent, no real side effects)
+   → append-only AuditEvent timeline
+   → IncidentReport + server-side PDF download
 ```
 
 ### Capabilities available now
 
-- Stages 1–4 preserved (dashboard, upload, frames, multimodal analysis, human analysis review)
-- Procedure upload: PDF, TXT, Markdown with size/path safeguards
-- Deterministic chunking with section/page metadata when available
-- Local lexical retrieval (no paid API required); method labeled in responses
-- Grounded response plans where every policy action cites verified chunks
-- `insufficient_policy` when evidence is missing (no invented policy claims)
-- UI labeling: Demo vs real planner; **Recommended, not executed**
+- Stages 1–5 preserved (dashboard, upload, frames, multimodal analysis, procedure retrieval, citations, response plans)
+- Persistent plan approval: pending, approved, partially approved, rejected
+- Confirmation-gated approval and execution (opening a page never implies approval)
+- Deterministic simulated executor for supervisor alert, medical assistance request, ticket, evidence preserve, isolation recommendation, follow-up
+- Idempotent execution keys; safe retry of failed simulated actions only
+- Append-only audit events (application-level; not a legal compliance ledger)
+- Incident reports with evidence, citations, approvals, execution outcomes, and simulation disclosure
+- Server-side PDF generation (reportlab) with safe filenames
 
-### Stage 5 limitations
+### Stage 6 limitations
 
-- No human approval of response actions (Stage 6)
-- No action execution, alerts, tickets, or emergency contact (Stage 6)
-- No PDF incident reports or full audit execution trail (Stage 6)
+- All action outcomes are **SIMULATED** — no real Slack, email, SMS, emergency, or ticketing calls
+- Authentication/authorization remain demo-user prototypes (not production RBAC)
+- Audit “immutability” is application-level append-only on SQLite, not tamper-resistant storage
 - Live detector integration remains separate (Sean)
-- Sample SOP text is demonstration content, not legal advice
+- Stage 7 live operations / multi-camera work is not started
 
 ---
 
@@ -306,9 +308,8 @@ uvicorn app.main:app --reload
 
 ## Planned Future Stages
 
-1. **Stage 4** — Multimodal AI verification, incident classification, confidence/evidence explanations
-2. **Stage 5** — Approval execution, notifications, incident report generation
-3. **Stage 6** — Multi-camera operations, auth/RBAC, production observability
+1. **Stage 7** — Multi-camera operations, auth/RBAC, production observability (not started)
+2. Live detector integration remains a separate teammate track
 
 ---
 
