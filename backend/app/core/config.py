@@ -82,6 +82,15 @@ class Settings(BaseSettings):
     planner_provider: str = Field(default="demo", alias="PLANNER_PROVIDER")
     planner_model: str | None = Field(default=None, alias="PLANNER_MODEL")
 
+    detector_events_directory: str = Field(
+        default="./data/detector-events",
+        alias="DETECTOR_EVENTS_DIRECTORY",
+    )
+    detector_ingest_auto_analyze: bool = Field(
+        default=True,
+        alias="DETECTOR_INGEST_AUTO_ANALYZE",
+    )
+
     @field_validator("frontend_origins")
     @classmethod
     def validate_origins(cls, value: str) -> str:
@@ -135,6 +144,10 @@ class Settings(BaseSettings):
     @property
     def report_path(self) -> Path:
         return Path(self.report_directory).expanduser().resolve()
+
+    @property
+    def detector_events_path(self) -> Path:
+        return Path(self.detector_events_directory).expanduser().resolve()
 
     @property
     def is_demo_ai(self) -> bool:

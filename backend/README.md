@@ -1,6 +1,6 @@
-# SafetyLens Backend (Stage 6)
+# SafetyLens Backend (Stage 7)
 
-FastAPI service with typed REST contracts, SQLite persistence, video processing, multimodal analysis, procedure retrieval, grounded response planning, human approval, simulated action execution, append-only audit events, and PDF incident reports.
+FastAPI service covering Stages 1–7: video pipeline, multimodal analysis, procedure retrieval, human approval, simulated execution, audit/PDF reports, detector event handoff, and safe demo reset.
 
 ## Setup
 
@@ -14,84 +14,37 @@ python -m app.seed.run
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-If upgrading an existing local SQLite file after Stage 6 schema changes, delete `safetylens.db` and re-seed (tests always use a fresh in-memory DB).
+After schema changes, delete `safetylens.db` and re-seed.
 
-## Stage 6 environment
+## Stage 7 detector ingestion
 
-| Variable | Description | Default |
-|---|---|---|
-| `PROCEDURE_DIRECTORY` | Stored procedure originals | `./data/procedures` |
-| `REPORT_DIRECTORY` | Generated PDF reports (gitignored) | `./data/reports` |
-| `MAX_PROCEDURE_SIZE_MB` | Upload size limit | `10` |
-| `PLANNER_PROVIDER` | `demo` or `openai` | `demo` |
-| `PLANNER_MODEL` | Optional real planner model | empty |
+Accepts Sean’s version 1 event JSON (+ evidence clip) and maps into the existing Stage 3 upload → prepare → Stage 4 analyze pipeline.
 
-Never commit `.env`, uploaded media, generated reports, or databases.
+| Endpoint | Purpose |
+|---|---|
+| `POST /api/detector/events` | Ingest event JSON + clip (`multipart`) |
+| `GET /api/detector/events` | List recent handoffs |
+| `GET /api/detector/events/{event_id}` | Read mapping / status |
+| `POST /api/detector/events/{event_id}/retry` | Safe retry after failure |
+| `POST /api/demo/reset` | Confirmed demo-state reset (`DEMO_MODE` only) |
 
-## Approval workflow
+### Contract rules
 
-1. Only `completed` grounded response plans can be reviewed.
-2. `insufficient_policy` and `failed` plans cannot be approved or executed.
-3. `POST .../approve` requires `confirmed=true`, selected action IDs from that plan, reviewer name, optional notes.
-4. Partial approval selects a subset of actions; rejection stores an optional reason.
-5. Double approval and approval after execution starts are rejected (`409`).
-6. Demo identity defaults to `demo-reviewer`. Production auth/RBAC is **not** implemented.
+- `schema_version` must be `1.0`
+- `event_id` is unique; duplicates reuse the existing asset/job/analysis mapping
+- `source_id` is a detector label; `camera_id` must be a real Camera PK (e.g. `cam-04`) when provided
+- `pose_quality` is landmark reliability — never copied into AI confidence
+- `heuristic_score` is not calibrated probability
+- Absolute detector workstation paths are never returned by the API
+- Clip paths (when not uploaded) must resolve under `DETECTOR_EVENTS_DIRECTORY`
 
-## Simulated executor
+### Event-centered sampling
 
-`SimulatedActionExecutor` runs only explicitly approved actions. Results always set `simulation=true` and use safe wording such as “Simulated medical-assistance request created for demonstration.”
+When a video is linked to a detector event with `clip_event_offset_seconds`, frame extraction and analysis frame selection bias samples around that offset while preserving pre/post context and ordinary upload behavior.
 
-Supported simulated action types include supervisor alert, medical assistance request, incident ticket, evidence preservation, area-isolation recommendation, and follow-up scheduling.
+## Demo reset
 
-**No real** Slack, email, SMS, emergency services, or ticketing integrations are called.
-
-### Idempotency
-
-Each approved action gets a stable `idempotency_key` scoped to the approval + action. Repeated `POST .../execute` returns existing executions without creating duplicate simulated notifications or tickets. Successful actions are never re-run as new work; failed actions may be retried via `POST /api/executions/{id}/retry`.
-
-## Audit events
-
-`AuditEvent` rows are append-only through application APIs (no update/delete endpoints). Events cover analysis/plan lifecycle, approval, execution start/success/failure, retries, and report generation/download where practical.
-
-This is an **application-level append-only prototype** on SQLite — not a legally immutable compliance ledger.
-
-## Incident reports
-
-After analysis, planning, and (typically) simulated execution:
-
-- `POST /api/incidents/{id}/reports` persists report metadata and generates a PDF with reportlab
-- Incomplete reports are explicitly labeled
-- Regeneration is allowed when underlying execution state changes (`force_regenerate`)
-- Download: `GET /api/reports/{id}/download` returns valid PDF bytes
-- Filenames are sanitized; absolute storage paths are never exposed
-
-## Stage 6 API
-
-- `POST /api/response-plans/{id}/approve`
-- `POST /api/response-plans/{id}/reject`
-- `GET /api/response-plans/{id}/approval`
-- `POST /api/response-plans/{id}/execute`
-- `GET /api/response-plans/{id}/executions`
-- `POST /api/executions/{id}/retry`
-- `GET /api/incidents/{id}/audit`
-- `POST /api/incidents/{id}/reports`
-- `GET /api/incidents/{id}/reports`
-- `GET /api/reports/{id}`
-- `GET /api/reports/{id}/download`
-
-Plus all Stage 1–5 endpoints.
-
-### Example: approve and execute
-
-```bash
-curl -X POST http://127.0.0.1:8000/api/response-plans/PLAN-.../approve \
-  -H 'Content-Type: application/json' \
-  -d '{"selected_action_ids":["..."],"confirmed":true,"reviewer_name":"demo-reviewer","incident_identifier":"INC-2026-0042"}'
-
-curl -X POST http://127.0.0.1:8000/api/response-plans/PLAN-.../execute \
-  -H 'Content-Type: application/json' \
-  -d '{"confirmed":true}'
-```
+Requires `confirmed=true` and `DEMO_MODE=true`. Deletes runtime videos/analyses/plans/executions/reports/detector mappings and files under configured upload/frame/report directories only, then re-seeds cameras/incidents/procedures.
 
 ## Tests
 
@@ -99,13 +52,19 @@ curl -X POST http://127.0.0.1:8000/api/response-plans/PLAN-.../execute \
 pytest
 ```
 
-External AI/planner/action providers are mocked or simulated — no paid or real workplace calls.
+No paid providers or real workplace side effects.
+
+## Docker
+
+From repo root:
+
+```bash
+docker compose up --build
+```
 
 ## Limitations
 
-- Actions are simulated only
-- Authentication/authorization remain prototype limitations
-- Audit immutability is application-level only
-- No real emergency or workplace systems are contacted
-- No live detector adapter automation (Sean’s track)
-- Stage 7 is not started
+- Simulated actions only
+- Prototype auth
+- Application-level audit append-only
+- Detector MediaPipe extras are optional and platform-dependent (see `detector/README.md`)

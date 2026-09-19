@@ -550,3 +550,59 @@ export interface AnalysisReviewRequest {
   reviewerName?: string;
   notes?: string;
 }
+
+export type ApiDetectorIngestionStatus =
+  | "received"
+  | "uploading"
+  | "processing"
+  | "ready"
+  | "analyzing"
+  | "completed"
+  | "failed"
+  | "detector_unavailable";
+
+export interface ApiDetectorEvent {
+  id: string;
+  event_id: string;
+  schema_version: string;
+  event_type: string;
+  source_id: string;
+  camera_id: string | null;
+  camera_name: string | null;
+  track_id: string | null;
+  occurred_at: string | null;
+  source_timestamp_seconds: number | null;
+  clip_event_offset_seconds: number | null;
+  detector_state: string | null;
+  trigger_signals: string[];
+  pose_quality: number | null;
+  pose_quality_label: string;
+  heuristic_score: number | null;
+  heuristic_score_note: string;
+  metrics: Record<string, unknown>;
+  limitations: string[];
+  status: ApiDetectorIngestionStatus;
+  location: string;
+  asset_code: string | null;
+  job_code: string | null;
+  analysis_code: string | null;
+  incident_code: string | null;
+  error_code: string | null;
+  error_message: string | null;
+  retry_count: number;
+  correlation_id: string;
+  is_simulated: boolean;
+  message: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiDemoResetResponse {
+  reset: boolean;
+  message: string;
+  deleted_videos: number;
+  deleted_detector_events: number;
+  deleted_reports: number;
+  reseeding_completed: boolean;
+  demo_mode: boolean;
+}

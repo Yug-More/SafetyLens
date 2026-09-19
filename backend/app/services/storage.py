@@ -24,6 +24,7 @@ def ensure_storage_directories(settings: Settings | None = None) -> None:
     cfg.frame_path.mkdir(parents=True, exist_ok=True)
     cfg.procedure_path.mkdir(parents=True, exist_ok=True)
     cfg.report_path.mkdir(parents=True, exist_ok=True)
+    cfg.detector_events_path.mkdir(parents=True, exist_ok=True)
 
 
 def sanitize_original_filename(filename: str | None) -> str:
