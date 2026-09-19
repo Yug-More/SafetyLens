@@ -78,6 +78,8 @@ def _video_to_read(video: VideoAsset, latest_job: ProcessingJob | None = None) -
         camera_name=camera_name,
         location=video.location,
         status=VideoStatus(video.status),
+        demo_scenario=video.demo_scenario,
+        demo_ppe_observation=video.demo_ppe_observation,
         created_at=video.created_at,
         updated_at=video.updated_at,
         content_url=f"/api/videos/{video.asset_code}/content",
@@ -155,6 +157,8 @@ async def create_upload(
     upload: UploadFile,
     location: str,
     camera_id: str | None,
+    demo_scenario: str | None = None,
+    demo_ppe_observation: str | None = None,
     settings: Settings | None = None,
 ) -> tuple[VideoUploadResponse, str]:
     cfg = settings or get_settings()
@@ -203,6 +207,8 @@ async def create_upload(
         camera_id=camera_id,
         location=cleaned_location,
         status=VideoStatus.UPLOADED.value,
+        demo_scenario=(demo_scenario or None),
+        demo_ppe_observation=(demo_ppe_observation or None),
     )
     job = ProcessingJob(
         id=str(uuid4()),

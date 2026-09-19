@@ -34,6 +34,10 @@ class VideoAsset(Base, IdMixin, TimestampMixin):
         default=VideoStatus.UPLOADING.value,
         index=True,
     )
+    # Demo scenario selection (hackathon): person_down | ppe_compliance
+    demo_scenario: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    # hard_hat_not_visible | high_visibility_vest_not_visible | both_not_visible
+    demo_ppe_observation: Mapped[Optional[str]] = mapped_column(String(80), nullable=True)
 
     camera = relationship("Camera")
     frames = relationship(

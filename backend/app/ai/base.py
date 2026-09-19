@@ -21,6 +21,10 @@ class AIProvider(ABC):
         camera_name: str | None,
         video_asset_code: str,
         duration_seconds: float | None,
+        camera_id: str | None = None,
+        demo_scenario: str | None = None,
+        demo_ppe_observation: str | None = None,
+        required_ppe: list[str] | None = None,
     ) -> IncidentAnalysisResult:
         """Analyze selected frames and return validated structured output."""
 

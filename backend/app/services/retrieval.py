@@ -42,6 +42,18 @@ DOMAIN_WEIGHTS = {
     "report": 1.5,
     "documentation": 1.5,
     "assessment": 1.5,
+    "ppe": 3.0,
+    "hard": 2.0,
+    "hat": 2.5,
+    "helmet": 2.5,
+    "vest": 2.5,
+    "visibility": 2.0,
+    "compliance": 2.5,
+    "controlled": 2.0,
+    "zone": 1.5,
+    "entry": 1.8,
+    "reminder": 2.0,
+    "escalat": 1.5,
 }
 
 
@@ -71,6 +83,8 @@ def build_query_text(
     evidence_descriptions: list[str],
     user_query: str | None = None,
 ) -> str:
+    from app.core.incident_types import is_ppe_incident, is_person_down_incident
+
     parts = [
         incident_type or "",
         title or "",
@@ -80,6 +94,13 @@ def build_query_text(
         " ".join(evidence_descriptions),
         user_query or "",
     ]
+    if is_ppe_incident(incident_type, summary):
+        parts.append(
+            "ppe hard hat high visibility vest controlled zone "
+            "required PPE compliance SOP-PPE"
+        )
+    elif is_person_down_incident(incident_type, summary):
+        parts.append("person down fall medical assistance SOP-FALL")
     return " ".join(part for part in parts if part).strip()
 
 
@@ -118,6 +139,12 @@ def score_chunk(query_tokens: list[str], chunk: ProcedureChunk, procedure: Safet
         score += 0.25
     if "person" in joined_query and "down" in joined_query and "person" in chunk.content.lower():
         score += 0.15
+    if "ppe" in joined_query and "ppe" in procedure.procedure_code.lower():
+        score += 0.4
+    if "ppe" in joined_query and "ppe" in procedure.title.lower():
+        score += 0.3
+    if any(token in joined_query for token in ("hat", "vest", "helmet")) and "ppe" in procedure.procedure_code.lower():
+        score += 0.2
     return min(score, 1.0)
 
 

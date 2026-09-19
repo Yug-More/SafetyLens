@@ -29,6 +29,18 @@ from app.services import audit as audit_service
 from app.services.audit import list_audit_events
 
 
+def _loads_json_list(raw: str | None) -> list[str]:
+    if not raw:
+        return []
+    try:
+        data = json.loads(raw)
+    except Exception:
+        return []
+    if not isinstance(data, list):
+        return []
+    return [str(item) for item in data]
+
+
 def _year_prefix() -> str:
     return str(utc_now().year)
 
@@ -139,6 +151,20 @@ def _build_summary(
             "severity": analysis.severity if analysis else None,
             "confidence": analysis.confidence if analysis else None,
             "incident_type": analysis.incident_type if analysis else None,
+            "analysis_mode": getattr(analysis, "analysis_mode", None) if analysis else None,
+            "required_ppe": _loads_json_list(getattr(analysis, "required_ppe_json", None))
+            if analysis
+            else [],
+            "observed_ppe": _loads_json_list(getattr(analysis, "observed_ppe_json", None))
+            if analysis
+            else [],
+            "possibly_missing_ppe": _loads_json_list(
+                getattr(analysis, "possibly_missing_ppe_json", None)
+            )
+            if analysis
+            else [],
+            "provider_name": analysis.provider_name if analysis else None,
+            "is_demo": analysis.is_demo if analysis else None,
         }
         if analysis
         else None,
@@ -221,6 +247,25 @@ def _render_pdf(summary: dict, report_code: str) -> bytes:
     if analysis:
         add("Analysis", "Heading2")
         add(f"Code: {analysis.get('analysis_code')}")
+        add(f"Type: {analysis.get('incident_type')}")
+        mode = analysis.get("analysis_mode")
+        provider = analysis.get("provider_name")
+        if mode or provider:
+            add(f"Provider: {provider or '—'} | Mode: {mode or '—'}")
+        conf = analysis.get("confidence")
+        if mode == "configured_demo" or conf is None:
+            add("Confidence: Configured scenario" if mode == "configured_demo" else "Confidence: —")
+        else:
+            add(f"Confidence: {conf}")
+        required = analysis.get("required_ppe") or []
+        observed = analysis.get("observed_ppe") or []
+        missing = analysis.get("possibly_missing_ppe") or []
+        if required or observed or missing:
+            add(f"Required PPE: {', '.join(required) if required else '—'}")
+            add(f"Observed PPE: {', '.join(observed) if observed else 'not clearly visible'}")
+            add(
+                f"Possibly missing PPE: {', '.join(missing) if missing else '—'}"
+            )
         add(f"Summary: {analysis.get('summary')}")
         add(f"Details: {analysis.get('detailed_analysis')}")
 

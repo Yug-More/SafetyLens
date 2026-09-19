@@ -8,6 +8,7 @@ from app.api.routes import (
     execution,
     health,
     incidents,
+    ppe,
     procedures,
     system,
     videos,
@@ -26,3 +27,4 @@ api_router.include_router(analysis.router)
 api_router.include_router(execution.router)
 api_router.include_router(detector.router)
 api_router.include_router(workflow.router)
+api_router.include_router(ppe.router)
