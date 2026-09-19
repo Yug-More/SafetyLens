@@ -9,13 +9,14 @@ from sqlalchemy.orm import Session
 from tests.conftest import make_test_video
 
 
-def _ready_plan(client: TestClient, tmp_path: Path) -> str:
+def _ready_plan(client: TestClient, tmp_path: Path) -> tuple[str, str, str | None]:
+    """Upload → analyze → prepare → human-confirm. Returns plan_code, analysis_code, incident_code."""
     video_path = make_test_video(tmp_path / "fall.mp4", frames=40, fps=8)
     with video_path.open("rb") as handle:
         uploaded = client.post(
             "/api/videos/upload",
             files={"file": ("fall.mp4", handle, "video/mp4")},
-            data={"location": "Loading Zone B"},
+            data={"location": "Warehouse Aisle", "camera_id": "cam-03"},
         ).json()["data"]
 
     deadline = time.time() + 20
@@ -43,28 +44,88 @@ def _ready_plan(client: TestClient, tmp_path: Path) -> str:
     else:
         raise AssertionError("analysis timed out")
 
-    client.post(f"/api/analyses/{analysis_code}/retrieve-procedures", json={})
-    plan = client.post(f"/api/analyses/{analysis_code}/response-plan", json={})
-    assert plan.status_code == 201, plan.text
-    data = plan.json()["data"]
-    assert data["status"] == "completed"
-    return data["plan_code"]
+    prepared = client.post(f"/api/analyses/{analysis_code}/prepare-response")
+    assert prepared.status_code == 200, prepared.text
+    workflow = prepared.json()["data"]
+
+    if not workflow.get("plan_code"):
+        client.post(f"/api/analyses/{analysis_code}/retrieve-procedures", json={})
+        plan = client.post(f"/api/analyses/{analysis_code}/response-plan", json={})
+        assert plan.status_code == 201, plan.text
+        plan_code = plan.json()["data"]["plan_code"]
+        assert plan.json()["data"]["status"] == "completed"
+    else:
+        plan_code = workflow["plan_code"]
+
+    review = client.post(
+        f"/api/analyses/{analysis_code}/review",
+        json={
+            "decision": "confirmed",
+            "reviewer_name": "Yug Supervisor",
+            "notes": "Confirmed for Stage 6/7 tests",
+        },
+    )
+    assert review.status_code == 200, review.text
+
+    return plan_code, analysis_code, workflow.get("incident_code")
+
+
+def test_approve_blocked_without_incident_confirmation(client: TestClient, tmp_path: Path):
+    video_path = make_test_video(tmp_path / "gate.mp4", frames=40, fps=8)
+    with video_path.open("rb") as handle:
+        uploaded = client.post(
+            "/api/videos/upload",
+            files={"file": ("gate.mp4", handle, "video/mp4")},
+            data={"location": "Warehouse Aisle", "camera_id": "cam-03"},
+        ).json()["data"]
+    deadline = time.time() + 20
+    while time.time() < deadline:
+        job = client.get(f"/api/processing-jobs/{uploaded['job_code']}").json()["data"]
+        if job["status"] in {"completed", "failed"}:
+            break
+        time.sleep(0.05)
+    analysis_code = client.post(
+        f"/api/videos/{uploaded['asset_code']}/analyze"
+    ).json()["data"]["analysis_code"]
+    deadline = time.time() + 20
+    while time.time() < deadline:
+        analysis = client.get(f"/api/analyses/{analysis_code}").json()["data"]
+        if analysis["status"] in {"completed", "needs_review", "failed"}:
+            break
+        time.sleep(0.05)
+    prepared = client.post(f"/api/analyses/{analysis_code}/prepare-response")
+    assert prepared.status_code == 200
+    plan_code = prepared.json()["data"]["plan_code"]
+    if not plan_code:
+        plan_code = client.post(
+            f"/api/analyses/{analysis_code}/response-plan", json={}
+        ).json()["data"]["plan_code"]
+    plan = client.get(f"/api/response-plans/{plan_code}").json()["data"]
+    blocked = client.post(
+        f"/api/response-plans/{plan_code}/approve",
+        json={
+            "selected_action_ids": [plan["actions"][0]["id"]],
+            "confirmed": True,
+            "reviewer_name": "Yug Supervisor",
+        },
+    )
+    assert blocked.status_code == 409
+    assert blocked.json()["error"]["code"] == "INCIDENT_NOT_CONFIRMED"
 
 
 def test_approve_execute_idempotent_and_report(client: TestClient, tmp_path: Path):
-    plan_code = _ready_plan(client, tmp_path)
+    plan_code, _analysis_code, incident_code = _ready_plan(client, tmp_path)
+    assert incident_code
     plan = client.get(f"/api/response-plans/{plan_code}").json()["data"]
     action_ids = [action["id"] for action in plan["actions"]]
     assert action_ids
 
-    # Cannot execute before approval.
     blocked = client.post(
         f"/api/response-plans/{plan_code}/execute",
         json={"confirmed": True},
     )
     assert blocked.status_code == 409
 
-    # Confirmation required for approval.
     unconfirmed = client.post(
         f"/api/response-plans/{plan_code}/approve",
         json={
@@ -82,7 +143,7 @@ def test_approve_execute_idempotent_and_report(client: TestClient, tmp_path: Pat
             "confirmed": True,
             "reviewer_name": "Yug Supervisor",
             "notes": "Demo approval for Stage 6",
-            "incident_identifier": "INC-2026-0042",
+            "incident_identifier": incident_code,
         },
     )
     assert approved.status_code == 200, approved.text
@@ -91,7 +152,6 @@ def test_approve_execute_idempotent_and_report(client: TestClient, tmp_path: Pat
     assert approval["reviewer_name"] == "Yug Supervisor"
     assert set(approval["selected_action_ids"]) == set(action_ids)
 
-    # Double approval blocked.
     again = client.post(
         f"/api/response-plans/{plan_code}/approve",
         json={
@@ -115,7 +175,6 @@ def test_approve_execute_idempotent_and_report(client: TestClient, tmp_path: Pat
         assert item["simulation"] is True
         assert "Simulated" in item["message"] or "simulated" in item["message"].lower()
 
-    # Idempotent repeat.
     repeated = client.post(
         f"/api/response-plans/{plan_code}/execute",
         json={"confirmed": True},
@@ -124,7 +183,7 @@ def test_approve_execute_idempotent_and_report(client: TestClient, tmp_path: Pat
     assert len(repeated.json()["data"]["executions"]) == len(payload["executions"])
     assert "idempotent" in repeated.json()["data"]["message"].lower()
 
-    audit = client.get("/api/incidents/INC-2026-0042/audit")
+    audit = client.get(f"/api/incidents/{incident_code}/audit")
     assert audit.status_code == 200
     events = audit.json()["data"]
     types = [event["event_type"] for event in events]
@@ -132,12 +191,17 @@ def test_approve_execute_idempotent_and_report(client: TestClient, tmp_path: Pat
     assert "execution_requested" in types
     assert all(event["simulation"] is True for event in events)
 
-    report = client.post(
-        "/api/incidents/INC-2026-0042/reports",
-        json={"plan_identifier": plan_code},
-    )
-    assert report.status_code == 201, report.text
-    report_data = report.json()["data"]
+    reports = client.get(f"/api/incidents/{incident_code}/reports")
+    assert reports.status_code == 200
+    if reports.json()["data"]:
+        report_data = reports.json()["data"][0]
+    else:
+        report = client.post(
+            f"/api/incidents/{incident_code}/reports",
+            json={"plan_identifier": plan_code},
+        )
+        assert report.status_code == 201, report.text
+        report_data = report.json()["data"]
     assert report_data["simulation"] is True
     assert report_data["download_url"]
 
@@ -148,7 +212,7 @@ def test_approve_execute_idempotent_and_report(client: TestClient, tmp_path: Pat
 
 
 def test_partial_approval_and_rejection(client: TestClient, tmp_path: Path):
-    plan_code = _ready_plan(client, tmp_path)
+    plan_code, _, incident_code = _ready_plan(client, tmp_path)
     plan = client.get(f"/api/response-plans/{plan_code}").json()["data"]
     first = plan["actions"][0]["id"]
 
@@ -158,7 +222,7 @@ def test_partial_approval_and_rejection(client: TestClient, tmp_path: Path):
             "selected_action_ids": [first],
             "confirmed": True,
             "reviewer_name": "demo-reviewer",
-            "incident_identifier": "INC-2026-0042",
+            "incident_identifier": incident_code,
         },
     )
     assert partial.status_code == 200
@@ -171,8 +235,7 @@ def test_partial_approval_and_rejection(client: TestClient, tmp_path: Path):
     assert executed.status_code == 200
     assert len(executed.json()["data"]["executions"]) == 1
 
-    # New plan for rejection path.
-    plan_code_2 = _ready_plan(client, tmp_path)
+    plan_code_2, _, _ = _ready_plan(client, tmp_path)
     rejected = client.post(
         f"/api/response-plans/{plan_code_2}/reject",
         json={"reviewer_name": "demo-reviewer", "reason": "Not needed"},
@@ -191,7 +254,7 @@ def test_invalid_action_selection_and_insufficient_plan(
 ):
     from app.models.procedure import SafetyProcedure
 
-    plan_code = _ready_plan(client, tmp_path)
+    plan_code, _, _ = _ready_plan(client, tmp_path)
     bad = client.post(
         f"/api/response-plans/{plan_code}/approve",
         json={
@@ -202,7 +265,6 @@ def test_invalid_action_selection_and_insufficient_plan(
     )
     assert bad.status_code == 422
 
-    # Force insufficient policy plan.
     for procedure in db_session.query(SafetyProcedure).all():
         procedure.is_active = False
     db_session.commit()
@@ -245,7 +307,7 @@ def test_invalid_action_selection_and_insufficient_plan(
 def test_simulated_failure_and_retry(client: TestClient, tmp_path: Path, db_session: Session):
     from app.services import approval_execution as approval_service
 
-    plan_code = _ready_plan(client, tmp_path)
+    plan_code, _, incident_code = _ready_plan(client, tmp_path)
     plan = client.get(f"/api/response-plans/{plan_code}").json()["data"]
     action_ids = [action["id"] for action in plan["actions"]]
     fail_id = action_ids[0]
@@ -256,7 +318,7 @@ def test_simulated_failure_and_retry(client: TestClient, tmp_path: Path, db_sess
             "selected_action_ids": action_ids[:1],
             "confirmed": True,
             "reviewer_name": "demo-reviewer",
-            "incident_identifier": "INC-2026-0042",
+            "incident_identifier": incident_code,
         },
     )
 

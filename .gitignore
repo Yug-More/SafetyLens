@@ -41,6 +41,8 @@ coverage/
 *.sqlite3
 backend/*.db
 backend/*.sqlite*
+*.db.bak*
+backend/*.db.bak*
 
 # Uploaded media and extracted frames
 backend/data/uploads/

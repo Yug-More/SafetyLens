@@ -14,6 +14,7 @@ from app.models.analysis_review import AnalysisReview
 from app.models.detector import DetectorEventIngestion
 from app.models.execution import ActionExecution, AuditEvent, IncidentReport, PlanApproval
 from app.models.incident_analysis import IncidentAnalysis
+from app.models.notification import OperatorNotification
 from app.models.procedure_policy import (
     PlanCitation,
     PlannedAction,
@@ -79,6 +80,7 @@ def reset_demo_state(
     db.execute(delete(ResponsePlan))
     db.execute(delete(ProcedureRetrievalMatch))
     db.execute(delete(ProcedureRetrieval))
+    db.execute(delete(OperatorNotification))
     db.execute(delete(AnalysisEvidence))
     db.execute(delete(AnalysisReview))
     db.execute(delete(DetectorEventIngestion))

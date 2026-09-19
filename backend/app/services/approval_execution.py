@@ -74,14 +74,19 @@ def _resolve_incident(db: Session, identifier: str | None) -> Incident | None:
 def _default_incident_for_plan(db: Session, plan: ResponsePlan) -> Incident | None:
     if plan.incident_id:
         return db.get(Incident, plan.incident_id)
-    # Demo convenience: link fall plans to seeded INC-2026-0042 when present.
-    analysis = plan.analysis
-    text = f"{analysis.incident_type or ''} {analysis.summary or ''}".lower() if analysis else ""
-    if "fall" in text or "person_down" in text or "person-down" in text:
-        return db.scalars(
-            select(Incident).where(Incident.incident_code == "INC-2026-0042")
-        ).first()
-    return db.scalars(select(Incident).order_by(Incident.detected_at.desc())).first()
+    # Prefer the operator-notification incident created for this analysis.
+    from app.models.notification import OperatorNotification
+
+    note = db.scalars(
+        select(OperatorNotification).where(
+            OperatorNotification.analysis_id == plan.analysis_id
+        )
+    ).first()
+    if note and note.incident_id:
+        linked = db.get(Incident, note.incident_id)
+        if linked is not None:
+            return linked
+    return None
 
 
 def _latest_approval(plan: ResponsePlan) -> PlanApproval | None:
@@ -184,6 +189,10 @@ def approve_plan(
             status_code=409,
         )
 
+    from app.services.workflow import require_confirmed_analysis
+
+    require_confirmed_analysis(db, plan)
+
     latest = _latest_approval(plan)
     if latest and latest.status in {
         PlanApprovalStatus.APPROVED.value,
@@ -213,6 +222,8 @@ def approve_plan(
         )
 
     incident = _resolve_incident(db, payload.incident_identifier) or _default_incident_for_plan(db, plan)
+    if incident is not None and not plan.incident_id:
+        plan.incident_id = incident.id
     all_ids = {action.id for action in plan.actions}
     status = (
         PlanApprovalStatus.APPROVED
@@ -380,6 +391,10 @@ def execute_plan(
             status_code=409,
         )
 
+    from app.services.workflow import require_confirmed_analysis
+
+    require_confirmed_analysis(db, plan)
+
     approval = _latest_approval(plan)
     if approval is None or approval.status not in {
         PlanApprovalStatus.APPROVED.value,
@@ -529,6 +544,30 @@ def execute_plan(
         .where(ActionExecution.approval_id == approval.id)
         .order_by(ActionExecution.created_at.asc())
     ).all()
+
+    # Auto-generate PDF report when execution finishes successfully.
+    if plan.execution_status in {
+        PlanExecutionStatus.EXECUTED.value,
+        PlanExecutionStatus.PARTIALLY_FAILED.value,
+    }:
+        incident = _default_incident_for_plan(db, plan)
+        if incident is not None:
+            try:
+                from app.schemas.execution import GenerateReportRequest
+                from app.services import reports as report_service
+
+                report_service.generate_incident_report(
+                    db,
+                    incident.incident_code,
+                    GenerateReportRequest(
+                        plan_identifier=plan.plan_code,
+                        force_regenerate=False,
+                    ),
+                )
+            except Exception:
+                logger = __import__("logging").getLogger(__name__)
+                logger.exception("Auto report generation failed for %s", plan.plan_code)
+
     return ExecutePlanResponse(
         plan_id=plan.id,
         plan_code=plan.plan_code,
