@@ -12,7 +12,7 @@ services:
       AI_PROVIDER: demo
       AI_DEMO_MODE: "true"
       PLANNER_PROVIDER: demo
-      FRONTEND_ORIGINS: http://localhost:3000
+      FRONTEND_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
       DATABASE_URL: sqlite:////data/safetylens.db
       UPLOAD_DIRECTORY: /data/uploads
       FRAME_DIRECTORY: /data/frames

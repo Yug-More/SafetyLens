@@ -1,6 +1,6 @@
-# SafetyLens Backend (Stage 7)
+# SafetyLens Backend
 
-FastAPI service covering Stages 1–7: video pipeline, multimodal analysis, procedure retrieval, human approval, simulated execution, audit/PDF reports, detector event handoff, and safe demo reset.
+FastAPI service for video processing, incident analysis, procedure retrieval, human approval, simulated execution, audit/PDF reports, detector event ingestion, and camera-specific PPE policies.
 
 ## Setup
 
@@ -14,11 +14,11 @@ python -m app.seed.run
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-After schema changes, delete `safetylens.db` and re-seed.
+Startup creates missing tables and applies the supported additive SQLite column updates. Preserve and back up existing databases before schema changes; arbitrary schema changes require a reviewed migration. The confirmed demo reset below is available when you intentionally want to discard demo runtime data.
 
-## Stage 7 detector ingestion
+## Detector ingestion
 
-Accepts Sean’s version 1 event JSON (+ evidence clip) and maps into the existing Stage 3 upload → prepare → Stage 4 analyze pipeline.
+Accepts version 1 detector event JSON and an evidence clip, then maps them into the upload → prepare → analyze pipeline. The local camera runner saves these files but does not automatically submit them; import them through the dashboard or this API.
 
 | Endpoint | Purpose |
 |---|---|
@@ -45,6 +45,12 @@ When a video is linked to a detector event with `clip_event_offset_seconds`, fra
 ## Demo reset
 
 Requires `confirmed=true` and `DEMO_MODE=true`. Deletes runtime videos/analyses/plans/executions/reports/detector mappings and files under configured upload/frame/report directories only, then re-seeds cameras/incidents/procedures.
+
+## Providers and PPE policies
+
+The default `AI_PROVIDER=demo` returns deterministic rehearsal results. Configure `AI_PROVIDER=openai`, `OPENAI_API_KEY`, and `VISION_MODEL` for frame-based model analysis. Planning is configured separately through `PLANNER_PROVIDER` and `PLANNER_MODEL`.
+
+`GET /api/ppe-policies` lists active camera policies; `GET /api/cameras/{camera_id}/ppe-policy` returns a camera's requirements. The configured PPE demo and provider analysis share the human-review workflow. They do not add PPE inference to the local fall detector.
 
 ## Tests
 
