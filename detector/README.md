@@ -81,7 +81,11 @@ python -m safetylens_detector.live `
   --mirror
 ```
 
-The preview displays the temporal state and a red incident alert. Press `Q` to stop. Completed incidents save a 3-second pre-event plus 3-second post-event MP4 under the ignored `detector/events` directory. The source may also be an OpenCV-compatible HTTP/RTSP URL, for example `--source "http://PHONE_IP:PORT/video"`.
+The preview displays green `NORMAL` and red `FALL DETECTED`. After an incident, recovery requires a continuous upright pose for 0.6 seconds and the 4-second duplicate-suppression interval to finish. The detector then rearms for another fall. Brief upright glitches and missing poses do not clear an incident. Press `Q` to stop.
+
+The default live profile uses body posture, with frame aspect ratio accounted for. Use a fixed camera with one full person visible. For a fixed overhead view where the body points toward the camera, `--overhead-camera` enables an additional shoulder-displacement heuristic. This heuristic is sensitive to camera movement and changes in distance; it is disabled in the default live profile. Prerecorded analysis retains its overhead-compatible default.
+
+Completed incidents save a 3-second pre-event plus 3-second post-event MP4 under the ignored `detector/events` directory. Event JSON is saved immediately; session JSONL records pose measurements, state transitions, and event IDs for diagnosis. Allow three seconds after an alert before stopping to finish the evidence clip. These local records do not automatically create a backend incident; upload the evidence clip through the application for that workflow. The source may also be an OpenCV-compatible HTTP/RTSP URL, for example `--source "http://PHONE_IP:PORT/video"`.
 
 For a phone exposed to Windows as a webcam, try `--source 1`, then `2`, while keeping `--source 0` for the built-in camera. The pose model and state machine still run locally on the laptop; only camera frames cross from the phone.
 

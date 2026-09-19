@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import unittest
+from dataclasses import replace
 
 from safetylens_detector import Landmark, PoseObservation, derive_pose_metrics
 
@@ -28,6 +29,28 @@ def observation(timestamp: float, *, horizontal: bool, hip_y: float) -> PoseObse
 
 
 class PoseMetricTests(unittest.TestCase):
+    def test_geometry_is_invariant_to_frame_aspect_ratio(self) -> None:
+        square = observation(0.0, horizontal=True, hip_y=0.55)
+        wide = replace(square, frame_aspect_ratio=2.0, landmarks={
+            name: Landmark(point.x / 2, point.y, point.visibility)
+            for name, point in square.landmarks.items()
+        })
+        a, b = derive_pose_metrics(square), derive_pose_metrics(wide)
+        self.assertAlmostEqual(a.bbox_width_height_ratio, b.bbox_width_height_ratio)
+        self.assertAlmostEqual(a.torso_angle_degrees_from_vertical, b.torso_angle_degrees_from_vertical)
+
+    def test_unreliable_ankle_and_outstretched_hand_do_not_widen_body(self) -> None:
+        original = observation(0.0, horizontal=False, hip_y=0.55)
+        noisy = replace(original, landmarks={
+            **original.landmarks,
+            "left_ankle": Landmark(0.0, 0.9, 0.01),
+            "right_wrist": Landmark(1.0, 0.4, 0.99),
+        })
+        self.assertAlmostEqual(
+            derive_pose_metrics(original).bbox_width_height_ratio,
+            derive_pose_metrics(noisy).bbox_width_height_ratio,
+        )
+
     def test_torso_angle_distinguishes_upright_and_horizontal(self) -> None:
         upright = derive_pose_metrics(observation(0.0, horizontal=False, hip_y=0.55))
         horizontal = derive_pose_metrics(observation(0.0, horizontal=True, hip_y=0.65))

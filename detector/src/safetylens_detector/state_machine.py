@@ -21,6 +21,7 @@ class TrackState:
     rapid_drop_seen: bool = False
     armed: bool = True
     baseline_shoulder_y: float | None = None
+    recovery_since: float | None = None
 
 
 class FallStateMachine:
@@ -44,10 +45,14 @@ class FallStateMachine:
                 raise ValueError("Observation timestamps must strictly increase per track.")
             if observation.timestamp_seconds - track.last_timestamp > self.config.maximum_observation_gap_seconds:
                 self._clear_candidate(track)
+                track.recovery_since = None
+                if track.armed:
+                    track.baseline_shoulder_y = None
                 track.state = DetectorState.MONITORING if track.armed else DetectorState.COOLDOWN
         track.last_timestamp = observation.timestamp_seconds
 
         if metrics.pose_quality < self.config.minimum_pose_quality or metrics.torso_angle_degrees_from_vertical is None:
+            track.recovery_since = None
             track.state = DetectorState.LOW_VISIBILITY
             self._clear_candidate(track)
             return previous_state, track.state, None, ("insufficient_pose_quality",)
@@ -56,7 +61,8 @@ class FallStateMachine:
         if track.baseline_shoulder_y is None and metrics.shoulder_center_y is not None:
             track.baseline_shoulder_y = metrics.shoulder_center_y
         overhead_displacement = (
-            metrics.shoulder_center_y is not None
+            self.config.enable_overhead_displacement
+            and metrics.shoulder_center_y is not None
             and track.baseline_shoulder_y is not None
             and metrics.shoulder_center_y - track.baseline_shoulder_y
             >= self.config.overhead_shoulder_drop_ratio
@@ -205,7 +211,14 @@ class FallStateMachine:
 
         elif track.state == DetectorState.COOLDOWN:
             if upright:
-                track.recovered_after_incident = True
+                if track.recovery_since is None:
+                    track.recovery_since = timestamp
+                track.recovered_after_incident = (
+                    timestamp - track.recovery_since >= self.config.recovery_hold_seconds
+                )
+            else:
+                track.recovery_since = None
+                track.recovered_after_incident = False
             cooldown_elapsed = (
                 track.incident_at is not None
                 and timestamp - track.incident_at >= self.config.cooldown_seconds
@@ -214,6 +227,7 @@ class FallStateMachine:
                 track.state = DetectorState.MONITORING
                 track.armed = True
                 self._reset_temporal_state(track)
+                track.baseline_shoulder_y = metrics.shoulder_center_y
 
         reasons = tuple(
             reason
@@ -233,6 +247,10 @@ class FallStateMachine:
         previous = track.state
         track.state = DetectorState.NO_PERSON
         track.last_timestamp = None
+        track.recovery_since = None
+        track.recovered_after_incident = False
+        if track.armed:
+            track.baseline_shoulder_y = None
         self._clear_candidate(track)
         return previous, track.state
 
@@ -288,3 +306,4 @@ class FallStateMachine:
         cls._clear_candidate(track)
         track.incident_at = None
         track.recovered_after_incident = False
+        track.recovery_since = None

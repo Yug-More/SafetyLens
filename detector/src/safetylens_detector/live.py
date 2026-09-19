@@ -2,14 +2,16 @@ from __future__ import annotations
 
 import argparse
 import json
+from dataclasses import asdict
 from pathlib import Path
 from time import perf_counter
 from typing import Any
+from uuid import uuid4
 
 from .engine import DetectorEngine
 from .evidence_buffer import EvidenceCapture, EvidenceWindowBuffer
 from .mediapipe_provider import MediaPipePoseProvider
-from .models import DetectorState, PoseObservation
+from .models import DetectorConfig, DetectorState, PoseObservation
 
 
 REASON_PRESENTATION = {
@@ -300,6 +302,7 @@ def run_live(
     maximum_seconds: float | None = None,
     camera_warmup_seconds: float = 15.0,
     arming_seconds: float = 1.5,
+    overhead_camera: bool = False,
 ) -> int:
     if sample_fps <= 0:
         raise ValueError("sample_fps must be positive.")
@@ -332,6 +335,8 @@ def run_live(
     notice: str | None = None
     analyzed_frames = 0
     events = 0
+    session_log = Path(events_directory) / f"session-{uuid4()}.jsonl"
+    session_log.parent.mkdir(parents=True, exist_ok=True)
 
     print(
         json.dumps(
@@ -340,6 +345,8 @@ def run_live(
                 "source": capture_source,
                 "source_id": source_id,
                 "sample_fps": sample_fps,
+                "decision_log": str(session_log.resolve()),
+                "overhead_camera": overhead_camera,
                 "controls": (
                     "Press Q in the preview window to stop."
                     if preview
@@ -400,7 +407,9 @@ def run_live(
             flush=True,
         )
         started = perf_counter()
-        engine = DetectorEngine()
+        engine = DetectorEngine(DetectorConfig(
+            enable_overhead_displacement=overhead_camera,
+        ))
         evidence = EvidenceWindowBuffer[Any](
             pre_event_seconds=pre_event_seconds,
             maximum_frames=max(120, round(sample_fps * pre_event_seconds * 2)),
@@ -426,7 +435,9 @@ def run_live(
                     frame = cv2.flip(frame, 1)
 
                 if timestamp + 1e-9 >= next_sample_seconds:
-                    next_sample_seconds += 1.0 / sample_fps
+                    next_sample_seconds = max(
+                        next_sample_seconds + 1.0 / sample_fps, timestamp
+                    )
                     analyzed_frames += 1
                     evidence.add(timestamp, frame.copy())
                     observation = provider.detect(
@@ -479,7 +490,6 @@ def run_live(
                             latest_reasons = result.event.trigger_signals
                         elif (
                             fall_active
-                            and result.previous_state == DetectorState.COOLDOWN
                             and result.state == DetectorState.MONITORING
                         ):
                             fall_active = False
@@ -504,6 +514,11 @@ def run_live(
                             )
                         if result.event is not None:
                             events += 1
+                            event_path = Path(events_directory) / f"{result.event.event_id}.json"
+                            event_path.write_text(
+                                json.dumps(result.event.to_dict(), indent=2) + "\n",
+                                encoding="utf-8",
+                            )
                             notice = "Incident recorded"
                             notice_until = timestamp + 4.0
                             evidence.start_capture(
@@ -517,6 +532,18 @@ def run_live(
                                 ),
                                 flush=True,
                             )
+
+                    with session_log.open("a", encoding="utf-8") as decision_file:
+                        decision_file.write(json.dumps({
+                            "timestamp_seconds": timestamp,
+                            "armed": detector_armed,
+                            "fall_active": fall_active,
+                            "state": state.value,
+                            "metrics": asdict(result.metrics) if result and result.metrics else None,
+                            "reasons": list(result.reasons) if result else [],
+                            "event_id": result.event.event_id if result and result.event else None,
+                            "pose": asdict(observation) if observation else None,
+                        }) + "\n")
 
                     while completed := evidence.pop_completed():
                         path = _write_evidence_clip(
@@ -633,6 +660,10 @@ def main() -> int:
     parser.add_argument("--max-seconds", type=float)
     parser.add_argument("--camera-warmup-seconds", type=float, default=15.0)
     parser.add_argument("--arming-seconds", type=float, default=1.5)
+    parser.add_argument(
+        "--overhead-camera", action="store_true",
+        help="Enable the shoulder-displacement heuristic for a fixed overhead camera",
+    )
     args = parser.parse_args()
 
     run_live(
@@ -649,6 +680,7 @@ def main() -> int:
         maximum_seconds=args.max_seconds,
         camera_warmup_seconds=args.camera_warmup_seconds,
         arming_seconds=args.arming_seconds,
+        overhead_camera=args.overhead_camera,
     )
     return 0
 
