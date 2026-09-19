@@ -458,6 +458,11 @@ export interface VideoUploadRequest {
   file: File;
   location: string;
   cameraId?: string;
+  demoScenario?: "person_down" | "ppe_compliance";
+  demoPpeObservation?:
+    | "hard_hat_not_visible"
+    | "high_visibility_vest_not_visible"
+    | "both_not_visible";
 }
 
 export type ApiAnalysisStatus =
@@ -515,6 +520,11 @@ export interface ApiIncidentAnalysis {
   recommended_actions: string[];
   limitations: string[];
   inconclusive: boolean;
+  required_ppe?: string[];
+  observed_ppe?: string[];
+  possibly_missing_ppe?: string[];
+  analysis_mode?: string | null;
+  human_review_required?: boolean;
   error_code: string | null;
   error_message: string | null;
   started_at: string | null;

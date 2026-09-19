@@ -284,6 +284,11 @@ export function mapIncidentAnalysis(
     recommendedActions: analysis.recommended_actions ?? [],
     limitations: analysis.limitations ?? [],
     inconclusive: analysis.inconclusive,
+    requiredPpe: analysis.required_ppe ?? [],
+    observedPpe: analysis.observed_ppe ?? [],
+    possiblyMissingPpe: analysis.possibly_missing_ppe ?? [],
+    analysisMode: analysis.analysis_mode ?? null,
+    humanReviewRequired: analysis.human_review_required ?? true,
     errorCode: analysis.error_code,
     errorMessage: analysis.error_message,
     evidence: (analysis.evidence ?? []).map((item) => ({

@@ -77,13 +77,19 @@ class DemoResponsePlanner:
                 is_simulated=True,
             )
 
-        incident_type = (analysis.incident_type or "").lower()
-        is_fall = any(
-            token in incident_type or token in (analysis.summary or "").lower()
-            for token in ("fall", "person_down", "person-down", "person down")
-        ) or any("fall" in m.procedure.procedure_code.lower() for m in matches)
+        from app.core.incident_types import is_person_down_incident, is_ppe_incident
 
-        if not is_fall and analysis.inconclusive:
+        is_ppe = is_ppe_incident(analysis.incident_type, analysis.summary)
+        is_fall = (not is_ppe) and (
+            is_person_down_incident(analysis.incident_type, analysis.summary)
+            or any("fall" in m.procedure.procedure_code.lower() for m in matches)
+        )
+        # Prefer typed incident classification over weak procedure co-matches.
+        if not is_ppe and not is_fall:
+            is_ppe = any("ppe" in m.procedure.procedure_code.lower() for m in matches)
+            is_fall = any("fall" in m.procedure.procedure_code.lower() for m in matches)
+
+        if not is_fall and not is_ppe and analysis.inconclusive:
             return ResponsePlanDraft(
                 status="insufficient_policy",
                 summary="Analysis is inconclusive and retrieved policy evidence is not specific enough.",
@@ -102,8 +108,11 @@ class DemoResponsePlanner:
                 is_simulated=True,
             )
 
-        if is_fall:
+        if is_fall and not is_ppe:
             return self._fall_plan(analysis, matches)
+
+        if is_ppe:
+            return self._ppe_plan(analysis, matches)
 
         # Generic grounded plan using top matches only.
         top = matches[0]
@@ -144,6 +153,13 @@ class DemoResponsePlanner:
         analysis: IncidentAnalysis,
         matches: list[RankedChunk],
     ) -> ResponsePlanDraft:
+        fall_matches = [
+            item
+            for item in matches
+            if "fall" in item.procedure.procedure_code.lower()
+            or "fall" in item.procedure.title.lower()
+        ]
+        matches = fall_matches or matches
         supervisor = _find_chunk(matches, "supervisor")
         medical = _find_chunk(matches, "medical")
         area = _find_chunk(matches, "area") or _find_chunk(matches, "machinery") or _find_chunk(matches, "isolate")
@@ -266,6 +282,177 @@ class DemoResponsePlanner:
                 "Demo planner — simulated grounded planning",
                 "Recommendations only — Stage 5 does not execute actions or send alerts",
                 "Sample company procedure — not legal advice or an external regulatory mandate",
+            ],
+            provider_name=self.name,
+            provider_model=self.model,
+            is_demo=True,
+            is_simulated=True,
+        )
+
+    def _ppe_plan(
+        self,
+        analysis: IncidentAnalysis,
+        matches: list[RankedChunk],
+    ) -> ResponsePlanDraft:
+        ppe_matches = [
+            item
+            for item in matches
+            if "ppe" in item.procedure.procedure_code.lower()
+            or "ppe" in item.procedure.title.lower()
+        ]
+        matches = ppe_matches or matches
+        requirements = _find_chunk(matches, "controlled") or _find_chunk(matches, "ppe")
+        verification = _find_chunk(matches, "supervisor") or _find_chunk(matches, "verify")
+        pause = _find_chunk(matches, "pause") or _find_chunk(matches, "prevent") or _find_chunk(matches, "entry")
+        obtain = _find_chunk(matches, "obtain") or _find_chunk(matches, "vest") or _find_chunk(matches, "hat")
+        document = _find_chunk(matches, "record") or _find_chunk(matches, "document")
+        evidence = _find_chunk(matches, "evidence") or _find_chunk(matches, "preserve")
+        escalate = _find_chunk(matches, "escalat") or document
+
+        required = [verification, pause, obtain, document, evidence]
+        if any(item is None for item in required):
+            return ResponsePlanDraft(
+                status="insufficient_policy",
+                summary="Retrieved PPE-procedure excerpts are incomplete for a grounded plan.",
+                rationale=(
+                    "Demo Planner requires verified PPE procedure passages covering supervisor "
+                    "verification, controlled-zone pause, PPE replacement, documentation, and evidence."
+                ),
+                actions=[],
+                limitations=["Insufficient verified policy passages for PPE response actions"],
+                provider_name=self.name,
+                provider_model=self.model,
+                is_demo=True,
+                is_simulated=True,
+            )
+
+        assert verification and pause and obtain and document and evidence
+        code = verification.procedure.procedure_code
+        missing = []
+        try:
+            import json
+
+            missing = json.loads(analysis.possibly_missing_ppe_json or "[]")
+        except Exception:
+            missing = []
+        missing_label = ", ".join(
+            item.replace("_", " ") for item in missing
+        ) or "required PPE"
+
+        actions = [
+            PlannedActionDraft(
+                title="Request supervisor verification",
+                description=(
+                    f"Ask an on-duty supervisor to verify whether {missing_label} is present "
+                    "before continued controlled-zone work."
+                ),
+                priority=ActionPriority.HIGH,
+                responsible_role="Control Room Operator",
+                requires_human_approval=True,
+                is_policy_grounded=True,
+                citation_chunk_ids=[verification.chunk.id],
+            ),
+            PlannedActionDraft(
+                title="Prevent or pause controlled-zone entry",
+                description=(
+                    "Pause or delay entry into the PPE-required zone until required PPE is "
+                    "confirmed or supplied."
+                ),
+                priority=ActionPriority.CRITICAL,
+                responsible_role="Floor Supervisor",
+                requires_human_approval=True,
+                is_policy_grounded=True,
+                citation_chunk_ids=[pause.chunk.id],
+            ),
+            PlannedActionDraft(
+                title="Ask worker to obtain required PPE",
+                description=(
+                    f"Direct the worker to obtain the required hard hat or high-visibility vest "
+                    f"({missing_label}) before re-entering the zone."
+                ),
+                priority=ActionPriority.HIGH,
+                responsible_role="Floor Supervisor",
+                requires_human_approval=True,
+                is_policy_grounded=True,
+                citation_chunk_ids=[obtain.chunk.id],
+            ),
+            PlannedActionDraft(
+                title="Record the compliance event",
+                description=(
+                    "Document the PPE compliance event, camera, zone, and review decision "
+                    f"according to {code}."
+                ),
+                priority=ActionPriority.STANDARD,
+                responsible_role="Safety Coordinator",
+                requires_human_approval=True,
+                is_policy_grounded=True,
+                citation_chunk_ids=[document.chunk.id],
+            ),
+            PlannedActionDraft(
+                title="Preserve the evidence clip",
+                description=(
+                    "Preserve the relevant camera clip and related digital evidence according "
+                    "to company policy."
+                ),
+                priority=ActionPriority.HIGH,
+                responsible_role="Safety Coordinator",
+                requires_human_approval=True,
+                is_policy_grounded=True,
+                citation_chunk_ids=[evidence.chunk.id],
+            ),
+        ]
+        if escalate and escalate.chunk.id not in {document.chunk.id}:
+            actions.append(
+                PlannedActionDraft(
+                    title="Escalate repeated violations",
+                    description=(
+                        "Escalate repeated PPE noncompliance according to company policy. "
+                        "SIMULATED for this demonstration."
+                    ),
+                    priority=ActionPriority.STANDARD,
+                    responsible_role="Safety Manager",
+                    requires_human_approval=True,
+                    is_policy_grounded=True,
+                    citation_chunk_ids=[escalate.chunk.id],
+                )
+            )
+        if requirements and requirements.chunk.id not in {
+            verification.chunk.id,
+            pause.chunk.id,
+        }:
+            actions.insert(
+                0,
+                PlannedActionDraft(
+                    title="Confirm controlled-zone PPE requirements",
+                    description=(
+                        "Confirm the zone's required PPE list (hard hat and high-visibility vest) "
+                        "before applying corrective actions."
+                    ),
+                    priority=ActionPriority.STANDARD,
+                    responsible_role="Control Room Operator",
+                    requires_human_approval=True,
+                    is_policy_grounded=True,
+                    citation_chunk_ids=[requirements.chunk.id],
+                ),
+            )
+
+        return ResponsePlanDraft(
+            status="completed",
+            summary=(
+                f"Grounded PPE noncompliance response plan using {code}. "
+                "Recommendations only — no actions have been executed."
+            ),
+            rationale=(
+                "Deterministic Demo Planner linked each recommended PPE action to verified "
+                f"excerpts from {code}. No medical dispatch actions are included for PPE-only "
+                "events. Critical actions require human approval."
+            ),
+            actions=actions,
+            limitations=[
+                "Demo planner — simulated grounded planning",
+                "Recommendations only — actions remain SIMULATED until human approval and execution",
+                "Sample company procedure — not legal advice",
+                "Only hard hat and high-visibility vest are supported in this version",
             ],
             provider_name=self.name,
             provider_model=self.model,

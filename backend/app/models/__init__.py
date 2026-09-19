@@ -5,6 +5,7 @@ from app.models.analysis_review import AnalysisReview
 from app.models.camera import Camera
 from app.models.detector import DetectorEventIngestion
 from app.models.notification import OperatorNotification
+from app.models.ppe_policy import CameraPpePolicy
 from app.models.evidence import Evidence
 from app.models.execution import ActionExecution, AuditEvent, IncidentReport, PlanApproval
 from app.models.incident import Incident
@@ -31,6 +32,7 @@ __all__ = [
     "Camera",
     "DetectorEventIngestion",
     "OperatorNotification",
+    "CameraPpePolicy",
     "Evidence",
     "Incident",
     "IncidentAnalysis",
