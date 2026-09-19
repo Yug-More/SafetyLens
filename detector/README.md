@@ -2,7 +2,7 @@
 
 This package owns the lightweight, continuous part of SafetyLens. It consumes timestamped pose landmarks, derives explainable motion/posture metrics, emits at most one `possible_person_down` event per fall episode, and retains a bounded pre/post-event evidence window. It does not diagnose injury, produce response instructions, or write to the main application database.
 
-The initial milestone is deliberately independent of a pose runtime. MediaPipe, MoveNet, or a small YOLO pose model can implement the `PoseProvider` protocol after a local benchmark. The temporal logic and event contract remain the same.
+MediaPipe supplies the live and prerecorded pose observations. The metric engine and state machine can also consume recorded landmarks independently of that runtime, allowing future pose providers to reuse the event contract.
 
 ## State flow
 
@@ -12,7 +12,7 @@ no_person -> monitoring -> suspected -> confirming -> incident -> cooldown
                   +-------------+-------------------------+
 ```
 
-Low-quality or missing landmarks enter `low_visibility`. Tracking resumes only from fresh observations. A cooldown requires an upright recovery before rearming, preventing repeated alerts while a person remains on the floor. Confirmation has two paths: a rapid drop followed by persistent down posture, or persistent down posture followed by sustained low motion. Down posture combines torso angle, a guarded wide-body-box signal for curled poses, and relative shoulder displacement for high/overhead cameras where lying lengthwise can still appear vertical in image coordinates.
+Low-quality poses enter `low_visibility`; a sustained absence enters `no_person`. Tracking resumes from fresh observations. A cooldown requires an upright recovery before rearming, preventing repeated alerts while a person remains on the floor. Confirmation has two paths: a rapid drop followed by persistent down posture, or persistent down posture followed by sustained low motion. Down posture uses torso angle and a guarded wide-body-box signal for curled poses. The optional overhead profile also uses relative shoulder displacement for views where lying lengthwise can still appear vertical in image coordinates.
 
 ## Run tests
 
@@ -89,11 +89,11 @@ Completed incidents save a 3-second pre-event plus 3-second post-event MP4 under
 
 For a phone exposed to Windows as a webcam, try `--source 1`, then `2`, while keeping `--source 0` for the built-in camera. The pose model and state machine still run locally on the laptop; only camera frames cross from the phone.
 
-## Next milestone
+## Future development
 
 1. Tune thresholds against positive and negative demo clips.
-2. Connect webcam input to the same observation pipeline.
-3. Encode buffered frames into an incident clip.
-4. Export the event clip through Yug's existing `POST /api/videos/upload` workflow.
+2. Add stable multi-person tracking and validate across camera positions.
+3. Add retention controls and long-running camera recovery.
+4. Automate delivery of saved event JSON and clips to `POST /api/detector/events` with retries and duplicate protection.
 
-See `docs/team/DETECTOR_CONTRACT.md` for the integration boundary.
+See the [detector contract](../docs/team/DETECTOR_CONTRACT.md) for the integration boundary and the [backend guide](../backend/README.md) for the implemented ingestion API.

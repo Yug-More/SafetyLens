@@ -2,7 +2,7 @@
 
 ### See danger. Trigger action.
 
-SafetyLens is an AI-powered workplace safety and incident-response platform that transforms existing security cameras from passive recording devices into proactive, human-supervised safety systems.
+SafetyLens is an AI-powered workplace safety and incident-response platform for warehouses, factories, and other environments where teams need to notice incidents and respond quickly.
 
 When a potential incident occurs, SafetyLens preserves the relevant evidence, analyzes what happened, alerts a safety operator, retrieves the appropriate company procedure, prepares a citation-backed response plan, and executes only the actions approved by a human.
 
@@ -38,7 +38,7 @@ The system automates investigation and response preparation while preserving hum
 
 ```mermaid
 flowchart TD
-    A["Existing CCTV Cameras"] --> B["Lightweight Event Detection"]
+    A["Camera Feed"] --> B["Lightweight Event Detection"]
     B --> C["Evidence Clip Preserved"]
     C --> D["Multimodal Analysis"]
     D --> E["Operator Alerted"]
@@ -53,7 +53,9 @@ flowchart TD
 
 A lightweight detector can monitor camera feeds continuously. More expensive multimodal analysis is invoked only when a suspicious event requires deeper investigation, making the architecture more scalable than analyzing every full video stream continuously.
 
-For the hackathon demonstration, uploading a recorded camera clip simulates the event handoff from an existing facility camera.
+The local detector saves evidence clips and event JSON. Upload a clip or import its detector event into the dashboard to start the response workflow; the live preview does not automatically send incidents to the backend.
+
+The default `demo` analysis provider returns configured rehearsal results without visually interpreting the footage. The optional `openai` provider analyzes extracted frames when credentials and a vision model are configured. Live pose detection runs locally with MediaPipe in either case.
 
 ---
 
@@ -142,7 +144,7 @@ Every simulated action is clearly labelled **SIMULATED**.
 
 ## Verified Demo Scenario
 
-The primary demonstrated scenario is a possible person-down event in a warehouse aisle.
+The primary dashboard scenario is a possible person-down event assigned to the seeded Camera 03 — Warehouse Aisle. The live screenshots above show a staged demonstration in a meeting room.
 
 1. A recorded Camera 03 event is submitted to SafetyLens.
 2. The video is automatically prepared and analyzed.
@@ -155,7 +157,7 @@ The primary demonstrated scenario is a possible person-down event in a warehouse
 9. Approved actions execute in simulation.
 10. SafetyLens records the audit trail and generates a PDF report.
 
-The architecture is designed to extend to additional safety scenarios such as PPE noncompliance, fire or smoke risks, and restricted-zone entry. These scenarios require appropriate visual models, camera positioning, and organization-specific procedures.
+The repository also includes a PPE review workflow with camera-specific requirements, configured demo observations, and provider-assisted analysis. It is separate from the local fall detector and is not a continuously running PPE detection model. Fire, smoke, and restricted-zone detection remain future work.
 
 ---
 
@@ -247,7 +249,7 @@ SafetyLens/
 
 ### Prerequisites
 
-- Python 3.12+
+- Python 3.12 recommended (the detector package requires Python 3.11+)
 - Node.js 20+
 - npm
 - FFmpeg
@@ -300,6 +302,45 @@ Frontend:
 ```text
 http://localhost:3000
 ```
+
+### Windows PowerShell
+
+From the repository root, start the backend:
+
+```powershell
+cd backend
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+Copy-Item .env.example .env
+.\.venv\Scripts\python.exe -m app.seed.run
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+In a second terminal, from the repository root:
+
+```powershell
+cd frontend
+npm install
+Copy-Item .env.example .env.local
+npm run dev
+```
+
+Copy the example environment files only during initial setup; preserve any existing local configuration. Open [the dashboard](http://localhost:3000/monitor) and [API documentation](http://127.0.0.1:8000/docs).
+
+### Live camera detector
+
+The camera preview is a separate local process. Follow the [detector setup](detector/README.md#analyze-a-prerecorded-video) to install its video dependencies and download the pose model, then run from the repository root:
+
+```powershell
+$env:PYTHONPATH = "detector/src"
+python -m safetylens_detector.live --source 0 --model detector/models/pose_landmarker_lite.task --mirror
+```
+
+Use the Python environment containing the detector dependencies. Camera indices vary by device; the Camo phone setup used in our demo is `--source 1`. Keep one full person and the floor visible. Press `Q` to stop. Local clips, event JSON, and decision logs are saved under the ignored `detector/events/` directory. See the [detector guide](detector/README.md) for recovery behavior and overhead-camera mode.
+
+### Docker
+
+From the repository root, run `docker compose up --build` to start the dashboard and API with demo providers. Runtime data is retained in the `safetylens-data` volume. Run the local camera detector separately on the host.
 
 ---
 
@@ -383,7 +424,7 @@ SafetyLens is a hackathon prototype and is not a replacement for trained safety 
 ## Future Development
 
 - Production RTSP and ONVIF camera connections
-- Real-time edge inference
+- Multi-camera edge deployment and automatic detector-to-backend delivery
 - Specialized fire, smoke, and PPE models
 - Multi-site facility management
 - Secure role-based access control
@@ -402,8 +443,10 @@ SafetyLens is a hackathon prototype and is not a replacement for trained safety 
 
 ---
 
-## Closing
+## Documentation
 
-SafetyLens turns workplace cameras into an intelligent, explainable, and human-controlled incident-response layer.
-
-**See danger. Trigger action.**
+- [Backend setup and detector ingestion](backend/README.md)
+- [Frontend setup](frontend/README.md)
+- [Detector setup and behavior](detector/README.md)
+- [Demo script](docs/DEMO_SCRIPT.md) and [manual QA](docs/demo/MANUAL_QA.md)
+- [Documentation index and retained planning material](docs/README.md)
