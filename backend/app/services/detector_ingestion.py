@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import logging
 import shutil
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
 
@@ -76,11 +76,9 @@ def resolve_clip_event_offset(event: DetectorEventPayload) -> float | None:
 
 
 def resolve_occurred_at(event: DetectorEventPayload) -> datetime | None:
-    if event.occurred_at is not None:
-        return event.occurred_at
-    if event.occurred_at_seconds is not None:
-        return datetime.fromtimestamp(event.occurred_at_seconds, tz=timezone.utc)
-    return None
+    # Detector seconds are relative to the recording/session, NOT Unix time.
+    # Preserve an unknown wall-clock date rather than inventing a 1970 incident.
+    return event.occurred_at
 
 
 def _to_read(row: DetectorEventIngestion) -> DetectorEventRead:

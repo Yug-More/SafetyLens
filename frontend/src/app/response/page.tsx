@@ -180,8 +180,8 @@ export default function ResponsePage() {
               ))}
             </ul>
             <p className="mt-4 text-xs text-muted-foreground">
-              Stage 6 will add human approval and simulated execution. Stage 5
-              recommendations above are not executed.
+              This section is seeded reference content. Use the policy workspace above
+              for stored approvals, simulated execution, audit records, and PDF reports.
             </p>
           </article>
         </section>

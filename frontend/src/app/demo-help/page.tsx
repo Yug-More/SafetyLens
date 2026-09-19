@@ -32,7 +32,7 @@ const demoSteps = [
     number: "03",
     title: "Show the procedure library",
     description:
-      "Open the seeded safety procedures and explain that retrieval tied to the uploaded video is a later stage, not a live claim in this demo.",
+      "Retrieve the seeded fall-response SOP for the selected analysis, inspect citations, and generate a proposed plan. Demo Planner is deterministic.",
     href: "/procedures",
     label: "Open Procedures",
     state: "Available now",
@@ -41,7 +41,7 @@ const demoSteps = [
     number: "04",
     title: "Explain human review",
     description:
-      "Use the Response Center to illustrate the intended approval workflow. Its incident, recommendation, and approval controls are demo data; no alert or action is sent.",
+      "Approve selected plan actions, run simulated execution, inspect the audit trail, and download a PDF report. No external alert is sent.",
     href: "/response",
     label: "Open Response Center",
     state: "Demo interface",
@@ -57,7 +57,7 @@ export default function DemoHelpPage() {
         status={
           <span className="inline-flex items-center gap-1.5 rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
             <Clapperboard className="size-3.5" aria-hidden="true" />
-            Stage 3 rehearsal
+            Fall-only rehearsal
           </span>
         }
       />
@@ -71,10 +71,10 @@ export default function DemoHelpPage() {
             SafetyLens turns a safety recording into a review-ready evidence workspace.
           </h2>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
-            Today&apos;s prototype securely accepts a short video, prepares candidate frames, and
-            keeps the proposed response behind a human review experience. The AI verification,
-            video-driven procedure retrieval, notifications, and report generation are planned
-            stages—not capabilities to claim during this rehearsal.
+            Today&apos;s demo focuses on possible falls: local pose detection and a state machine,
+            evidence import, cited procedure retrieval, human approval, simulated actions, and
+            PDF reporting. Default Demo AI is scripted; it does not visually verify a fall.
+            Phone streaming is not required for submission.
           </p>
         </div>
         <div className="rounded-lg border border-border bg-panel/80 p-4">
@@ -153,7 +153,7 @@ export default function DemoHelpPage() {
               Candidate frames are review aids, not confirmed proof of an incident.
             </li>
             <li className="rounded-lg border border-border/70 bg-secondary/25 px-3 py-2.5">
-              The current Response Center uses seeded demo content and simulated approvals.
+              Approvals and audit records are stored; downstream actions are simulated.
             </li>
             <li className="rounded-lg border border-border/70 bg-secondary/25 px-3 py-2.5">
               Do not state accuracy, cost savings, alerts sent, or emergency actions completed

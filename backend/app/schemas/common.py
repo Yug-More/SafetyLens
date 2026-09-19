@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from typing import Generic, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -7,6 +8,15 @@ T = TypeVar("T")
 
 class APIModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
+
+    @field_validator("*", mode="after")
+    @classmethod
+    def restore_sqlite_utc(cls, value):
+        # SQLite drops tzinfo from UTC DateTime columns. Without an offset,
+        # browsers interpret API timestamps as local time (hours in the future).
+        if isinstance(value, datetime) and value.tzinfo is None:
+            return value.replace(tzinfo=timezone.utc)
+        return value
 
 
 class Meta(APIModel):

@@ -96,6 +96,7 @@ export function TopNavigation() {
 
         <Button
           className="ml-1"
+          nativeButton={false}
           render={<Link href="/response" />}
           onClick={() =>
             toast.message(

@@ -14,6 +14,8 @@ import type { ApiDetectorEvent } from "@/lib/api/types";
 import { useApiResource } from "@/hooks/useApiResource";
 import { ConnectionBanner } from "@/components/ConnectionBanner";
 
+const emptyEvents = () => [] as ApiDetectorEvent[];
+
 function statusLabel(status: ApiDetectorEvent["status"]): string {
   switch (status) {
     case "received":
@@ -45,6 +47,7 @@ export function DetectorHandoffPanel({
   const [busy, setBusy] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [clipFile, setClipFile] = useState<File | null>(null);
+  const [eventFile, setEventFile] = useState<File | null>(null);
 
   const loader = useCallback(async () => {
     const response = await fetchDetectorEvents(10);
@@ -53,40 +56,41 @@ export function DetectorHandoffPanel({
 
   const { data, error, source, isLoading, reload } = useApiResource({
     loader,
-    fallback: () => [] as ApiDetectorEvent[],
+    fallback: emptyEvents,
     allowFallback: false,
   });
 
   const events = data ?? [];
 
   async function handleIngest() {
-    if (!clipFile) {
-      setActionError("Choose a detector evidence clip before ingesting.");
+    if (!clipFile || !eventFile) {
+      setActionError("Choose the detector JSON and its matching video before ingesting.");
       return;
     }
     setBusy(true);
     setActionError(null);
     try {
-      const eventId = `evt-ui-${Date.now()}`;
+      const parsed: unknown = JSON.parse(await eventFile.text());
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+        throw new Error("Choose a detector event or video-analysis JSON object.");
+      }
+      const document = parsed as Record<string, unknown>;
+      const candidates = Array.isArray(document.events) ? document.events : [document];
+      if (candidates.length !== 1) {
+        throw new Error(candidates.length === 0
+          ? "No fall candidate was detected. Nothing will be submitted."
+          : "This demo accepts one event at a time. Choose a single event JSON.");
+      }
+      const candidate = candidates[0];
+      if (!candidate || typeof candidate !== "object" ||
+          candidate.schema_version !== "1.0" ||
+          candidate.event_type !== "possible_person_down" ||
+          typeof candidate.event_id !== "string" || typeof candidate.source_id !== "string") {
+        throw new Error("Invalid fall detector event. Export JSON from safetylens_detector.video.");
+      }
       const event = await ingestDetectorEvent({
         clip: clipFile,
-        event: {
-          schema_version: "1.0",
-          event_id: eventId,
-          event_type: "possible_person_down",
-          source_id: "demo-camera-04",
-          camera_id: "cam-04",
-          track_id: "track-ui-1",
-          occurred_at: new Date().toISOString(),
-          source_timestamp_seconds: 2,
-          clip_event_offset_seconds: 2,
-          state: "incident",
-          trigger_signals: ["rapid_drop", "demo_ingest"],
-          pose_quality: 0.9,
-          heuristic_score: null,
-          metrics: {},
-          limitations: ["demo_ui_ingest", "requires_human_verification"],
-        },
+        event: candidate,
       });
       if (event.asset_code && onOpenAsset) {
         onOpenAsset(event.asset_code, event.job_code);
@@ -94,7 +98,7 @@ export function DetectorHandoffPanel({
       reload();
     } catch (err) {
       setActionError(
-        err instanceof ApiError
+        err instanceof Error
           ? err.message
           : "Detector ingest failed. Uploaded-video demo remains available."
       );
@@ -122,9 +126,9 @@ export function DetectorHandoffPanel({
         <div>
           <h2 className="text-base font-semibold text-foreground">Detector handoff</h2>
           <p className="mt-1 text-xs text-muted-foreground">
-            Optional Stage 7 path: ingest Sean&apos;s contract event + clip into the existing
-            upload/analyze pipeline. Uploaded-video demo works even if the detector process is
-            offline.
+            Import real fall-detector JSON with its matching original video. This uploads
+            existing results; it does not run detection in the browser. Default Demo AI
+            analysis is scripted, and downstream actions are simulated.
           </p>
         </div>
         <span className="rounded-md border border-amber-500/40 bg-amber-500/10 px-2 py-1 text-[11px] text-amber-100">
@@ -144,6 +148,12 @@ export function DetectorHandoffPanel({
 
       <div className="flex flex-wrap items-end gap-2">
         <label className="space-y-1 text-xs text-muted-foreground">
+          Detector result JSON
+          <input type="file" accept=".json,application/json"
+            className="block w-full text-sm text-foreground"
+            onChange={(event) => setEventFile(event.target.files?.[0] ?? null)} />
+        </label>
+        <label className="space-y-1 text-xs text-muted-foreground">
           Evidence clip
           <input
             type="file"
@@ -152,7 +162,7 @@ export function DetectorHandoffPanel({
             onChange={(event) => setClipFile(event.target.files?.[0] ?? null)}
           />
         </label>
-        <Button size="sm" disabled={busy || !clipFile} onClick={() => void handleIngest()}>
+        <Button size="sm" disabled={busy || !clipFile || !eventFile} onClick={() => void handleIngest()}>
           {busy ? (
             <Loader2 className="size-4 animate-spin" data-icon="inline-start" />
           ) : (

@@ -15,6 +15,7 @@ import {
 import type { ApiIncidentReport } from "@/lib/api/types";
 
 const DEMO_INCIDENT = "INC-2026-0042";
+const emptyReports = () => [] as ApiIncidentReport[];
 
 export default function ReportsPage() {
   const [selected, setSelected] = useState<ApiIncidentReport | null>(null);
@@ -28,7 +29,7 @@ export default function ReportsPage() {
 
   const { data, error, source, isLoading, reload } = useApiResource({
     loader,
-    fallback: () => [] as ApiIncidentReport[],
+    fallback: emptyReports,
     allowFallback: false,
   });
 
