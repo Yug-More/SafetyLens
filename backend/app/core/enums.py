@@ -67,3 +67,32 @@ class JobStatus(str, enum.Enum):
 
 class JobType(str, enum.Enum):
     VIDEO_PREPARE = "video_prepare"
+    ANALYSIS = "analysis"
+
+
+class AnalysisStatus(str, enum.Enum):
+    QUEUED = "queued"
+    RUNNING = "running"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    NEEDS_REVIEW = "needs_review"
+
+
+class AnalysisSeverity(str, enum.Enum):
+    NONE = "none"
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+    CRITICAL = "critical"
+
+
+class ReviewDecision(str, enum.Enum):
+    PENDING = "pending"
+    CONFIRMED = "confirmed"
+    REJECTED = "rejected"
+    NEEDS_MORE_INFO = "needs_more_info"
+
+
+class AIProviderName(str, enum.Enum):
+    DEMO = "demo"
+    OPENAI = "openai"

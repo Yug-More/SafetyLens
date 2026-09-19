@@ -241,3 +241,94 @@ export interface VideoUploadRequest {
   location: string;
   cameraId?: string;
 }
+
+export type ApiAnalysisStatus =
+  | "queued"
+  | "running"
+  | "completed"
+  | "failed"
+  | "needs_review";
+
+export type ApiAnalysisSeverity = "none" | "low" | "medium" | "high" | "critical";
+
+export type ApiReviewDecision =
+  | "pending"
+  | "confirmed"
+  | "rejected"
+  | "needs_more_info";
+
+export interface ApiAnalysisEvidence {
+  id: string;
+  frame_id: string;
+  frame_code: string;
+  timestamp_seconds: number;
+  observation: string;
+  relevance: string;
+  content_url: string;
+}
+
+export interface ApiAnalysisReview {
+  id: string;
+  decision: ApiReviewDecision;
+  reviewer_name: string;
+  notes: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiIncidentAnalysis {
+  id: string;
+  analysis_code: string;
+  video_asset_id: string;
+  video_asset_code: string | null;
+  processing_job_id: string | null;
+  processing_job_code: string | null;
+  status: ApiAnalysisStatus;
+  provider_name: string;
+  is_demo: boolean;
+  is_simulated: boolean;
+  incident_detected: boolean | null;
+  incident_type: string | null;
+  summary: string | null;
+  detailed_analysis: string | null;
+  severity: ApiAnalysisSeverity | null;
+  confidence: number | null;
+  recommended_actions: string[];
+  limitations: string[];
+  inconclusive: boolean;
+  error_code: string | null;
+  error_message: string | null;
+  started_at: string | null;
+  completed_at: string | null;
+  created_at: string;
+  updated_at: string;
+  evidence: ApiAnalysisEvidence[];
+  review: ApiAnalysisReview | null;
+  provider_label: string | null;
+  human_approval_required: boolean;
+}
+
+export interface ApiAnalyzeVideoResponse {
+  analysis_code: string;
+  job_code: string;
+  status: ApiAnalysisStatus;
+  provider_name: string;
+  is_demo: boolean;
+  is_simulated: boolean;
+  message: string;
+}
+
+export interface ApiAIProviderInfo {
+  provider_name: string;
+  is_demo: boolean;
+  is_simulated: boolean;
+  label: string;
+  description: string;
+}
+
+export interface AnalysisReviewRequest {
+  decision: Exclude<ApiReviewDecision, "pending">;
+  reviewerName?: string;
+  notes?: string;
+}
