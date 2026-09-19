@@ -15,6 +15,7 @@ video = ["mediapipe==1.0.1"]
 
 [project.scripts]
 safetylens-video = "safetylens_detector.video:main"
+safetylens-live = "safetylens_detector.live:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
