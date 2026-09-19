@@ -1,6 +1,7 @@
 # Dependencies
 node_modules/
 frontend/node_modules/
+.pnpm-store/
 backend/.venv/
 .venv/
 venv/
@@ -44,7 +45,16 @@ backend/*.sqlite*
 # Uploaded media and extracted frames
 backend/data/uploads/
 backend/data/frames/
+backend/data/procedures/
+backend/data/reports/
+backend/data/detector-events/
 !backend/data/README.md
+
+# Detector local artifacts
+detector/models/
+detector/.venv/
+detector/**/*.mp4
+detector/**/events/
 
 # Build / caches
 dist/

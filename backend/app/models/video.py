@@ -46,3 +46,8 @@ class VideoAsset(Base, IdMixin, TimestampMixin):
         back_populates="video_asset",
         cascade="all, delete-orphan",
     )
+    analyses = relationship(
+        "IncidentAnalysis",
+        back_populates="video_asset",
+        cascade="all, delete-orphan",
+    )

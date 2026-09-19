@@ -36,6 +36,61 @@ class Settings(BaseSettings):
     frame_sample_count: int = Field(default=10, alias="FRAME_SAMPLE_COUNT", ge=1, le=60)
     max_frame_dimension: int = Field(default=1280, alias="MAX_FRAME_DIMENSION", ge=320)
 
+    ai_provider: str = Field(default="demo", alias="AI_PROVIDER")
+    openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
+    vision_model: str | None = Field(default=None, alias="VISION_MODEL")
+    ai_request_timeout_seconds: int = Field(
+        default=45,
+        alias="AI_REQUEST_TIMEOUT_SECONDS",
+        ge=5,
+        le=300,
+    )
+    ai_max_retries: int = Field(default=2, alias="AI_MAX_RETRIES", ge=0, le=5)
+    ai_max_frames: int = Field(default=8, alias="AI_MAX_FRAMES", ge=1, le=16)
+    ai_max_image_dimension: int = Field(
+        default=1280,
+        alias="AI_MAX_IMAGE_DIMENSION",
+        ge=320,
+        le=2048,
+    )
+    ai_demo_mode: bool = Field(default=True, alias="AI_DEMO_MODE")
+
+    procedure_directory: str = Field(
+        default="./data/procedures",
+        alias="PROCEDURE_DIRECTORY",
+    )
+    report_directory: str = Field(default="./data/reports", alias="REPORT_DIRECTORY")
+    max_procedure_size_mb: int = Field(default=10, alias="MAX_PROCEDURE_SIZE_MB", ge=1)
+    max_procedure_text_chars: int = Field(
+        default=200_000,
+        alias="MAX_PROCEDURE_TEXT_CHARS",
+        ge=1000,
+    )
+    procedure_chunk_max_chars: int = Field(
+        default=900,
+        alias="PROCEDURE_CHUNK_MAX_CHARS",
+        ge=200,
+        le=4000,
+    )
+    retrieval_top_k: int = Field(default=8, alias="RETRIEVAL_TOP_K", ge=1, le=25)
+    retrieval_min_score: float = Field(
+        default=0.08,
+        alias="RETRIEVAL_MIN_SCORE",
+        ge=0.0,
+        le=1.0,
+    )
+    planner_provider: str = Field(default="demo", alias="PLANNER_PROVIDER")
+    planner_model: str | None = Field(default=None, alias="PLANNER_MODEL")
+
+    detector_events_directory: str = Field(
+        default="./data/detector-events",
+        alias="DETECTOR_EVENTS_DIRECTORY",
+    )
+    detector_ingest_auto_analyze: bool = Field(
+        default=True,
+        alias="DETECTOR_INGEST_AUTO_ANALYZE",
+    )
+
     @field_validator("frontend_origins")
     @classmethod
     def validate_origins(cls, value: str) -> str:
@@ -44,6 +99,22 @@ class Settings(BaseSettings):
             raise ValueError("FRONTEND_ORIGINS cannot be blank")
         if "*" in cleaned:
             raise ValueError("Wildcard CORS origins are not allowed")
+        return cleaned
+
+    @field_validator("ai_provider")
+    @classmethod
+    def normalize_provider(cls, value: str) -> str:
+        cleaned = value.strip().lower()
+        if cleaned not in {"demo", "openai"}:
+            raise ValueError("AI_PROVIDER must be 'demo' or 'openai'")
+        return cleaned
+
+    @field_validator("planner_provider")
+    @classmethod
+    def normalize_planner(cls, value: str) -> str:
+        cleaned = value.strip().lower()
+        if cleaned not in {"demo", "openai"}:
+            raise ValueError("PLANNER_PROVIDER must be 'demo' or 'openai'")
         return cleaned
 
     @property
@@ -55,12 +126,36 @@ class Settings(BaseSettings):
         return self.max_video_size_mb * 1024 * 1024
 
     @property
+    def max_procedure_size_bytes(self) -> int:
+        return self.max_procedure_size_mb * 1024 * 1024
+
+    @property
     def upload_path(self) -> Path:
         return Path(self.upload_directory).expanduser().resolve()
 
     @property
     def frame_path(self) -> Path:
         return Path(self.frame_directory).expanduser().resolve()
+
+    @property
+    def procedure_path(self) -> Path:
+        return Path(self.procedure_directory).expanduser().resolve()
+
+    @property
+    def report_path(self) -> Path:
+        return Path(self.report_directory).expanduser().resolve()
+
+    @property
+    def detector_events_path(self) -> Path:
+        return Path(self.detector_events_directory).expanduser().resolve()
+
+    @property
+    def is_demo_ai(self) -> bool:
+        return self.ai_provider == "demo"
+
+    @property
+    def is_demo_planner(self) -> bool:
+        return self.planner_provider == "demo"
 
 
 @lru_cache

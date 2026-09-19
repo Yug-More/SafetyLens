@@ -6,6 +6,7 @@ import {
   FileText,
   BarChart3,
   Settings,
+  Clapperboard,
   type LucideIcon,
 } from "lucide-react";
 
@@ -22,6 +23,7 @@ export const navigationItems: NavItem[] = [
   { title: "Response Center", href: "/response", icon: ShieldCheck },
   { title: "Procedures", href: "/procedures", icon: FileText },
   { title: "Reports", href: "/reports", icon: BarChart3 },
+  { title: "Demo Guide", href: "/demo-help", icon: Clapperboard },
   { title: "Settings", href: "/settings", icon: Settings },
 ];
 

@@ -105,6 +105,224 @@ export interface ApiProcedure {
   created_at: string;
   updated_at: string;
   steps: string[];
+  effective_date?: string | null;
+  source_filename?: string | null;
+  source_format?: string | null;
+  chunk_count?: number;
+  is_sample?: boolean;
+}
+
+export interface ApiProcedureChunk {
+  id: string;
+  chunk_code: string;
+  chunk_order: number;
+  section_heading: string | null;
+  page_number: number | null;
+  content: string;
+  procedure_id: string;
+  procedure_code: string | null;
+  procedure_title: string | null;
+  procedure_version: string | null;
+}
+
+export interface ApiRetrievalMatch {
+  procedure_id: string;
+  procedure_code: string;
+  procedure_title: string;
+  procedure_version: string;
+  chunk_id: string;
+  chunk_code: string;
+  chunk_order: number;
+  section_heading: string | null;
+  page_number: number | null;
+  excerpt: string;
+  score: number;
+  method: string;
+  rank: number;
+}
+
+export interface ApiProcedureRetrieval {
+  id: string;
+  retrieval_code: string;
+  analysis_id: string;
+  analysis_code: string | null;
+  query_text: string;
+  method: string;
+  status: "completed" | "insufficient" | "failed";
+  match_count: number;
+  message: string | null;
+  matches: ApiRetrievalMatch[];
+  created_at: string;
+}
+
+export interface ApiPlanCitation {
+  id: string;
+  chunk_id: string;
+  chunk_code: string | null;
+  procedure_code: string | null;
+  procedure_title: string | null;
+  section_heading: string | null;
+  page_number: number | null;
+  excerpt: string;
+}
+
+export interface ApiPlannedAction {
+  id: string;
+  action_order: number;
+  title: string;
+  description: string;
+  priority: ApiActionPriority;
+  responsible_role: string;
+  requires_human_approval: boolean;
+  is_policy_grounded: boolean;
+  selection_status?: string;
+  citations: ApiPlanCitation[];
+}
+
+export interface ApiResponsePlan {
+  id: string;
+  plan_code: string;
+  analysis_id: string;
+  analysis_code: string | null;
+  retrieval_id: string | null;
+  retrieval_code: string | null;
+  status: "queued" | "completed" | "insufficient_policy" | "failed";
+  approval_status?: "pending" | "approved" | "partially_approved" | "rejected";
+  execution_status?:
+    | "none"
+    | "in_progress"
+    | "executed"
+    | "partially_failed"
+    | "failed"
+    | "cancelled";
+  incident_id?: string | null;
+  summary: string | null;
+  rationale: string | null;
+  provider_name: string;
+  provider_model: string | null;
+  is_demo: boolean;
+  is_simulated: boolean;
+  provider_label: string;
+  limitations: string[];
+  error_code: string | null;
+  error_message: string | null;
+  actions: ApiPlannedAction[];
+  recommendations_executed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiPlanApproval {
+  id: string;
+  approval_code: string;
+  plan_id: string;
+  plan_code: string | null;
+  incident_id: string | null;
+  incident_code: string | null;
+  status: "pending" | "approved" | "partially_approved" | "rejected";
+  reviewer_name: string;
+  notes: string | null;
+  rejection_reason: string | null;
+  selected_action_ids: string[];
+  correlation_id: string;
+  decided_at: string | null;
+  is_simulated: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiActionExecution {
+  id: string;
+  execution_code: string;
+  plan_id: string;
+  action_id: string;
+  action_title: string | null;
+  approval_id: string;
+  idempotency_key: string;
+  action_type: string;
+  requested_target: string;
+  provider: string;
+  simulation: boolean;
+  status: "pending" | "running" | "completed" | "failed" | "skipped";
+  message: string;
+  started_at: string | null;
+  completed_at: string | null;
+  failure_code: string | null;
+  failure_reason: string | null;
+  external_reference: string | null;
+  attempt_number: number;
+  correlation_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiExecutePlanResponse {
+  plan_id: string;
+  plan_code: string;
+  execution_status: string;
+  simulation: boolean;
+  correlation_id: string;
+  executions: ApiActionExecution[];
+  message: string;
+}
+
+export interface ApiAuditEvent {
+  id: string;
+  event_code: string;
+  incident_id: string | null;
+  analysis_id: string | null;
+  plan_id: string | null;
+  execution_id: string | null;
+  event_type: string;
+  actor_type: string;
+  actor_name: string;
+  occurred_at: string;
+  metadata: Record<string, unknown>;
+  previous_status: string | null;
+  new_status: string | null;
+  correlation_id: string;
+  simulation: boolean;
+}
+
+export interface ApiIncidentReport {
+  id: string;
+  report_code: string;
+  incident_id: string;
+  incident_code: string | null;
+  plan_id: string | null;
+  plan_code: string | null;
+  approval_id: string | null;
+  status: "complete" | "incomplete" | "failed";
+  simulation: boolean;
+  title: string;
+  summary: Record<string, unknown>;
+  incomplete_reason: string | null;
+  download_url: string | null;
+  generated_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiProcedureUploadResponse {
+  id: string;
+  procedure_code: string;
+  title: string;
+  version: string;
+  source_format: string;
+  source_filename: string;
+  chunk_count: number;
+  is_sample: boolean;
+  message: string;
+}
+
+export interface ProcedureUploadRequest {
+  file: File;
+  procedureCode: string;
+  title: string;
+  category: string;
+  version: string;
+  sourceName?: string;
+  isSample?: boolean;
 }
 
 export interface ApiIncidentDetail {
@@ -240,4 +458,151 @@ export interface VideoUploadRequest {
   file: File;
   location: string;
   cameraId?: string;
+}
+
+export type ApiAnalysisStatus =
+  | "queued"
+  | "running"
+  | "completed"
+  | "failed"
+  | "needs_review";
+
+export type ApiAnalysisSeverity = "none" | "low" | "medium" | "high" | "critical";
+
+export type ApiReviewDecision =
+  | "pending"
+  | "confirmed"
+  | "rejected"
+  | "needs_more_info";
+
+export interface ApiAnalysisEvidence {
+  id: string;
+  frame_id: string;
+  frame_code: string;
+  timestamp_seconds: number;
+  observation: string;
+  relevance: string;
+  content_url: string;
+}
+
+export interface ApiAnalysisReview {
+  id: string;
+  decision: ApiReviewDecision;
+  reviewer_name: string;
+  notes: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiIncidentAnalysis {
+  id: string;
+  analysis_code: string;
+  video_asset_id: string;
+  video_asset_code: string | null;
+  processing_job_id: string | null;
+  processing_job_code: string | null;
+  status: ApiAnalysisStatus;
+  provider_name: string;
+  is_demo: boolean;
+  is_simulated: boolean;
+  incident_detected: boolean | null;
+  incident_type: string | null;
+  summary: string | null;
+  detailed_analysis: string | null;
+  severity: ApiAnalysisSeverity | null;
+  confidence: number | null;
+  recommended_actions: string[];
+  limitations: string[];
+  inconclusive: boolean;
+  error_code: string | null;
+  error_message: string | null;
+  started_at: string | null;
+  completed_at: string | null;
+  created_at: string;
+  updated_at: string;
+  evidence: ApiAnalysisEvidence[];
+  review: ApiAnalysisReview | null;
+  provider_label: string | null;
+  human_approval_required: boolean;
+}
+
+export interface ApiAnalyzeVideoResponse {
+  analysis_code: string;
+  job_code: string;
+  status: ApiAnalysisStatus;
+  provider_name: string;
+  is_demo: boolean;
+  is_simulated: boolean;
+  message: string;
+}
+
+export interface ApiAIProviderInfo {
+  provider_name: string;
+  is_demo: boolean;
+  is_simulated: boolean;
+  label: string;
+  description: string;
+}
+
+export interface AnalysisReviewRequest {
+  decision: Exclude<ApiReviewDecision, "pending">;
+  reviewerName?: string;
+  notes?: string;
+}
+
+export type ApiDetectorIngestionStatus =
+  | "received"
+  | "uploading"
+  | "processing"
+  | "ready"
+  | "analyzing"
+  | "completed"
+  | "failed"
+  | "detector_unavailable";
+
+export interface ApiDetectorEvent {
+  id: string;
+  event_id: string;
+  schema_version: string;
+  event_type: string;
+  source_id: string;
+  camera_id: string | null;
+  camera_name: string | null;
+  track_id: string | null;
+  occurred_at: string | null;
+  source_timestamp_seconds: number | null;
+  clip_event_offset_seconds: number | null;
+  detector_state: string | null;
+  trigger_signals: string[];
+  pose_quality: number | null;
+  pose_quality_label: string;
+  heuristic_score: number | null;
+  heuristic_score_note: string;
+  metrics: Record<string, unknown>;
+  limitations: string[];
+  status: ApiDetectorIngestionStatus;
+  location: string;
+  asset_code: string | null;
+  job_code: string | null;
+  analysis_code: string | null;
+  incident_code: string | null;
+  error_code: string | null;
+  error_message: string | null;
+  retry_count: number;
+  correlation_id: string;
+  is_simulated: boolean;
+  message: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiDemoResetResponse {
+  reset: boolean;
+  message: string;
+  deleted_videos: number;
+  deleted_detector_events: number;
+  deleted_reports: number;
+  reseeding_completed: boolean;
+  demo_mode: boolean;
 }
