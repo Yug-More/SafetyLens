@@ -34,12 +34,16 @@ async def upload_video(
     file: UploadFile = File(...),
     location: str = Form(...),
     camera_id: str | None = Form(default=None),
+    demo_scenario: str | None = Form(default=None),
+    demo_ppe_observation: str | None = Form(default=None),
 ) -> ItemResponse[VideoUploadResponse]:
     response, video_id = await video_service.create_upload(
         db,
         upload=file,
         location=location,
         camera_id=camera_id or None,
+        demo_scenario=demo_scenario or None,
+        demo_ppe_observation=demo_ppe_observation or None,
     )
     job = video_service.get_job(db, response.job_code)
     background_tasks.add_task(video_service.process_video_job, video_id, job.id)

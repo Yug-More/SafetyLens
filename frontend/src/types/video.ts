@@ -100,6 +100,11 @@ export interface IncidentAnalysisView {
   recommendedActions: string[];
   limitations: string[];
   inconclusive: boolean;
+  requiredPpe: string[];
+  observedPpe: string[];
+  possiblyMissingPpe: string[];
+  analysisMode: string | null;
+  humanReviewRequired: boolean;
   errorCode: string | null;
   errorMessage: string | null;
   evidence: AnalysisEvidenceItem[];

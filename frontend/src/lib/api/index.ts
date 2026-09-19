@@ -274,6 +274,12 @@ export function uploadVideo(request: VideoUploadRequest) {
   if (request.cameraId) {
     formData.append("camera_id", request.cameraId);
   }
+  if (request.demoScenario) {
+    formData.append("demo_scenario", request.demoScenario);
+  }
+  if (request.demoPpeObservation) {
+    formData.append("demo_ppe_observation", request.demoPpeObservation);
+  }
   return apiPostMultipart<ApiVideoUploadResponse>("/api/videos/upload", formData);
 }
 

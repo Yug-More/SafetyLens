@@ -114,6 +114,9 @@ function MonitorPageContent() {
   const [activeCameraId, setActiveCameraId] = useState(DEFAULT_UPLOAD_CAMERA_ID);
   const [focusedCameraId, setFocusedCameraId] = useState<string | null>(null);
   const [workspaceState, setWorkspaceState] = useState<VideoWorkspaceState | null>(null);
+  const [demoScenario, setDemoScenario] = useState<"person_down" | "ppe_compliance">(
+    "person_down"
+  );
 
   const loader = useCallback(async () => {
     const [summary, camerasRes] = await Promise.all([
@@ -253,8 +256,12 @@ function MonitorPageContent() {
   function handleUploaded(response: ApiVideoUploadResponse) {
     setLocalUpload(response);
     setSelectedVideoUrl(null);
-    setActiveCameraId(DEFAULT_UPLOAD_CAMERA_ID);
-    setFocusedCameraId(DEFAULT_UPLOAD_CAMERA_ID);
+    setActiveCameraId(
+      demoScenario === "ppe_compliance" ? "cam-04" : DEFAULT_UPLOAD_CAMERA_ID
+    );
+    setFocusedCameraId(
+      demoScenario === "ppe_compliance" ? "cam-04" : DEFAULT_UPLOAD_CAMERA_ID
+    );
     reloadLibrary();
   }
 
@@ -349,19 +356,34 @@ function MonitorPageContent() {
           </span>
         }
         actions={
-          <Button
-            variant="outline"
-            onClick={() => {
-              if (source === "fallback") {
-                return;
-              }
-              setActiveCameraId(DEFAULT_UPLOAD_CAMERA_ID);
-              setUploadOpen(true);
-            }}
-          >
-            <Upload data-icon="inline-start" />
-            Upload Demo Event
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant={demoScenario === "person_down" ? "default" : "outline"}
+              onClick={() => {
+                setDemoScenario("person_down");
+                setActiveCameraId("cam-03");
+                if (source !== "fallback") {
+                  setUploadOpen(true);
+                }
+              }}
+            >
+              <Upload data-icon="inline-start" />
+              Run Person-Down Demo
+            </Button>
+            <Button
+              variant={demoScenario === "ppe_compliance" ? "default" : "outline"}
+              onClick={() => {
+                setDemoScenario("ppe_compliance");
+                setActiveCameraId("cam-04");
+                if (source !== "fallback") {
+                  setUploadOpen(true);
+                }
+              }}
+            >
+              <Upload data-icon="inline-start" />
+              Run PPE Demo
+            </Button>
+          </div>
         }
       />
 
@@ -549,8 +571,11 @@ function MonitorPageContent() {
         open={uploadOpen}
         onOpenChange={setUploadOpen}
         cameras={data.cameras}
-        defaultCameraId={DEFAULT_UPLOAD_CAMERA_ID}
-        defaultLocation={uploadCamera?.location ?? DEFAULT_UPLOAD_LOCATION}
+        defaultCameraId={demoScenario === "ppe_compliance" ? "cam-04" : "cam-03"}
+        defaultLocation={
+          demoScenario === "ppe_compliance" ? "Production Floor" : DEFAULT_UPLOAD_LOCATION
+        }
+        defaultScenario={demoScenario}
         onUploaded={handleUploaded}
       />
     </div>

@@ -21,6 +21,8 @@ class VideoAssetRead(APIModel):
     camera_name: str | None = None
     location: str
     status: VideoStatus
+    demo_scenario: str | None = None
+    demo_ppe_observation: str | None = None
     created_at: datetime
     updated_at: datetime
     content_url: str | None = None

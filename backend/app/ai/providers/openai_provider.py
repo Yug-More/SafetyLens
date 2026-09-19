@@ -12,6 +12,7 @@ from app.ai.base import AIProvider, AIProviderError
 from app.ai.prompts import SYSTEM_PROMPT, build_user_prompt
 from app.ai.schemas import FrameAnalysisInput, IncidentAnalysisResult
 from app.core.config import Settings
+from app.core.enums import AnalysisSeverity
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +42,10 @@ class OpenAIProvider(AIProvider):
         camera_name: str | None,
         video_asset_code: str,
         duration_seconds: float | None,
+        camera_id: str | None = None,
+        demo_scenario: str | None = None,
+        demo_ppe_observation: str | None = None,
+        required_ppe: list[str] | None = None,
     ) -> IncidentAnalysisResult:
         if not frames:
             raise AIProviderError(
@@ -63,6 +68,7 @@ class OpenAIProvider(AIProvider):
             camera_name=camera_name,
             video_asset_code=video_asset_code,
             duration_seconds=duration_seconds,
+            required_ppe=required_ppe,
         )
 
         content: list[dict[str, Any]] = [{"type": "text", "text": user_text}]
@@ -91,7 +97,47 @@ class OpenAIProvider(AIProvider):
                 payload = json.loads(raw)
                 result = IncidentAnalysisResult.model_validate(payload)
                 self._validate_frame_references(result, frames)
-                return result
+                from app.core.incident_types import (
+                    ALLOWED_ANALYSIS_TYPES,
+                    normalize_incident_type,
+                )
+
+                normalized = normalize_incident_type(result.incident_type) or result.incident_type
+                if normalized not in ALLOWED_ANALYSIS_TYPES:
+                    normalized = (
+                        "insufficient_evidence"
+                        if result.inconclusive or not result.incident_detected
+                        else result.incident_type
+                    )
+                # Never claim PPE noncompliance without a configured camera policy.
+                if normalized == "ppe_noncompliance" and not required_ppe:
+                    normalized = "insufficient_evidence"
+                    return result.model_copy(
+                        update={
+                            "incident_detected": False,
+                            "incident_type": normalized,
+                            "severity": AnalysisSeverity.NONE,
+                            "inconclusive": True,
+                            "analysis_mode": "multimodal",
+                            "required_ppe": [],
+                            "possibly_missing_ppe": [],
+                            "summary": (
+                                "No PPE requirement is configured for this camera, "
+                                "so PPE noncompliance was not inferred."
+                            ),
+                            "human_review_required": False,
+                        }
+                    )
+                return result.model_copy(
+                    update={
+                        "incident_type": normalized,
+                        "analysis_mode": "multimodal",
+                        "required_ppe": list(required_ppe or result.required_ppe),
+                        "human_review_required": True
+                        if result.incident_detected
+                        else result.human_review_required,
+                    }
+                )
             except AIProviderError:
                 raise
             except Exception as exc:  # noqa: BLE001 - normalize provider failures

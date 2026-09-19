@@ -92,16 +92,34 @@ PROCEDURE_SEED = [
     {
         "id": "proc-ppe",
         "procedure_code": "SOP-PPE-3.4",
-        "title": "PPE Compliance Procedure",
+        "title": "Required PPE and Controlled-Zone Entry",
         "category": "Compliance",
         "version": "3.4",
         "is_sample": True,
         "content": (
-            "1. Identify the non-compliant worker and zone.\n"
-            "2. Issue an immediate PPE reminder.\n"
-            "3. Pause work if risk remains elevated.\n"
-            "4. Document the compliance event.\n"
-            "5. Schedule refresher training if recurring."
+            "Sample company procedure for demonstration only — not legal advice.\n\n"
+            "## Controlled-Zone PPE Requirements\n"
+            "1. Workers entering a PPE-required controlled zone must wear a hard hat "
+            "and a high-visibility vest when those items are listed for the zone.\n"
+            "2. Control-room operators must treat missing or not-visible required PPE "
+            "as a compliance event pending human verification.\n\n"
+            "## Supervisor Verification\n"
+            "3. Request an on-duty supervisor to verify whether required PPE is present "
+            "before allowing continued controlled-zone entry.\n"
+            "4. Do not rely solely on distant camera footage when occlusion or angle "
+            "may hide PPE.\n\n"
+            "## Pause or Delay Entry\n"
+            "5. Prevent or pause controlled-zone entry when required PPE is unavailable "
+            "or cannot be confirmed.\n"
+            "6. Ask the worker to obtain the required hard hat or high-visibility vest "
+            "before re-entering the zone.\n\n"
+            "## Documentation and Escalation\n"
+            "7. Record the compliance event, including camera, zone, and possibly missing items.\n"
+            "8. Escalate repeated noncompliance according to company policy.\n\n"
+            "## Evidence Preservation\n"
+            "9. Preserve the relevant camera clip and related digital evidence according "
+            "to company policy.\n"
+            "10. Do not alter, overwrite, or discard source media from the incident window."
         ),
     },
     {
@@ -418,12 +436,57 @@ def _seed_services(db: Session, now: datetime) -> None:
         )
 
 
+def _seed_ppe_policies(db: Session) -> None:
+    import json
+    from uuid import uuid4
+
+    from app.models.ppe_policy import CameraPpePolicy
+
+    policies = [
+        {
+            "camera_id": "cam-04",
+            "zone_label": "Production Floor",
+            "required_ppe": ["hard_hat", "high_visibility_vest"],
+            "procedure_code": "SOP-PPE-3.4",
+        },
+        {
+            "camera_id": "cam-02",
+            "zone_label": "Loading Bay",
+            "required_ppe": ["hard_hat", "high_visibility_vest"],
+            "procedure_code": "SOP-PPE-3.4",
+        },
+    ]
+    for item in policies:
+        existing = db.scalars(
+            select(CameraPpePolicy).where(CameraPpePolicy.camera_id == item["camera_id"])
+        ).first()
+        payload = json.dumps(item["required_ppe"])
+        if existing:
+            existing.zone_label = item["zone_label"]
+            existing.required_ppe_json = payload
+            existing.procedure_code = item["procedure_code"]
+            existing.is_active = True
+            continue
+        db.add(
+            CameraPpePolicy(
+                id=str(uuid4()),
+                camera_id=item["camera_id"],
+                zone_label=item["zone_label"],
+                required_ppe_json=payload,
+                procedure_code=item["procedure_code"],
+                is_active=True,
+            )
+        )
+
+
 def seed_database(db: Session) -> dict[str, int]:
     now = datetime.now(timezone.utc)
 
     for camera_id, name, location in CAMERA_SEED:
         _get_or_create_camera(db, camera_id, name, location)
     db.flush()
+
+    _seed_ppe_policies(db)
 
     procedures = {
         item["procedure_code"]: _get_or_create_procedure(db, item) for item in PROCEDURE_SEED

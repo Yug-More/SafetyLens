@@ -75,6 +75,25 @@ function confidencePercent(value: number | null | undefined): string {
   return `${Math.round(normalized)}%`;
 }
 
+function formatPpeLabel(value: string): string {
+  return value.replaceAll("_", " ");
+}
+
+function isPpeIncident(analysis: ApiIncidentAnalysis | null): boolean {
+  const type = (analysis?.incident_type ?? "").toLowerCase();
+  return type === "ppe_noncompliance" || type === "ppe_violation";
+}
+
+function analysisModeLabel(analysis: ApiIncidentAnalysis | null): string {
+  if (analysis?.analysis_mode === "configured_demo") {
+    return "Configured PPE Demo · Human verification required";
+  }
+  if (analysis && !analysis.is_demo) {
+    return "Multimodal analysis · Human verification required";
+  }
+  return "Demo AI analysis · Human verification required";
+}
+
 function topEvidence(
   items: ApiIncidentAnalysis["evidence"],
   max = 3
@@ -677,9 +696,49 @@ export function PolicyResponseWorkspace() {
           <div>
             <dt className="text-muted-foreground">Confidence</dt>
             <dd className="font-medium text-foreground">
-              {confidencePercent(analysis.confidence ?? workflow?.confidence)}
+              {analysis.analysis_mode === "configured_demo"
+                ? "Configured scenario"
+                : confidencePercent(
+                    analysis.confidence ?? workflow?.confidence
+                  )}
             </dd>
           </div>
+          <div>
+            <dt className="text-muted-foreground">Analysis source</dt>
+            <dd className="font-medium text-foreground">
+              {analysisModeLabel(analysis)}
+            </dd>
+          </div>
+          {isPpeIncident(analysis) ? (
+            <>
+              <div>
+                <dt className="text-muted-foreground">Required PPE</dt>
+                <dd className="font-medium capitalize text-foreground">
+                  {(analysis.required_ppe ?? []).length > 0
+                    ? analysis.required_ppe!.map(formatPpeLabel).join(", ")
+                    : "—"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">Observed PPE</dt>
+                <dd className="font-medium capitalize text-foreground">
+                  {(analysis.observed_ppe ?? []).length > 0
+                    ? analysis.observed_ppe!.map(formatPpeLabel).join(", ")
+                    : "Not clearly visible"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">Possibly missing PPE</dt>
+                <dd className="font-medium capitalize text-foreground">
+                  {(analysis.possibly_missing_ppe ?? []).length > 0
+                    ? analysis.possibly_missing_ppe!
+                        .map(formatPpeLabel)
+                        .join(", ")
+                    : "—"}
+                </dd>
+              </div>
+            </>
+          ) : null}
         </dl>
       </section>
 

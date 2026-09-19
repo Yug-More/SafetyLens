@@ -36,6 +36,7 @@ interface VideoUploadDialogProps {
   cameras: Camera[];
   defaultCameraId?: string;
   defaultLocation?: string;
+  defaultScenario?: "person_down" | "ppe_compliance";
   onUploaded: (response: ApiVideoUploadResponse) => void;
 }
 
@@ -69,6 +70,7 @@ export function VideoUploadDialog({
   cameras,
   defaultCameraId = "cam-04",
   defaultLocation = "Loading Zone B",
+  defaultScenario = "person_down",
   onUploaded,
 }: VideoUploadDialogProps) {
   const inputId = useId();
@@ -76,6 +78,14 @@ export function VideoUploadDialog({
   const [file, setFile] = useState<File | null>(null);
   const [location, setLocation] = useState(defaultLocation);
   const [cameraId, setCameraId] = useState(defaultCameraId);
+  const [scenario, setScenario] = useState<"person_down" | "ppe_compliance">(
+    defaultScenario
+  );
+  const [ppeObservation, setPpeObservation] = useState<
+    | "hard_hat_not_visible"
+    | "high_visibility_vest_not_visible"
+    | "both_not_visible"
+  >("hard_hat_not_visible");
   const [error, setError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -85,11 +95,13 @@ export function VideoUploadDialog({
     setFile(null);
     setLocation(defaultLocation);
     setCameraId(defaultCameraId);
+    setScenario(defaultScenario);
+    setPpeObservation("hard_hat_not_visible");
     setError(null);
     setUploading(false);
     setDragOver(false);
     setFormKey((value) => value + 1);
-  }, [defaultCameraId, defaultLocation]);
+  }, [defaultCameraId, defaultLocation, defaultScenario]);
 
   const handleOpenChange = (next: boolean) => {
     if (next) {
@@ -127,6 +139,9 @@ export function VideoUploadDialog({
         file,
         location: location.trim(),
         cameraId: cameraId || undefined,
+        demoScenario: scenario,
+        demoPpeObservation:
+          scenario === "ppe_compliance" ? ppeObservation : undefined,
       });
       toast.success("Upload received. Preparing analysis…");
       onUploaded(response);
@@ -225,6 +240,79 @@ export function VideoUploadDialog({
                 <X className="size-3.5" />
               </Button>
             </div>
+          ) : null}
+
+          <label className="block space-y-1.5">
+            <span className="text-xs font-medium text-muted-foreground">
+              Demo scenario
+            </span>
+            <Select
+              value={scenario}
+              onValueChange={(value) => {
+                if (value === "person_down" || value === "ppe_compliance") {
+                  setScenario(value);
+                  if (value === "ppe_compliance") {
+                    setCameraId("cam-04");
+                    setLocation("Production Floor");
+                  } else {
+                    setCameraId("cam-03");
+                    setLocation("Warehouse Aisle");
+                  }
+                }
+              }}
+              disabled={uploading}
+            >
+              <SelectTrigger className="w-full" aria-label="Select demo scenario">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="person_down">
+                  Person-down demonstration
+                </SelectItem>
+                <SelectItem value="ppe_compliance">
+                  PPE-compliance demonstration
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </label>
+
+          {scenario === "ppe_compliance" ? (
+            <label className="block space-y-1.5">
+              <span className="text-xs font-medium text-muted-foreground">
+                Configured PPE observation
+              </span>
+              <Select
+                value={ppeObservation}
+                onValueChange={(value) => {
+                  if (
+                    value === "hard_hat_not_visible" ||
+                    value === "high_visibility_vest_not_visible" ||
+                    value === "both_not_visible"
+                  ) {
+                    setPpeObservation(value);
+                  }
+                }}
+                disabled={uploading}
+              >
+                <SelectTrigger className="w-full" aria-label="PPE observation">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="hard_hat_not_visible">
+                    Hard hat not visible
+                  </SelectItem>
+                  <SelectItem value="high_visibility_vest_not_visible">
+                    High-visibility vest not visible
+                  </SelectItem>
+                  <SelectItem value="both_not_visible">
+                    Both not visible
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-[11px] text-muted-foreground">
+                Configured Demo Scenario — Demo AI does not independently discover missing PPE.
+              </p>
+            </label>
           ) : null}
 
           <label className="block space-y-1.5">
