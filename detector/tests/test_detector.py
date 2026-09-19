@@ -110,6 +110,9 @@ class DetectorEngineTests(unittest.TestCase):
             self.assertIsNone(result.event)
         self.assertEqual(result.state, DetectorState.COOLDOWN)
         recovered = self.engine.process(pose(3.2))
+        self.assertEqual(recovered.state, DetectorState.COOLDOWN)
+        for t in (3.4, 3.6, 3.9):
+            recovered = self.engine.process(pose(t))
         self.assertEqual(recovered.state, DetectorState.MONITORING)
 
     def test_tracks_have_independent_state(self) -> None:
@@ -167,7 +170,40 @@ class DetectorEngineTests(unittest.TestCase):
         self.assertEqual(reappeared[-1].state, DetectorState.COOLDOWN)
 
         recovered = self.engine.process(pose(4.0))
+        self.assertEqual(recovered.state, DetectorState.COOLDOWN)
+        for t in (4.2, 4.4, 4.7):
+            recovered = self.engine.process(pose(t))
         self.assertEqual(recovered.state, DetectorState.MONITORING)
+
+    def test_live_normal_fall_recovery_and_second_fall(self) -> None:
+        engine = DetectorEngine(DetectorConfig(enable_overhead_displacement=False))
+        frames = [pose(0.0)]
+        frames += [pose(i / 10, horizontal=True, center_y=0.7) for i in range(1, 61)]
+        # Stand at a different image height: recovery must not depend on the old
+        # shoulder baseline. A single upright frame must not clear the incident.
+        frames += [pose(i / 10, center_y=0.65) for i in range(61, 75)]
+        frames += [pose(i / 10, horizontal=True, center_y=0.7) for i in range(75, 100)]
+        results = [engine.process(frame) for frame in frames]
+        self.assertEqual(sum(r.event is not None for r in results), 2)
+        self.assertEqual(results[61].state, DetectorState.COOLDOWN)
+        self.assertEqual(results[74].state, DetectorState.MONITORING)
+
+    def test_live_upright_translation_cannot_confirm_a_fall(self) -> None:
+        engine = DetectorEngine(DetectorConfig(enable_overhead_displacement=False))
+        results = [engine.process(pose(0.0, center_y=0.35))]
+        results += [engine.process(pose(i / 10, center_y=0.65)) for i in range(1, 61)]
+        self.assertFalse(any(r.event for r in results))
+        self.assertEqual(results[-1].state, DetectorState.MONITORING)
+
+    def test_brief_upright_glitch_does_not_clear_floor_incident(self) -> None:
+        engine = DetectorEngine(DetectorConfig(enable_overhead_displacement=False))
+        engine.process(pose(0.0))
+        for i in range(1, 61):
+            engine.process(pose(i / 10, horizontal=True, center_y=0.7))
+        self.assertEqual(engine.process(pose(6.1)).state, DetectorState.COOLDOWN)
+        for i in range(62, 81):
+            result = engine.process(pose(i / 10, horizontal=True, center_y=0.7))
+        self.assertEqual(result.state, DetectorState.COOLDOWN)
 
     def test_rapid_drop_and_wide_tilted_box_confirm_curled_fall(self) -> None:
         def curled(timestamp: float, center_y: float) -> PoseObservation:

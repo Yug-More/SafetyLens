@@ -35,12 +35,15 @@ class PoseObservation:
     landmarks: Mapping[str, Landmark]
     source_id: str = "unknown-source"
     source_timestamp_seconds: float | None = None
+    frame_aspect_ratio: float = 1.0
 
     def __post_init__(self) -> None:
         if self.timestamp_seconds < 0:
             raise ValueError("timestamp_seconds must be non-negative.")
         if not self.track_id.strip():
             raise ValueError("track_id must not be blank.")
+        if self.frame_aspect_ratio <= 0:
+            raise ValueError("frame_aspect_ratio must be positive.")
 
 
 @dataclass(frozen=True)
@@ -74,6 +77,8 @@ class DetectorConfig:
     low_motion_hold_seconds: float = 1.20
     suspicion_timeout_seconds: float = 2.50
     cooldown_seconds: float = 4.0
+    recovery_hold_seconds: float = 0.6
+    enable_overhead_displacement: bool = True
 
     def __post_init__(self) -> None:
         bounded = {
@@ -83,6 +88,7 @@ class DetectorConfig:
             if not 0 <= value <= 1:
                 raise ValueError(f"{name} must be in [0, 1].")
         positive = {
+            "recovery_hold_seconds": self.recovery_hold_seconds,
             "maximum_observation_gap_seconds": self.maximum_observation_gap_seconds,
             "rapid_drop_velocity": self.rapid_drop_velocity,
             "horizontal_angle_degrees": self.horizontal_angle_degrees,

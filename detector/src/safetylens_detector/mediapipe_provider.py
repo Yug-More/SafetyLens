@@ -17,6 +17,7 @@ def landmarks_to_observation(
     timestamp_seconds: float,
     source_id: str,
     track_id: str = "person-1",
+    frame_aspect_ratio: float = 1.0,
 ) -> PoseObservation:
     """Convert MediaPipe's 33 normalized landmarks without importing its runtime."""
 
@@ -49,6 +50,7 @@ def landmarks_to_observation(
         source_id=source_id,
         track_id=track_id,
         landmarks=landmarks,
+        frame_aspect_ratio=frame_aspect_ratio,
     )
 
 
@@ -112,6 +114,7 @@ class MediaPipePoseProvider:
             timestamp_seconds=timestamp_seconds,
             source_id=source_id,
             track_id=track_id,
+            frame_aspect_ratio=frame_bgr.shape[1] / frame_bgr.shape[0],
         )
 
     def close(self) -> None:

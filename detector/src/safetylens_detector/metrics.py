@@ -20,7 +20,7 @@ def _visible_landmarks(observation: PoseObservation) -> dict[str, Landmark]:
     return {
         name: landmark
         for name, landmark in observation.landmarks.items()
-        if landmark.visibility > 0
+        if landmark.visibility >= 0.5
     }
 
 
@@ -30,6 +30,9 @@ def derive_pose_metrics(
 ) -> PoseMetrics:
     """Derive model-independent metrics from normalized pose landmarks."""
 
+    # Normalize both axes to frame height; raw x/y fractions distort geometry
+    # on widescreen camera frames. Keep shoulder y in original frame units.
+    aspect = current.frame_aspect_ratio
     visible = _visible_landmarks(current)
     torso = [current.landmarks.get(name) for name in TORSO_NAMES]
     quality = fmean(item.visibility if item else 0.0 for item in torso)
@@ -45,16 +48,23 @@ def derive_pose_metrics(
         shoulder_center = _midpoint(left_shoulder, right_shoulder)  # type: ignore[arg-type]
         shoulder_center_y = shoulder_center[1]
         hip_center = _midpoint(left_hip, right_hip)  # type: ignore[arg-type]
-        torso_length = _distance(shoulder_center, hip_center)
+        torso_length = hypot(
+            (shoulder_center[0] - hip_center[0]) * aspect,
+            shoulder_center[1] - hip_center[1],
+        )
         if torso_length > 1e-6:
-            dx = abs(shoulder_center[0] - hip_center[0])
+            dx = abs(shoulder_center[0] - hip_center[0]) * aspect
             dy = abs(shoulder_center[1] - hip_center[1])
             angle = degrees(atan2(dx, dy))
 
-            xs = [item.x for item in visible.values()]
-            ys = [item.y for item in visible.values()]
+            body = [item for name, item in visible.items() if name in (
+                "nose", *TORSO_NAMES, "left_knee", "right_knee",
+                "left_ankle", "right_ankle",
+            )]
+            xs = [item.x for item in body]
+            ys = [item.y for item in body]
             if xs and ys and max(ys) - min(ys) > 1e-6:
-                ratio = (max(xs) - min(xs)) / (max(ys) - min(ys))
+                ratio = (max(xs) - min(xs)) * aspect / (max(ys) - min(ys))
 
             if previous is not None:
                 elapsed = current.timestamp_seconds - previous.timestamp_seconds
@@ -68,13 +78,13 @@ def derive_pose_metrics(
                 common = sorted(set(visible).intersection(previous.landmarks))
                 motions = [
                     _distance(
-                        (visible[name].x, visible[name].y),
-                        (previous.landmarks[name].x, previous.landmarks[name].y),
+                        (visible[name].x * aspect, visible[name].y),
+                        (previous.landmarks[name].x * aspect, previous.landmarks[name].y),
                     )
                     / elapsed
                     / torso_length
                     for name in common
-                    if previous.landmarks[name].visibility > 0
+                    if previous.landmarks[name].visibility >= 0.5
                 ]
                 if motions:
                     mean_motion = fmean(motions)
