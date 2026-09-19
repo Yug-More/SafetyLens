@@ -6,9 +6,9 @@ from safetylens_detector.live import (
     frame_has_visible_signal,
     parse_capture_source,
     pose_is_fully_framed,
-    state_presentation,
+    public_detection_status,
 )
-from safetylens_detector.models import DetectorState, Landmark, PoseObservation
+from safetylens_detector.models import Landmark, PoseObservation
 
 
 class FakeFrame:
@@ -76,13 +76,15 @@ class LivePresentationTests(unittest.TestCase):
     def test_missing_person_does_not_arm(self) -> None:
         self.assertFalse(pose_is_fully_framed(None))
 
-    def test_internal_state_names_are_hidden_from_demo_labels(self) -> None:
-        cooldown = " ".join(state_presentation(DetectorState.COOLDOWN)).lower()
-        low_visibility = " ".join(
-            state_presentation(DetectorState.LOW_VISIBILITY)
-        ).lower()
-        self.assertNotIn("cooldown", cooldown)
-        self.assertNotIn("low_visibility", low_visibility)
+    def test_public_status_is_normal_before_a_confirmed_fall(self) -> None:
+        title, detail = public_detection_status(False)
+        self.assertEqual(title, "Normal")
+        self.assertIn("no confirmed fall", detail)
+
+    def test_public_status_is_fall_only_after_confirmation(self) -> None:
+        title, detail = public_detection_status(True)
+        self.assertEqual(title, "Fall detected")
+        self.assertIn("human review", detail)
 
 
 if __name__ == "__main__":
