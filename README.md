@@ -1,5 +1,7 @@
 # SafetyLens
 
+🏆 **SafetyLens secured 1st place among 384 participants at The Executable World Hackathon, earning a $25,000 prize.**
+
 ### See danger. Trigger action.
 
 SafetyLens is an AI-powered workplace safety and incident-response platform for warehouses, factories, and other environments where teams need to notice incidents and respond quickly.
