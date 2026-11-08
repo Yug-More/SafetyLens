@@ -17,7 +17,7 @@ class PlanApproveRequest(APIModel):
     reviewer_name: str = Field(default="demo-reviewer", min_length=1, max_length=120)
     notes: str | None = Field(default=None, max_length=4000)
     incident_identifier: str | None = None
-    confirmed: bool = False
+    confirmed: bool = Field(default=False, validate_default=True)
 
     @field_validator("reviewer_name")
     @classmethod
@@ -96,7 +96,7 @@ class ActionExecutionRead(APIModel):
 
 
 class ExecutePlanRequest(APIModel):
-    confirmed: bool = False
+    confirmed: bool = Field(default=False, validate_default=True)
 
     @field_validator("confirmed")
     @classmethod

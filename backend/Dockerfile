@@ -8,14 +8,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.lock.txt .
+RUN pip install --no-cache-dir -r requirements.lock.txt
 
 COPY app ./app
+COPY migrations ./migrations
+COPY alembic.ini start.sh ./
+RUN useradd --create-home --uid 10001 safetylens && mkdir -p /data && chown -R safetylens:safetylens /data /app
+USER safetylens
 
 ENV PYTHONUNBUFFERED=1 \
     APP_NAME="SafetyLens API" \
-    ENVIRONMENT=production \
+    ENVIRONMENT=development \
     API_HOST=0.0.0.0 \
     API_PORT=8000 \
     DEMO_MODE=true \
@@ -32,4 +36,4 @@ ENV PYTHONUNBUFFERED=1 \
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "python -m app.seed.run && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+CMD ["sh", "/app/start.sh"]

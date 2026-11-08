@@ -6,7 +6,7 @@ import json
 from typing import Any
 from uuid import uuid4
 
-from sqlalchemy import func, select
+from sqlalchemy import func, select, delete
 from sqlalchemy.orm import Session
 
 from app.core.enums import AuditActorType, AuditEventType
@@ -28,7 +28,7 @@ def _next_event_code(db: Session) -> str:
         )
         or 0
     )
-    return f"AUD-{_year_prefix()}-{count + 1:04d}"
+    return f"AUD-{_year_prefix()}-{uuid4().hex[:12].upper()}"
 
 
 def append_audit_event(
@@ -65,6 +65,13 @@ def append_audit_event(
         simulation=simulation,
     )
     db.add(event)
+    from app.models.platform import StreamEvent
+    from datetime import timedelta
+    db.execute(delete(StreamEvent).where(StreamEvent.created_at < utc_now() - timedelta(days=30)))
+    db.add(StreamEvent(kind=str(event.event_type), payload_json=json.dumps({
+        "incident_id": incident_id, "analysis_id": analysis_id, "plan_id": plan_id,
+        "execution_id": execution_id,
+    })))
     db.flush()
     return event
 

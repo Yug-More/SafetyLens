@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
@@ -19,6 +20,9 @@ def list_incidents(
     search: str | None = Query(default=None),
     limit: int = Query(default=50, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
+    since: datetime | None = None,
+    until: datetime | None = None,
+    ascending: bool = False,
 ) -> CollectionResponse[IncidentRead]:
     data, meta = incident_service.list_incidents(
         db,
@@ -27,7 +31,7 @@ def list_incidents(
         camera_id=camera_id,
         search=search,
         limit=limit,
-        offset=offset,
+        offset=offset, since=since, until=until, ascending=ascending,
     )
     return CollectionResponse(data=data, meta=meta)
 

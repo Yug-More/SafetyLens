@@ -51,6 +51,7 @@ class ActionPriority(str, enum.Enum):
 
 
 class VideoStatus(str, enum.Enum):
+    EXPIRED = "expired"
     UPLOADING = "uploading"
     UPLOADED = "uploaded"
     PROCESSING = "processing"

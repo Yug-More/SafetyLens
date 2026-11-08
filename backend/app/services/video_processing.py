@@ -50,6 +50,8 @@ def extract_metadata(path: str, settings: Settings | None = None) -> VideoMetada
         fps = float(capture.get(cv2.CAP_PROP_FPS) or 0.0)
         frame_count = int(capture.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
 
+        if width * height > 8_294_400:
+            raise AppError("VIDEO_DIMENSIONS_TOO_LARGE", "Video exceeds the 4K pixel limit.", 422)
         if width <= 0 or height <= 0:
             raise AppError(
                 "INVALID_VIDEO_DIMENSIONS",

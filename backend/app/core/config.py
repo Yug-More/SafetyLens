@@ -24,6 +24,14 @@ class Settings(BaseSettings):
         default="http://localhost:3000",
         alias="FRONTEND_ORIGINS",
     )
+    auth_enabled: bool = Field(default=True, alias="AUTH_ENABLED")
+    cookie_secure: bool = Field(default=False, alias="COOKIE_SECURE")
+    session_lifetime_seconds: int = Field(default=28800, alias="SESSION_LIFETIME_SECONDS", ge=60, le=86400)
+    detector_api_token: str | None = Field(default=None, alias="DETECTOR_API_TOKEN")
+    detector_camera_ids: str = Field(default="", alias="DETECTOR_CAMERA_IDS")
+    camera_encryption_key: str | None = Field(default=None, alias="CAMERA_ENCRYPTION_KEY")
+    evidence_retention_days: int = Field(default=30, alias="EVIDENCE_RETENTION_DAYS", ge=1, le=3650)
+
     demo_mode: bool = Field(default=True, alias="DEMO_MODE")
     upload_directory: str = Field(default="./data/uploads", alias="UPLOAD_DIRECTORY")
     frame_directory: str = Field(default="./data/frames", alias="FRAME_DIRECTORY")
@@ -90,6 +98,14 @@ class Settings(BaseSettings):
         default=True,
         alias="DETECTOR_INGEST_AUTO_ANALYZE",
     )
+
+    @field_validator("environment")
+    @classmethod
+    def normalize_environment(cls, value: str) -> str:
+        cleaned=value.strip().lower()
+        if cleaned not in {"development", "test", "production"}:
+            raise ValueError("ENVIRONMENT must be development, test or production")
+        return cleaned
 
     @field_validator("frontend_origins")
     @classmethod

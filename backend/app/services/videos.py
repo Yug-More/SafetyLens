@@ -43,7 +43,7 @@ def _year_prefix() -> str:
 def _next_code(db: Session, model, field_name: str, prefix: str) -> str:
     column = getattr(model, field_name)
     count = db.scalar(select(func.count()).select_from(model).where(column.like(f"{prefix}-%"))) or 0
-    return f"{prefix}-{count + 1:04d}"
+    return f"{prefix}-{uuid4().hex[:12].upper()}"
 
 
 def generate_asset_code(db: Session) -> str:
@@ -292,6 +292,8 @@ def process_video_job(video_id: str, job_id: str) -> None:
                 focus_offset_seconds=focus_offset,
             )
 
+            from app.services.playback import prepare_playback
+            prepare_playback(video.stored_filename, cfg)
             update_job(80, "Preparing evidence")
             for existing in list(video.frames):
                 storage.delete_file_quietly(storage.resolve_frame_path(existing.stored_filename, cfg))
@@ -322,6 +324,11 @@ def process_video_job(video_id: str, job_id: str) -> None:
             job.error_message = None
             db.commit()
 
+            # Real detector imports produce local-CV findings, never scripted demo observations.
+            from app.services.local_detection import prepare_detector_analysis
+            local = prepare_detector_analysis(db, video)
+            if local is not None:
+                return
             # Automatically continue the demo pipeline: analysis → notification → SOP → plan.
             try:
                 from app.services import analysis as analysis_service

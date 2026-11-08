@@ -1,4 +1,5 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from app.services.auth import authorize
 
 from app.api.routes import (
     analysis,
@@ -15,7 +16,7 @@ from app.api.routes import (
     workflow,
 )
 
-api_router = APIRouter()
+api_router = APIRouter(dependencies=[Depends(authorize)])
 api_router.include_router(health.router)
 api_router.include_router(dashboard.router)
 api_router.include_router(cameras.router)
@@ -28,3 +29,6 @@ api_router.include_router(execution.router)
 api_router.include_router(detector.router)
 api_router.include_router(workflow.router)
 api_router.include_router(ppe.router)
+
+from app.api.routes.platform import router as platform_router
+api_router.include_router(platform_router)

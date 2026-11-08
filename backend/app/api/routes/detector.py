@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 
-from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, UploadFile
+from fastapi import Request, APIRouter, BackgroundTasks, Depends, File, Form, UploadFile
 from sqlalchemy.orm import Session
 
 from app.core.errors import AppError
@@ -28,6 +28,7 @@ router = APIRouter(tags=["detector"])
 )
 async def ingest_detector_event(
     background_tasks: BackgroundTasks,
+    request: Request,
     db: Session = Depends(get_db),
     event_json: str = Form(..., description="Detector event JSON (schema_version 1.0)"),
     clip: UploadFile | None = File(default=None),
@@ -52,6 +53,16 @@ async def ingest_detector_event(
             status_code=422,
         ) from exc
 
+    actor = getattr(request.state, "actor", {})
+    from app.core.config import get_settings
+    cfg = get_settings()
+    if actor.get("mode") == "device":
+        allowed = {x.strip() for x in cfg.detector_camera_ids.split(",") if x.strip()}
+        if not event.camera_id or event.camera_id not in allowed:
+            raise AppError("CAMERA_NOT_AUTHORIZED", "Device is not authorized for this camera.", 403)
+        if not clip or not clip.filename:
+            raise AppError("CLIP_REQUIRED", "Devices must upload their evidence clip.", 422)
+        incident_identifier = None
     request = DetectorEventIngestRequest(
         event=event,
         location=location,

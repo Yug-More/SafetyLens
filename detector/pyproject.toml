@@ -11,7 +11,9 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = ["pytest>=8.3"]
-video = ["mediapipe==1.0.1"]
+video = ["mediapipe==0.10.21", "opencv-contrib-python==4.11.0.86", "numpy==1.26.4", "httpx>=0.27"]
+ppe = ["onnxruntime==1.31.1", "opencv-contrib-python==4.11.0.86", "numpy==1.26.4"]
+transport = ["httpx>=0.27"]
 
 [project.scripts]
 safetylens-video = "safetylens_detector.video:main"

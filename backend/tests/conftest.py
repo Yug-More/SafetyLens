@@ -37,6 +37,8 @@ def temp_media(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setenv("MAX_VIDEO_SIZE_MB", "5")
     monkeypatch.setenv("MAX_VIDEO_DURATION_SECONDS", "30")
     monkeypatch.setenv("FRAME_SAMPLE_COUNT", "8")
+    monkeypatch.setenv("AUTH_ENABLED", "false")
+    monkeypatch.setenv("ENVIRONMENT", "test")
     monkeypatch.setenv("AI_PROVIDER", "demo")
     monkeypatch.setenv("AI_DEMO_MODE", "true")
     monkeypatch.setenv("PLANNER_PROVIDER", "demo")

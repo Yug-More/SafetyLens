@@ -224,7 +224,9 @@ async def upload_procedure(
     cfg = settings or get_settings()
     cfg.procedure_path.mkdir(parents=True, exist_ok=True)
 
-    raw = await upload.read()
+    raw = await upload.read(cfg.max_procedure_size_bytes + 1)
+    if len(raw) > cfg.max_procedure_size_bytes:
+        raise AppError("FILE_TOO_LARGE", "Procedure exceeds the configured size limit.", 413)
     safe_name, source_format = validate_procedure_upload(
         filename=upload.filename,
         content_type=upload.content_type,
@@ -308,7 +310,7 @@ def _year_prefix() -> str:
 def _next_code(db: Session, model, field_name: str, prefix: str) -> str:
     column = getattr(model, field_name)
     count = db.scalar(select(func.count()).select_from(model).where(column.like(f"{prefix}-%"))) or 0
-    return f"{prefix}-{count + 1:04d}"
+    return f"{prefix}-{uuid4().hex[:12].upper()}"
 
 
 def _get_analysis(db: Session, identifier: str) -> IncidentAnalysis:

@@ -43,7 +43,7 @@ def _find_chunk(matches: list[RankedChunk], *keywords: str) -> RankedChunk | Non
         text = f"{match.chunk.section_heading or ''} {match.chunk.content}".lower()
         if any(kw in text for kw in lowered):
             return match
-    return matches[0] if matches else None
+    return None
 
 
 class DemoResponsePlanner:
@@ -462,11 +462,11 @@ class DemoResponsePlanner:
 
 
 class OpenAIResponsePlanner:
-    """Optional real planner — requires credentials; mocked in tests."""
+    """Compatibility adapter; deterministic templates, no external planner call."""
 
-    name = "openai"
-    is_demo = False
-    is_simulated = False
+    name = "deterministic-policy"
+    is_demo = True
+    is_simulated = True
 
     def __init__(self, *, api_key: str, model: str, timeout: int = 45) -> None:
         self._api_key = api_key
@@ -492,20 +492,19 @@ class OpenAIResponsePlanner:
                 limitations=["Real planner refused to invent policy without retrieved excerpts"],
                 provider_name=self.name,
                 provider_model=self.model,
-                is_demo=False,
-                is_simulated=False,
+                is_demo=True,
+                is_simulated=True,
             )
-        # Delegate structure to demo planner mapping while labeling as openai when
-        # a full structured LLM integration is not needed for the hackathon path.
+        # Preserve the compatibility setting without mislabeling deterministic output.
         # Callers that mock this class in tests replace generate entirely.
         demo = DemoResponsePlanner().generate(analysis=analysis, matches=matches)
-        demo.provider_name = self.name
+        demo.provider_name = "deterministic-policy"
         demo.provider_model = self.model
-        demo.is_demo = False
-        demo.is_simulated = False
+        demo.is_demo = True
+        demo.is_simulated = True
         demo.limitations = [
             *demo.limitations,
-            "OpenAI planner path — structure still citation-verified locally",
+            "Compatibility mode uses deterministic templates; no OpenAI planning call is made",
         ]
         return demo
 

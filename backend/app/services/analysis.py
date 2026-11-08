@@ -54,7 +54,7 @@ def _year_prefix() -> str:
 def _next_code(db: Session, model, field_name: str, prefix: str) -> str:
     column = getattr(model, field_name)
     count = db.scalar(select(func.count()).select_from(model).where(column.like(f"{prefix}-%"))) or 0
-    return f"{prefix}-{count + 1:04d}"
+    return f"{prefix}-{uuid4().hex[:12].upper()}"
 
 
 def generate_analysis_code(db: Session) -> str:
@@ -66,6 +66,8 @@ def generate_job_code(db: Session) -> str:
 
 
 def provider_label(provider_name: str, *, is_demo: bool, is_simulated: bool) -> str:
+    if provider_name == "local_cv":
+        return "Local computer vision (experimental; uncalibrated)"
     if provider_name == "demo" or is_demo:
         return "Demo AI (simulated)"
     if is_simulated:
@@ -538,6 +540,11 @@ def submit_review(
                     incident.status = IncidentStatus.AWAITING_REVIEW.value
                     incident.review_status = ReviewStatus.PENDING.value
 
+    from app.services.audit import append_audit_event
+    append_audit_event(db, event_type="analysis_reviewed", actor_type="human",
+        actor_name=payload.reviewer_name, correlation_id=str(uuid4()),
+        analysis_id=analysis.id, incident_id=note.incident_id if note else None,
+        metadata={"decision": review.decision, "notes": review.notes}, simulation=analysis.is_simulated)
     db.commit()
     return get_analysis(db, analysis.analysis_code)
 

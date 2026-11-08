@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session, selectinload
 
@@ -35,6 +36,9 @@ def list_incidents(
     search: str | None = None,
     limit: int = 50,
     offset: int = 0,
+    since: datetime | None = None,
+    until: datetime | None = None,
+    ascending: bool = False,
 ) -> tuple[list[IncidentRead], Meta]:
     query = select(Incident).options(selectinload(Incident.camera))
     if severity is not None:
@@ -54,9 +58,13 @@ def list_incidents(
             )
         )
 
+    if since:
+        query = query.where(Incident.detected_at >= since)
+    if until:
+        query = query.where(Incident.detected_at <= until)
     total = db.scalar(select(func.count()).select_from(query.subquery())) or 0
     rows = db.scalars(
-        query.order_by(Incident.detected_at.desc()).limit(limit).offset(offset)
+        query.order_by(Incident.detected_at.asc() if ascending else Incident.detected_at.desc(), Incident.id).limit(limit).offset(offset)
     ).all()
     data = [_incident_to_read(row) for row in rows]
     return data, Meta(count=total, limit=limit, offset=offset)

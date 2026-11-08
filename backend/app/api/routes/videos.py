@@ -108,9 +108,14 @@ def get_video_content(
     path = storage.resolve_upload_path(video.stored_filename, settings)
     if not path.exists():
         raise AppError("NOT_FOUND", "Video content is unavailable.", status_code=404)
+    from app.services.playback import playback_path
+    derivative = playback_path(video.stored_filename, settings)
+    if derivative.is_file():
+        path = derivative
     return FileResponse(
         path=path,
-        media_type=video.mime_type,
+        media_type="video/mp4" if derivative.is_file() else video.mime_type,
+        headers={"Cache-Control": "no-store"},
         filename=video.original_filename,
         content_disposition_type="inline",
     )
