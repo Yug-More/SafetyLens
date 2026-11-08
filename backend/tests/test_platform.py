@@ -320,3 +320,84 @@ def test_pose_region_policy_validation():
     for value in ([1, 0, .5, 1], [0, 0, float('nan'), 1], [0, 0, 2, 1]):
         with pytest.raises(ValueError):
             DetectionPolicy(pose_region=value)
+
+
+def test_local_ppe_deployment_is_explicitly_disabled(client, db_session, monkeypatch):
+    sign_in(client, db_session, monkeypatch)
+    response = client.post('/api/cameras', json={'name':'Excluded PPE','location':'Test',
+        'policy':{'detectors':['ppe'],'required_ppe':['hard_hat']}})
+    assert response.status_code == 409
+    assert response.json()['error']['code'] == 'PPE_DEPLOYMENT_DISABLED'
+
+
+def test_device_cannot_enumerate_events_or_rebind_an_event_id(client, db_session, tmp_path, monkeypatch):
+    import hashlib
+    enable_auth(monkeypatch)
+    monkeypatch.setenv('DETECTOR_API_TOKEN','scoped-test-device')
+    monkeypatch.setenv('DETECTOR_CAMERA_IDS','cam-03,cam-04')
+    get_settings.cache_clear()
+    client.headers['Authorization']='Bearer scoped-test-device'
+    assert client.get('/api/detector/events').status_code == 401
+    path=make_test_video(tmp_path/'hashed.mp4',frames=40)
+    payload={'schema_version':'1.0','event_id':str(uuid4()),'source_id':'actual-worker','camera_id':'cam-03',
+        'evidence':{'clip_sha256':hashlib.sha256(path.read_bytes()).hexdigest()}}
+    def submit():
+        return client.post('/api/detector/events',data={'event_json':json.dumps(payload)},
+            files={'clip':('hashed.mp4',path.read_bytes(),'video/mp4')})
+    first=submit()
+    assert first.status_code == 202,first.text
+    payload['camera_id']='cam-04'
+    assert submit().status_code == 409
+    payload['camera_id']='cam-03'
+    payload['evidence']['clip_sha256']='0'*64
+    assert submit().status_code == 409
+    payload['event_id']=str(uuid4())
+    mismatch=submit()
+    assert mismatch.status_code == 422
+    assert mismatch.json()['error']['code']=='EVIDENCE_HASH_MISMATCH'
+
+
+def test_interrupted_detector_job_recovers_from_persisted_media(client, db_session, tmp_path):
+    import asyncio
+    from fastapi import BackgroundTasks, UploadFile
+    from starlette.datastructures import Headers
+    from app.schemas.detector import DetectorEventIngestRequest
+    from app.services.detector_ingestion import ingest_detector_event, get_ingestion
+    from app.services.recovery import snapshot_interrupted_events, recover_events
+    path=make_test_video(tmp_path/'interrupted.mp4',frames=40)
+    event_id=str(uuid4())
+    payload=DetectorEventIngestRequest(event={'schema_version':'1.0','event_id':event_id,
+        'source_id':'recovery-regression-fixture','camera_id':'cam-03','trigger_signals':['rapid_drop']},
+        incident_identifier=None,auto_analyze=False)
+    # Real validation/storage/commit, deliberately stop before executing background tasks.
+    with path.open('rb') as handle:
+        upload=UploadFile(file=handle,filename='interrupted.mp4',headers=Headers({'content-type':'video/mp4'}))
+        response=asyncio.run(ingest_detector_event(db_session,payload,clip=upload,background_tasks=BackgroundTasks()))
+    assert response.status.value=='processing'
+    pending=snapshot_interrupted_events()
+    assert event_id in pending
+    result=recover_events(pending)
+    assert result['recovered']==1,result
+    assert event_id not in snapshot_interrupted_events()
+    db_session.expire_all()
+    recovered=get_ingestion(db_session,event_id)
+    assert recovered.status=='completed'
+    assert recovered.analysis.provider_name=='local_cv'
+    assert recovered.incident_id is not None
+
+    from app.services.videos import process_video_job
+    from app.models.video_frame import VideoFrame
+    before=list(db_session.scalars(select(VideoFrame.id).where(VideoFrame.video_asset_id==recovered.video_asset_id)))
+    process_video_job(recovered.video_asset_id,recovered.processing_job_id)
+    after=list(db_session.scalars(select(VideoFrame.id).where(VideoFrame.video_asset_id==recovered.video_asset_id)))
+    assert before==after  # A queued retry cannot rewrite already completed evidence.
+
+    from app.seed.seed_data import seed_database
+    from app.models.procedure_policy import ProcedureChunk, ProcedureRetrievalMatch
+    from app.models.camera import Camera
+    assert db_session.scalar(select(ProcedureRetrievalMatch.id).limit(1)) is not None
+    chunks=list(db_session.scalars(select(ProcedureChunk.id)))
+    camera=db_session.get(Camera,'cam-03');camera.name='Operator camera configuration preserved';db_session.commit()
+    seed_database(db_session)
+    assert list(db_session.scalars(select(ProcedureChunk.id)))==chunks
+    assert db_session.get(Camera,'cam-03').name=='Operator camera configuration preserved'

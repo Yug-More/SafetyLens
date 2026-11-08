@@ -92,11 +92,12 @@ def authorize(request: Request, db: Session = Depends(get_db)) -> dict:
         request.state.actor = actor
         return actor
     bearer = request.headers.get("authorization", "")
-    if (
-        path == "/api/detector/events"
-        or path == "/api/detector/heartbeat"
-        or path.startswith(("/api/detector/snapshot/", "/api/detector/config/"))
-    ) and bearer.startswith("Bearer "):
+    device_route = (
+        (request.method == "POST" and path in {"/api/detector/events", "/api/detector/heartbeat"})
+        or (request.method == "POST" and path.startswith("/api/detector/snapshot/"))
+        or (request.method == "GET" and path.startswith("/api/detector/config/"))
+    )
+    if device_route and bearer.startswith("Bearer "):
         token = bearer[7:]
         if cfg.detector_api_token and hmac.compare_digest(
             token, cfg.detector_api_token

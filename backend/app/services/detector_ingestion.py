@@ -3,6 +3,10 @@
 from __future__ import annotations
 
 import json
+import hashlib
+import asyncio
+from threading import Lock
+from weakref import WeakValueDictionary
 import logging
 import shutil
 from datetime import datetime
@@ -39,6 +43,8 @@ from app.services.videos import (
 )
 
 logger = logging.getLogger(__name__)
+_ingest_locks = WeakValueDictionary()
+_ingest_locks_guard = Lock()
 
 
 def _dumps(value: object) -> str:
@@ -421,6 +427,26 @@ async def ingest_detector_event(
     background_tasks: BackgroundTasks | None = None,
     settings: Settings | None = None,
 ) -> DetectorEventRead:
+    # A large UploadFile can yield while its first transaction is open. Keep
+    # duplicate UUID requests from blocking this same event loop on a DB unique
+    # constraint before the first upload can finish. Scope: one API process.
+    with _ingest_locks_guard:
+        lock = _ingest_locks.get(payload.event.event_id)
+        if lock is None:
+            lock = asyncio.Lock()
+            _ingest_locks[payload.event.event_id] = lock
+    async with lock:
+        return await _ingest_detector_event(db,payload,clip=clip,background_tasks=background_tasks,settings=settings)
+
+
+async def _ingest_detector_event(
+    db: Session,
+    payload: DetectorEventIngestRequest,
+    *,
+    clip: UploadFile | None = None,
+    background_tasks: BackgroundTasks | None = None,
+    settings: Settings | None = None,
+) -> DetectorEventRead:
     cfg = settings or get_settings()
     storage.ensure_storage_directories(cfg)
     cfg.detector_events_path.mkdir(parents=True, exist_ok=True)
@@ -430,6 +456,12 @@ async def ingest_detector_event(
         select(DetectorEventIngestion).where(DetectorEventIngestion.event_id == event.event_id)
     ).first()
     if existing is not None:
+        if (event.camera_id is not None and existing.camera_id != event.camera_id) or existing.source_id != event.source_id or existing.event_type != event.event_type:
+            raise AppError("EVENT_ID_CONFLICT", "Event ID already belongs to a different camera/source/type.", 409)
+        expected_hash = event.evidence.clip_sha256 if event.evidence else None
+        stored_hash = _loads_dict(existing.evidence_json).get("clip_sha256")
+        if expected_hash and stored_hash and expected_hash != stored_hash:
+            raise AppError("EVENT_ID_CONFLICT", "Event ID already acknowledges different evidence content.", 409)
         # Deduplicate: reuse mapping; never re-upload clip.
         return advance_ingestion(
             db,
@@ -516,6 +548,12 @@ async def ingest_detector_event(
                 "Provide a detector evidence clip upload or an allowed clip_relative_path.",
                 status_code=422,
             )
+
+        if event.evidence and event.evidence.clip_sha256:
+            destination = storage.resolve_upload_path(stored_filename, cfg)
+            if hashlib.sha256(destination.read_bytes()).hexdigest() != event.evidence.clip_sha256:
+                storage.delete_file_quietly(destination)
+                raise AppError("EVIDENCE_HASH_MISMATCH", "Uploaded evidence does not match the detector checksum.", 422)
 
         video, job = _create_video_from_stored(
             db,

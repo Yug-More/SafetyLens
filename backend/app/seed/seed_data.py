@@ -479,7 +479,17 @@ def _seed_ppe_policies(db: Session) -> None:
         )
 
 
-def seed_database(db: Session) -> dict[str, int]:
+def seed_database(db: Session, *, reset_existing: bool = False) -> dict[str, int]:
+    # Container startup is initialization, not an instruction to reset operator
+    # edits or invalidate chunks already referenced by approvals/reports.
+    if not reset_existing and db.scalar(select(Camera.id).limit(1)) is not None:
+        return {
+            "cameras": len(db.scalars(select(Camera)).all()),
+            "incidents": len(db.scalars(select(Incident)).all()),
+            "procedures": len(db.scalars(select(SafetyProcedure)).all()),
+            "services": len(db.scalars(select(SystemService)).all()),
+            "activity": len(db.scalars(select(ActivityEvent)).all()),
+        }
     now = datetime.now(timezone.utc)
 
     for camera_id, name, location in CAMERA_SEED:

@@ -1,4 +1,6 @@
 from contextlib import asynccontextmanager
+import asyncio
+import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,7 +20,17 @@ async def lifespan(_: FastAPI):
         raise RuntimeError("Production requires AUTH_ENABLED=true and COOKIE_SECURE=true behind HTTPS")
     init_db()
     ensure_storage_directories()
-    yield
+    from app.services.recovery import snapshot_interrupted_events, recover_events
+    event_ids = snapshot_interrupted_events()
+    recovery = asyncio.create_task(asyncio.to_thread(recover_events,event_ids)) if event_ids else None
+    try:
+        yield
+    finally:
+        if recovery:
+            try:
+                await asyncio.wait_for(asyncio.shield(recovery),timeout=5)
+            except asyncio.TimeoutError:
+                logging.getLogger(__name__).warning("Recovery still active on shutdown; unfinished work remains persisted")
 
 
 def create_app() -> FastAPI:
