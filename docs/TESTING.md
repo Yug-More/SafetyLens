@@ -38,3 +38,7 @@ Long-duration physical webcam/RTSP reconnection; multiple simultaneous real came
 ## Final continuation
 
 See FINAL_RELEASE_REPORT.md and END_TO_END_VERIFICATION.md for the newer 81-backend/55-detector/eight-browser verification. To exercise actual model inference rather than the default synthetic transport fixture, set `SAFETYLENS_REAL_CLIP` and `SAFETYLENS_POSE_MODEL` before `npm --prefix frontend run test:e2e`. The detector environment must exist separately. Use `SAFETYLENS_DISABLE_BUILD_CACHE=true npm --prefix frontend run build` on constrained storage; this changes caching, not compilation or validation. Linux builder npm 10.9.9 was used to repair missing optional peer lock entries; host lint/typecheck/build and Linux dry-run are separate evidence.
+
+## Final hardening evidence
+
+Current verified scope, commands and limitations are recorded in [FINAL_RELEASE_REPORT.md](FINAL_RELEASE_REPORT.md), [DEPLOYMENT_VERIFICATION.md](DEPLOYMENT_VERIFICATION.md), [SECURITY_REVIEW.md](SECURITY_REVIEW.md) and [PERFORMANCE_REPORT.md](PERFORMANCE_REPORT.md). These supersede earlier unverified frontend/PostgreSQL-17 status; they do not establish workplace readiness.

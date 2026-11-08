@@ -1,0 +1,49 @@
+{
+  "source_sha256": "6c91713eeb1d6ee878b230b223d54baef0191c7bf76a96321aba181846c3ad5b",
+  "cameras": {
+    "camera0": {
+      "clips": 20,
+      "tp": 5,
+      "fn": 5,
+      "fp": 2,
+      "tn": 8,
+      "precision": 0.7142857142857143,
+      "recall": 0.5,
+      "f1": 0.5882352941176471,
+      "recall_95pct_wilson": [
+        0.236593090512564,
+        0.7634069094874361
+      ],
+      "precision_95pct_wilson": [
+        0.35893445183261935,
+        0.9177810759959433
+      ],
+      "negative_seconds": 67.666,
+      "fall_alarms_per_negative_camera_hour": 106.40498921171638,
+      "all_candidate_alarms_on_negative_clips": 2
+    },
+    "camera1": {
+      "clips": 10,
+      "tp": 4,
+      "fn": 6,
+      "fp": 0,
+      "tn": 0,
+      "precision": null,
+      "recall": 0.4,
+      "f1": null,
+      "recall_95pct_wilson": [
+        0.16818032970623614,
+        0.6873262302663417
+      ],
+      "precision_95pct_wilson": null,
+      "negative_seconds": 0,
+      "fall_alarms_per_negative_camera_hour": null,
+      "all_candidate_alarms_on_negative_clips": 0
+    }
+  },
+  "limitations": [
+    "Video-presence, not frame accuracy",
+    "Nominal binomial intervals ignore unknown subject/session clustering",
+    "No precision or F1 estimated for positive-only camera subsets"
+  ]
+}

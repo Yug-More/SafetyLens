@@ -1,0 +1,23 @@
+{
+  "frozen_at": "2026-11-08T04:30:14.607194+00:00",
+  "plan": "Holdout URFall recording17-26 camera0 ten positive ten negative; camera1 ten paired positives only. Compare unchanged Lite single/conservative primary, Full single, Lite four-pose tracker. Prior clips development only. No threshold retuning. Camera1 negative performance and subject independence are not established.",
+  "source_hashes": {
+    "worker.py": "91a15290072cd2e7efca18999943557406a40d079e5ebf00c94ffc23b046cea7",
+    "delivery.py": "ae8dee7ad6703ed6f5590a2f953116c8efbe4f173c71c100fc79e312016a5990",
+    "metrics.py": "df2f78dcadaf509f2256f2561ef378b76b9236b497933f7d66bbfb4b13bc21b8",
+    "models.py": "2daaff0c146e3467c96bfd6a6e3639b89cc1665525a65b9cde0b231808ce8003",
+    "ppe_evaluation.py": "e7a99ad8cc76815bfc136e0be9e2fb4f4e320941a23255ec85393221c04dde59",
+    "evaluation.py": "6c8ceaa9c8ee823bcedd5f30483dd885bc918eb27263d290b157d762b24d5ac5",
+    "__init__.py": "904807212f2fe44d09e3dbc70547e759012519dfa327a1569a1ede8ef3eebed2",
+    "state_machine.py": "e23896136bf29e8388090eca1f805a9a90f0f843eccbbd83d34488a637e2d354",
+    "mediapipe_provider.py": "ee9e056e6c67f5869a5e2132ecf2260f77473024871b19e33a40cb8a31c484f1",
+    "engine.py": "05e5d5a3158d2eac0d586ab14f27c3e650fa82809480dfeb4fc8f13be4f6ece5",
+    "replay.py": "cd3a7ff66356a5004e232d4913e10a2c0f87668a8ea75965499cf8c84f98cc73",
+    "ppe.py": "d214edf3b615570af3d2d4d2663a768226afb01a0ba143fa7d1cb4ee80859550",
+    "live.py": "20c3fca6afcd8929361da567011ad2ab542a3cea7714fc8c0c7b8636ce5bccbd",
+    "evidence_buffer.py": "08b0694869fcd7f68b90fc8a2071b639f6fc95baa6d1f4562c61cbe8bdcaf9da",
+    "enhanced.py": "6b33b17dccf040a727013922b62e61920d49184905be63e368386460056c93d7",
+    "tracking.py": "bdc7ce3e286dec3eeffb0c8bf0b548f5cf9b3404e948e48a07843d6de3a2602a",
+    "video.py": "555cb47708b971188fc536d7e0250a2a78315bf855a39ae01c9604e9c33e8d65"
+  }
+}

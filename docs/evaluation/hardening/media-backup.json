@@ -1,0 +1,9 @@
+{
+  "files": 88,
+  "archive_bytes": 4300800,
+  "sha256": "e654e211c159d115ef21ceeb0ddd9677f53648b751b544f85a2a0f34c75efa27",
+  "all_file_hashes_preserved": true,
+  "archive_mode": "0o600",
+  "restore_volume": "safetylens-restore-1b97d0bf20cd",
+  "scope": "Isolated local evidence restoration, not encrypted offsite/disaster recovery"
+}

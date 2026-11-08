@@ -40,3 +40,7 @@ See CAMERA_PIPELINE.md and DETECTION_EVALUATION.md. Model weights/data are exter
 ## Continuation verification supersedes earlier environment limitation
 
 Docker Desktop was subsequently started. The backend image and actual PostgreSQL 16 migrations/authenticated CRUD/restart persistence passed. The Linux npm lockfile failure was reproduced and repaired; its clean-install dry-run passed. Full frontend-container runtime and the Compose PostgreSQL 17 profile remain unverified because only approximately 0.2 GiB of host disk remained. Read DEPLOYMENT_VERIFICATION.md for exact observations, commands and the distinction between implemented container configuration and tested runtime.
+
+## Final hardening evidence
+
+Current verified scope, commands and limitations are recorded in [FINAL_RELEASE_REPORT.md](FINAL_RELEASE_REPORT.md), [DEPLOYMENT_VERIFICATION.md](DEPLOYMENT_VERIFICATION.md), [SECURITY_REVIEW.md](SECURITY_REVIEW.md) and [PERFORMANCE_REPORT.md](PERFORMANCE_REPORT.md). These supersede earlier unverified frontend/PostgreSQL-17 status; they do not establish workplace readiness.

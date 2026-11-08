@@ -23,3 +23,7 @@ External notifications, medical calls and physical controls remain disabled: all
 ## Final continuation review
 
 The continued model-backed browser test exercises actual scoped device delivery, notification, human approval, simulated execution, audit and PDF access. New Docker context exclusions prevent accidental inclusion of private environment files and host dependencies. Local role/CSRF/session/device tests remain passing; these checks are not penetration testing or organization isolation. New pose-region input is normalized, finite and nonempty. Fixed ONNX float input dimensions are validated rather than silently assuming a compatible export. Public dataset images and model weights remain outside Git. Reference PPE model deployment is explicitly excluded pending license resolution and useful labeled performance. See FINAL_RELEASE_REPORT.md for current evidence and deployment limits.
+
+## Final hardening evidence
+
+Current verified scope, commands and limitations are recorded in [FINAL_RELEASE_REPORT.md](FINAL_RELEASE_REPORT.md), [DEPLOYMENT_VERIFICATION.md](DEPLOYMENT_VERIFICATION.md), [SECURITY_REVIEW.md](SECURITY_REVIEW.md) and [PERFORMANCE_REPORT.md](PERFORMANCE_REPORT.md). These supersede earlier unverified frontend/PostgreSQL-17 status; they do not establish workplace readiness.

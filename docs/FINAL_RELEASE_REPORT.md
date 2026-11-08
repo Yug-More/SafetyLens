@@ -1,106 +1,115 @@
-# SafetyLens final product completion report
+# SafetyLens final hardening report
 
-November 7, 2026 (local date). Continuation baseline `9c9315c28a43ead8ffebbafb68681def9fe0577a`; existing branch `feature/safetylens-platform-enhancement`.
+November 7, 2026, America/Los_Angeles. Starting commit `0f9e920`; existing branch `feature/safetylens-platform-enhancement`. The prior completion report is preserved as [PRODUCT_COMPLETION_BASELINE_REPORT.md](PRODUCT_COMPLETION_BASELINE_REPORT.md).
 
-## Readiness decision
+## Verdict
 
-**A working, improved local experimental prototype has been demonstrated; the full product-completion gates have not all passed.** Actual model-generated evidence reaches human review, approval, simulated response and PDF reporting. Untouched video-presence results improved, but false alerts on intentional reclining, missed short/multi-person falls and poor PPE detection remain material blockers. Full frontend-image/Compose17 verification requires more disk capacity. No industrial deployment, certified safety performance, controlled workplace pilot or independently verified high accuracy is claimed.
+**A reproducible local experimental platform with substantially stronger verified deployment, integrity and recovery—not a workplace-ready or safety-certified product.** The documented frontend/backend/PostgreSQL 17 stack now builds and runs. Actual model evidence completes the human-supervised incident/report workflow and realistic controlled failures recover. Broader detection recall is inadequate; PPE deployment is disabled. No public benchmark, green suite or container health result substitutes for representative workplace validation.
 
-## 1. README and historical preservation
+## README and history
 
-Restored the original two inline staged live-sensing screenshots, captions, problem/solution narrative, historical person-down demonstration, award description and linked team credits. Their bytes match `178f0f8` exactly. README history across all available branches was scanned; the two showcase paths originated in `2345b08`, were clarified in `6ba6896`, and remained in original main. Both still exist. Historical README images now use correct relative paths from docs/. Four primary README images and six README/docs local image references all resolve. A private local Markdown render and actual browser image loading verified positive image dimensions; the original image table was visually inspected. Existing enhanced screenshots remain actual application captures, not generated illustrations.
+The achievement appears immediately below the main title:
 
-The original first-place/$25,000/384 wording is preserved with **team-reported attribution** and supporting links. Organizer evidence confirms project/team participation but does not independently establish those exact award statistics. Team credits and historical commits remain untouched. Details: [README_RESTORATION.md](README_RESTORATION.md).
+> 🏆 **1st Place — The Executable World Hackathon | $25,000 Prize**
+>
+> SafetyLens secured first place among 384 participants at The Executable World Hackathon, earning a $25,000 prize.
 
-## 2. Reproduced root causes and repairs
+The README explicitly attributes this historical claim to the team; reviewed organizer evidence does not independently establish the prize/384 denominator. The event name and original contributor acknowledgements are preserved. Both original staged screenshots match baseline Git bytes. All current local image references resolve, and a private local Markdown/browser render loaded them with positive dimensions. No external renderer upload or fabricated screenshot was used. Historical diagrams/descriptions remain in the preserved original README; the original system diagram is retained in the current README as well.
 
-- Full composite depth/RGB frames were passed to single-person pose inference. Actual frame inspection and traces show this can select a depth silhouette or lose the RGB subject. Added an explicit, validated normalized pose region in camera policies, UI, provider and evaluator. Full raw evidence remains preserved. Default is full frame; no automatic favorable-region search.
-- Rapid descent detected after entering CONFIRMING was not retained. Fixed motion-evidence accumulation without lowering thresholds; a regression test exercises that exact sequence.
-- Finite replay EOF reopened the same clip, emitting new UUIDs repeatedly. A replay now consumes the file once.
-- Post-event captures could be discarded at EOF/shutdown. Available frames now finalize with explicit truncation limitations.
-- Fast offline replays could exit before the periodic sender tick. A final synchronous attempt prevents the ordinary loss while retaining failed deliveries durably.
-- Worker replay sampling reset from each selected frame and drifted from requested/evaluator FPS. It now advances a fixed sample clock.
-- Camera calibration help text was included in the accessible label, breaking exact label lookup. A separate label/input/aria-describedby fixes the cause. Link-rendered Base UI buttons now declare nonnative-button semantics.
-- Docker Desktop was stopped and the credential helper was missing from shell PATH. Starting the installed application and adding its Resources/bin to the command-local PATH enabled the daemon/build.
-- Real Linux npm clean installation exposed two missing optional peer lock entries. Regeneration using builder npm 10.9.9 fixed it; Linux clean-install dry-run passed. Docker contexts now exclude private environment files, host dependencies and local artifacts.
+## Confirmed engineering repairs
 
-Exact audit, sources and environmental limitations: [FINAL_PRODUCT_AUDIT.md](FINAL_PRODUCT_AUDIT.md).
+- Fixed missing `/app/public` in the real frontend image's final COPY stage; actual standalone build/runtime now pass.
+- Fixed automatic demo seeding that rewrote operator state and deleted referenced SOP chunks. A real PostgreSQL restart after a completed incident failed with a foreign-key violation before this repair. Ordinary startup now preserves existing data/citations; explicit confirmed demo reset remains separate.
+- Added startup recovery for persisted local detector preparation jobs, same-process per-video locks and completed-job idempotency. A service-level interrupted-commit regression verifies recovery without inventing model observations or re-extracting completed evidence.
+- Restricted device bearer authentication to intended method/path pairs; devices cannot enumerate incidents through the event-list route. Added camera/source/type/hash collision checks for event UUIDs.
+- Added outbox SHA-256 and backend verification of uploaded bytes. Actual source/backend evidence hashes match; mismatches reject. This is transfer integrity, not proof a compromised detector is truthful.
+- Serialized same-UUID uploads inside one API process to prevent a large spooled upload's open transaction from blocking its own event loop on duplicate insert. Two concurrent4.25MB uploads from an actual model event returned202/202 and reused one asset in .285s. The MP4 free-box padding exercises transport only and is not a detection benchmark sample.
+- Closed the incident-operation first-write race and retained SQL compare-and-swap. Two real authenticated roles submitting one version returned200/409.
+- Enabled database pre-ping after restart; bound the documented HTTP ports to loopback; retained protected evidence, CSRF/roles, encrypted camera sources and non-root runtime users.
+- Enforced PPE deployment exclusion in API/worker/UI rather than relying on documentation alone.
+- Fixed a rendered response panel that still said no actions had executed after simulated results existed. It now shows recorded-result guidance; the actual response browser regression passed.
 
-## 3. Fall detection evidence
+Source-level details and known limits: [FINAL_PRODUCT_AUDIT.md](FINAL_PRODUCT_AUDIT.md), [SECURITY_REVIEW.md](SECURITY_REVIEW.md). No source history or original contributor attribution was rewritten.
 
-The prior twelve clips remain preserved. Their four missed positives were individually inspected with actual contact sheets, pose counts, temporal metrics and state traces. New diagnostic replay yields TP5/FN1/FP0/TN6; this is development evidence after diagnosis, not a fresh test result. fall-03 remains missed despite available poses; partial body geometry near the frame boundary is unresolved.
+## Detection research: broader evidence is worse
 
-Before predictions on twenty additional clips (ten fall/ten ADL), the candidate was frozen: RGB-region calibration plus the state fix, original conservative thresholds unchanged. Same new clips with archived pre-change source/full-frame input: TP5/FN5/FP2/TN8, precision .7143, recall .5, F1 .5882. Candidate: **TP8/FN2/FP2/TN8, precision .8, recall .8, F1 .8**. Wilson 95% precision/recall interval approximately [.4902,.9433]. No statistical population superiority is established from this sample.
+Prior twelve/twenty-clip results remain untouched. The previous F1 .8 is a historical subset result, not general reliability. Candidate comparisons were fixed before new predictions; no temporal threshold was lowered or retuned against the new data. Alternatives: official Full pose model and an opt-in four-pose geometric tracker with separate temporal histories, ambiguity abstention, expiry and bounded memory. Full/tracking were not silently promoted to defaults.
 
-Both configurations falsely alert on two intentional couch-reclining clips. Only 79.166 seconds of negative footage supports the highly unstable 90.95 false alarms/camera-hour estimate. The candidate misses two short forward-fall clips containing an additional seated person and lower-frame truncation. Subject disjointness and pretrained-model overlap are unknown. These are video-presence confusion matrices, **not onset-matched event metrics**. No independent onset labels means event latency is unmeasured. Running, camera movement, kneeling, systematic occlusion and crowded camera operation are not exhaustively validated.
+New recording IDs17–26 supply twenty camera0 clips (10 positive/10 negative) and ten paired camera1 positive views. Camera pairs are correlated; subject/session separation and pretrained overlap are unknown. This is recording/content separation from development, not certified subject-disjoint evaluation.
 
-Raw outputs, hashes, failure discussion and reproduction: [DETECTION_VALIDATION.md](DETECTION_VALIDATION.md), [candidate results](evaluation/final/candidate-results.json), [preserved comparison](evaluation/final/baseline-results.json).
+On the **same new camera0 subset**:
 
-## 4. PPE inference and deployment exclusion
+- Preserved comparison code at `9c9315c`: TP2/FN8/FP1/TN9, F1 .3077.
+- Current calibrated Lite/default: **TP4/FN6/FP1/TN9**, precision .8, recall .4, F1 .5333.
+- Full/same temporal rules: TP4/FN6/FP0/TN10, F1 .5714.
+- Lite/four-pose: TP5/FN5/FP2/TN8, F1 .5882.
 
-Actual CPU ONNX inference, preprocessing, fixed float input dimensions, output decoding, class mapping, NMS, per-person association, temporal review candidates and preview overlay rendering are implemented. Twenty-four prespecified real labeled SH17 mirror test images contain 57 person/28 helmet/7 vest annotations. At IoU .5, precision/recall were person 1.0/.03509, helmet .05556/.03571, vest 0/0. Macro AP50:95 was **.003017**. Low-score truncation, small support and unknown training overlap limit interpretation; no association or compliance accuracy is derivable from these boxes.
+All profiles found4/10 camera1 positives; no camera1 negative footage was available, so its precision/F1/false-alarm performance are not estimated. Default camera0 recall's nominal Wilson95% interval [.1682,.6873] ignores unknown clustering. One false alert in67.666 negative seconds gives an unstable53.20/hour; zero observed Full alerts is not a zero-rate guarantee. All negative candidate events, including person-down candidates, are accounted for separately.
 
-**The evaluated reference model is excluded from deployment.** Poor labeled results are not hidden behind the successful adapter smoke. Its model-card CC-BY declaration conflicts with embedded AGPL metadata, and SH17 upstream noncommercial restrictions are not overridden by the mirror's CC-BY declaration. No license issue is claimed resolved. Per-person relationship/assessability labels and a useful appropriately licensed model remain outstanding. Details: [DETECTION_VALIDATION.md](DETECTION_VALIDATION.md), [PPE raw results](evaluation/final/ppe-results.json), [MODEL_REGISTRY.md](MODEL_REGISTRY.md).
+Actual frames/traces show short late confirmation, track loss, partial bodies, seated background people and a low-light bending false alert. The previous intentional-reclining failures also remain unresolved. Running/kneeling/camera motion/occlusion and industrial conditions have not been comprehensively validated. No trained TCN/RNN/transformer or calibrated fall probability is claimed.
 
-## 5. Actual integration and frontend verification
+Publisher frame labels were acquired after predictions without tuning the model. A frozen post-hoc matching rule and alignment checks support **camera0 annotation-to-event delay**: default four matches/six misses/one unmatched alert; detected-only delays [1.700,1.067,1.067,1.200] video-seconds (mean1.258). Misses are not dropped from the quality results. These are not live capture-to-operator delays or medical response times. All raw predictions, frame-label hashes, alignment evidence and source-matching scripts are in [DETECTION_VALIDATION.md](DETECTION_VALIDATION.md) and `evaluation/hardening/`.
 
-The real worker processed UR Fall fall-07 through MediaPipe, confirmed an event, captured actual evidence, delivered via authenticated outbox and received an acknowledgement. The browser found its matching notification, opened/played the correct video, confirmed the incident, approved selected policy-grounded actions, executed them in simulation, fetched audit history and downloaded a valid PDF. The device-scoped test uses existing registered `cam-03`; separate real camera create/edit/delete and policy round-trip are also browser verified. Seeded procedures supply policy content; external multimodal AI is not exercised. This is actual detector output, not the default synthetic fixture.
+## PPE findings
 
-Eight browser cases passed: camera CRUD/calibration and real analytics, viewer access/logout, responsive viewports, empty searches, persistent notes, actual detector/report workflow, cross-client SSE refresh, and all major route loading/network-error recovery. Route smoke is not exhaustive verification of every historical control. The original route smoke exposed additional link semantics warnings; those were repaired and a targeted rerun explicitly rejects Base UI warnings. Whole-suite pass and targeted results are kept separately.
+The old reference remains inadequate and license-conflicted. A small publisher-declared Apache alternative actually embedded AGPL metadata and lacked a person class. No associated face-recognition code was used. An official BSD-declared Qualcomm two-class export was inspected and actually evaluated through a separate offline adapter with validated graph/external-data hashes, input/output contract, preprocessing and NMS.
 
-Full walkthrough and boundaries: [END_TO_END_VERIFICATION.md](END_TO_END_VERIFICATION.md). Final actual event/artifact: [real-worker-result.json](evaluation/final/real-worker-result.json). That clip's event timestamp is relative to its source; its roughly 2.53-second worker wall interval includes offline process/model startup, processing, encoding and acknowledgement and is **not live alert latency**.
+On the same24 labeled images, the Qualcomm adapter produced5 helmet and14 vest predictions, with zero IoU.5 matches for either class. Person is unsupported; wearer/assessability labels are absent. No compliant-person accuracy is invented from object boxes. No candidate currently combines useful measured quality, person inference, wearer validation and reviewed licensing. Therefore **local PPE remains deployment-disabled**. These are observations of specific exports/adapters/subsets, not universal architecture claims. [PPE_VALIDATION.md](PPE_VALIDATION.md) records sources, protocol/parity limits and remaining requirements.
 
-## 6. Backend and deployment verification
+## Real application, deployment and faults
 
-Eighty-one backend tests pass, preserving the original suite. Authentication/session/CSRF/device scope, optimistic operations, camera lifecycle, local-CV provenance, ingestion, evidence, retrieval, approval/retry authorization, reporting, retention and migration adoption remain covered. There is no live external emergency/messaging integration.
+The exact documented Compose profile built both images and ran frontend standalone/Node22, backend/Python3.12 and PostgreSQL 17-alpine, all healthy. Browser interaction used actual container-served pages and actual MediaPipe-generated footage: checksum-verified ingestion, incident/notification, evidence playback, stored SOP retrieval/citations, human confirmation, selected approval, simulated execution, audit and a valid6832-byte PDF.
 
-The locked non-root backend container built and ran against actual PostgreSQL 16. Migration revision `0001_platform`, health, login, camera creation and persistence were checked. After restarting both containers, the camera and session persisted. Twenty local authenticated inventory requests averaged 12.121 ms (minimum 9.617, maximum 25.963); this is a small warm request sample, not a scalability benchmark.
+Actual fault checks passed:
 
-The standalone frontend image configuration and health check are implemented. Its Linux npm dependency-resolution failure was fixed and dry-run succeeded. Full frontend image build/runtime and Compose PostgreSQL17 runtime remain **unverified**: image work left approximately 0.2 GiB host free, insufficient for a new Linux node_modules/build. Only generated task caches were reclaimed; unrelated Docker images/volumes were preserved. Task-created verification containers were stopped/removed after checks, with named data volumes retained. Exact reproduction: [DEPLOYMENT_VERIFICATION.md](DEPLOYMENT_VERIFICATION.md).
+- Backend stop/start: a reopened outbox retained real evidence, recovered and reused its original asset.
+- PostgreSQL restart: session and evidence mapping persisted.
+- Two simultaneous operator edits: one accepted, one stale-version409.
+- Same-UUID concurrent large evidence uploads:202/202, one asset mapping.
+- Four concurrent recorded-camera workers: four acknowledged actual model events.
+- Controlled MJPEG interruption: observed online → offline → online after source restoration/reconnect backoff.
+- Private database dump: restored into a brand-new verification database with ten test/replay detector records.
+- Separate88-file media snapshot: restored into a new volume with every hash preserved and0600 archive.
 
-## 7. Exact test and benchmark commands
+The backup tests are quiescent component checks, not coordinated offsite disaster recovery. Startup recovery is single-process; physical RTSP equipment, sustained fleet load, HTTPS/proxy operation and distributed action guarantees remain unverified. Some new scripts initially failed on incorrect test-harness use of incident code/nested API shape; they were corrected against the actual schema, not hidden by changing the API to suit a guess. The initial real seed/restart failure was repaired and rerun. Commands and redacted JSON: [DEPLOYMENT_VERIFICATION.md](DEPLOYMENT_VERIFICATION.md), [END_TO_END_VERIFICATION.md](END_TO_END_VERIFICATION.md).
 
-- `backend/.venv/bin/python -m pytest -c backend/pytest.ini backend/tests -q`: **81 passed, 0 failed, 0 skipped**, 15.52 seconds.
-- `PYTHONPATH=detector/src backend/.venv/bin/python -m unittest discover -s detector/tests -q`: **55 passed, 0 failed, 0 skipped**; final measured 0.051 seconds.
-- `npm --prefix frontend run lint`: passed.
-- `npm --prefix frontend run typecheck`: passed.
-- `SAFETYLENS_DISABLE_BUILD_CACHE=true npm --prefix frontend run build`: passed, Next 16.4.5 webpack and standalone output. Cache disabling does not omit checks.
-- `SAFETYLENS_REAL_CLIP=/tmp/safetylens-final-evaluation/fall-07.mp4 SAFETYLENS_POSE_MODEL=/tmp/safetylens-evaluation/models/pose_landmarker_lite.task npm --prefix frontend run test:e2e`: **8 passed, 0 failed, 0 skipped, 0 flaky**, 98.645 seconds. Earlier expanded run: one accessible-label failure/seven passes, repaired and rerun; its compact failure evidence is retained.
-- `npm --prefix frontend run test:e2e -- --grep 'operator routes load'`: **1 passed, 0 failed, 0 skipped**, 23.0 seconds; final semantic-warning assertion passed across operational/demo routes.
-- Linux `node:22-alpine`/npm10.9.9 `npm ci --dry-run --ignore-scripts`: passed, 658 packages resolved. This is not a full Linux install/build pass.
-- `docker compose config --quiet` and PostgreSQL override config with supplied placeholder secret: passed static validation. Backend image/runtime + PostgreSQL16 checks passed separately.
-- `python3 scripts/acquire_final_validation.py --kind urfall --directory /tmp/safetylens-final-evaluation` and equivalent `--kind ppe --directory .../ppe`: all 20 video and 24 image content hashes verified.
-- `git diff --check`: passed before final staging.
+## Actual performance
 
-Detection commands and exact manifests are in DETECTION_VALIDATION.md. Offline analyzed FPS observed in the new comparison: baseline 80.58, candidate 81.03; runs overlapped other local work. PPE 24-image processing totaled 21.717 seconds; a separate single-image inference/decode smoke took .909 seconds. No CPU/GPU utilization, peak memory, statistically representative API percentiles, fleet performance or workplace alert-latency claim is made. The recorded dependency audit remains 13 findings (2 low,11 moderate), unresolved; no critical/high finding in that audit is not a proof of security.
+Host: Apple M2 Pro,16GiB RAM, macOS14.5. New offline sampled throughput: Lite75.96 FPS, Full57.44, tracked52.08. Lite peak RSS409,354,240 bytes and24.07 process CPU seconds over19.61s tool wall (122.74% on a one-core basis). These are process measurements, not total-machine/GPU utilization or supported fleet capacity.
 
-## 8. Feature classifications and acceptance gates
+Four repeated recorded cameras processed252 sampled frames in2.536s including startup (99.36 aggregate offline FPS), peak RSS668,106,752 bytes. The identical repeated scene and brief run cannot establish four-camera industrial reliability. MJPEG health changed online2.400s/offline4.615s/online12.666s during a controlled4–8s source interruption. Thirty final warm inventory requests averaged6.719ms (min5.476/max19.296); no SLO or saturation result follows.
 
-- README restoration/assets/history: **fully implemented and verified**. Gate 1 passes for available repository history and local rendering.
-- Local FastAPI/Next/database startup, auth and protected application workflow: **fully implemented and verified in the isolated local configuration**. Gate 2 passes locally; full Compose startup does not.
-- Pose-based temporal fall detection and calibrated candidate: **implemented but experimentally validated only**. Gate 3 has real separated content evidence and meaningful sample improvement, but falls short of general workplace reliability. Reliable intentional-lying discrimination and stable multi-person tracking are **not implemented**.
-- ONNX/PPE software adapter/association/overlays: **implemented but experimentally validated only**. Useful PPE model and per-person compliance validation are **blocked** by poor performance, unresolved licensing and missing independent relation labels. Gate 4 does not pass deployment readiness; affected capability is explicitly excluded.
-- Actual detector-to-notification/review/approval/audit/PDF path: **fully implemented and verified for the recorded fall**. Gate 5 passes that bounded scenario, not a live fleet.
-- Major frontend routes, CRUD, responsive layout, error handling and central workflow: **fully implemented and verified for tested interactions**. Gate 6 is partial for exhaustive product usability; every control, large-list stress, light theme and assistive technologies remain unverified.
-- Backend APIs/security/persistence: **fully implemented and verified for covered tests and actual PostgreSQL16 paths**. Gate 7 passes bounded evidence; third-party penetration review and distributed concurrency guarantees are not established.
-- Backend Docker/PostgreSQL16: **fully implemented and verified**. Frontend image/Compose17: **implemented but not verified**, storage-blocked. Gate 8 is partial.
-- Regression/browser/hash checks: **fully implemented and verified** for listed commands, with prior failures preserved. Docker full-stack, headless Linux pose and hardware fleet suites remain **blocked/unverified**; Gate 9 is partial relative to the full request.
-- Provenance, uncertainty, negative results and historical outputs: **implemented and verified** as recorded. Gate 10 passes reporting integrity; it does not certify the models.
-- External multimodal-provider integration: **implemented but not verified against a paid/live provider in this continuation**. Credentials/model access were not supplied.
-- Physical camera permissions, RTSP reconnect/crowd tests and sustained multi-camera capacity: **implemented interfaces but not verified with hardware**.
-- Organization tenancy, SSO/recovery, facial blurring, immutable compliance ledger and high-FPS browser video gateway: **not implemented**. No employee recognition/productivity inference is added.
-- Controlled workplace pilot/production adoption/certification: **not implemented or performed**. Shadow-evaluation protocol is documented; current model limitations prevent claiming operational readiness.
+The actual offline worker-to-ack interval was2.355s; it is not physical fall-to-UI latency. Live notification timing, accurate dropped frames, GPU utilization and representative storage/day remain unmeasured. Raw resources/timings and exact scope: [PERFORMANCE_REPORT.md](PERFORMANCE_REPORT.md).
 
-## 9. Security, privacy and human oversight
+## Tests and reproducibility
 
-Preserved authentication, strict cookies/CSRF/origin checks, four roles, device camera scope, encrypted private camera sources, bounded file handling, protected media/report endpoints, explicit retention and audit history. Docker ignore files address private-context leakage. Consequential actions remain simulated and explicitly approved. No real emergency dispatch, physical equipment command, employee identity inference or unapproved external message was sent. These are software safeguards, not a certified safety/security review.
+- Baseline at `0f9e920`:81 backend tests passed in12.12s;55 detector tests passed in .043s;8 browser cases passed; lint/typecheck/standalone build passed.
+- Final `backend/.venv/bin/python -m pytest -c backend/pytest.ini backend/tests -q`: **84 passed,0 failed,0 skipped**,12.14s.
+- Final `PYTHONPATH=detector/src backend/.venv/bin/python -m unittest discover -s detector/tests -q`: **58 passed,0 failed,0 skipped**. New tests exercise identity-order swaps, ambiguous crossings, expiry/bounds, excluded PPE, source/hash conflicts and interrupted-job/seed preservation—not detector accuracy.
+- Hardened actual-model `npm --prefix frontend run test:e2e` with `SAFETYLENS_REAL_CLIP`/`SAFETYLENS_POSE_MODEL`: **8 passed,0 failed,0 skipped,0 flaky**,64.595s. Default delivery without those variables remains explicitly synthetic.
+- Final response-text actual-model regression: **1 passed**,14.4s. It repeats a case and is not added to the unique suite count.
+- Frontend lint/typecheck passed. Both final container builds passed, including Next TypeScript/standalone production compilation. Final actual-container verifier separately drove the changed response UI.
+- Hash acquisition verified all30 new clips. Publisher matching, per-camera summarization, actual PPE inference, resource capture and fault/restore scripts are independently runnable from the repository.
+- `git diff --check` passed before staging. New Python modules were formatted with a temporary external formatter and AST equivalence checked; repository dependencies were not changed for formatting.
 
-Automatic approval review rejected uploading the README to GitHub's Markdown API because repository privacy/content sensitivity had not been cleared; no upload occurred. Local rendering completed the requested asset verification. No approval was needed to finish that safer local path.
+Exact commands and scope are in TESTING.md and the linked validation/deployment documents. CI workflow configuration is retained; no unobserved remote CI pass is claimed. No failing tests were disabled. There was no increase in test count presented as an accuracy improvement.
 
-## 10. Git delivery
+## Readiness classification by feature
 
-Continue on the existing authorized feature branch. All new commits use verified `Yug-More <yugmore20@gmail.com>` for both author and committer, checked before each commit and inspected afterward. No main merge, force push, branch deletion or historical authorship rewriting. Final commit IDs and independently checked remote HEAD are supplied in the delivery response; no successful push is assumed before the remote check. No PR is required or implied.
+- README/history/images/award placement: **implemented and verified**, with historical attribution.
+- Local authenticated frontend/backend/PG17 containers and migration/persistence: **implemented and verified** for the documented local configuration.
+- Actual detector-to-report human workflow, evidence integrity, controlled outage/reconnect/backup checks: **implemented and verified** for the recorded scenarios and stated single-process limits.
+- Core routes/CRUD/session/roles/responsive/error states: **implemented and verified for tested interactions**; exhaustive accessibility, light theme and every historical control are **unverified**.
+- Fall rules, Full comparison and geometric multi-pose tracking: **implemented and experimentally validated**; useful workplace detection remains **blocked** by inadequate broader recall/false-alert evidence and missing representative validation.
+- Offline PPE adapters: **implemented and experimentally validated**; complete person-specific PPE deployment is **blocked and disabled**.
+- Physical camera fleet, production HTTPS/proxy, live paid AI provider, distributed recovery/exactly-once execution: **implemented interfaces/configuration but unverified**, with distributed guarantees **not implemented**.
+- Organization tenancy, SSO/MFA/recovery, face blurring, certified immutable audit ledger: **not implemented**. Facial recognition/productivity scoring are deliberately absent.
+- Controlled workplace shadow pilot: **conditional and not accepted**; production workplace adoption/certification: **not performed or established**.
 
-## 11. Next work required for product completion
+Proposed measurable pilot gates—including independent data, camera-hours, missed-risk bounds, latency, privacy, retention and operator training—are in [PILOT_READINESS.md](PILOT_READINESS.md). None is silently marked achieved.
 
-A useful license-cleared PPE model and independent wearer/assessability annotations; sustained independently labeled negative camera-hours with intentional reclining, kneeling, occlusion and multiple people; a held-out subject/camera protocol and onset annotations; multi-person target association and robust partial-body handling; physical stream/failure/load tests; adequate storage for complete frontend-container/Compose17 verification; production HTTPS/proxy and independent security/privacy/pilot review. These are concrete remaining gates, not completed features hidden behind a green test count.
+## Security and Git delivery
+
+Authentication, CSRF/origin/role checks, protected evidence, camera secrets and simulated-only approvals remain enforced. Relevant threat-model fixes and residual risks are in SECURITY_REVIEW.md. Retained dependency audit:13 findings (2 low,11 moderate); no vulnerability-free claim. No external emergency message, physical action or employee identification was performed.
+
+All new commits must use checked author/committer `Yug-More <yugmore20@gmail.com>` on the existing feature branch. Historical authorship is retained; no force push, branch deletion or main merge. Actual commit IDs, push outcome and independently checked remote HEAD are provided in the delivery response and downloadable delivery report after Git verification. No PR is implied.

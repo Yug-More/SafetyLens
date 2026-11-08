@@ -1,0 +1,47 @@
+{
+  "hardware": "Apple M2 Pro, 17179869184 bytes RAM",
+  "platform": "macOS-14.5-arm64-arm-64bit",
+  "measurements": {
+    "original": {
+      "wall_seconds": 19.52,
+      "process_user_seconds": 21.09,
+      "process_system_seconds": 3.24,
+      "cpu_percent_one_core_basis": 124.64139344262296,
+      "peak_resident_bytes": 451575808,
+      "analyzed_fps": 76.22718269899897
+    },
+    "lite": {
+      "wall_seconds": 19.61,
+      "process_user_seconds": 21.46,
+      "process_system_seconds": 2.61,
+      "cpu_percent_one_core_basis": 122.74349821519633,
+      "peak_resident_bytes": 409354240,
+      "analyzed_fps": 75.96287207937694
+    },
+    "full": {
+      "wall_seconds": 25.29,
+      "process_user_seconds": 27.01,
+      "process_system_seconds": 2.89,
+      "cpu_percent_one_core_basis": 118.22854883353105,
+      "peak_resident_bytes": 395460608,
+      "analyzed_fps": 57.44020007260699
+    },
+    "tracked": {
+      "wall_seconds": 27.82,
+      "process_user_seconds": 29.73,
+      "process_system_seconds": 3.12,
+      "cpu_percent_one_core_basis": 118.0805176132279,
+      "peak_resident_bytes": 375291904,
+      "analyzed_fps": 52.0829523426356
+    },
+    "four_camera_replay": {
+      "wall_seconds": 2.52,
+      "process_user_seconds": 4.99,
+      "process_system_seconds": 2.24,
+      "cpu_percent_one_core_basis": 286.9047619047619,
+      "peak_resident_bytes": 668106752
+    }
+  },
+  "source": "macOS /usr/bin/time -l; bytes RSS; percent on one-core basis can exceed100; offline experiments not fleet SLOs",
+  "gpu_utilization": null
+}

@@ -38,3 +38,7 @@ Per-camera evidence periods are enforced by explicit administrator retention run
 The policy now accepts `pose_region` as normalized `[x1,y1,x2,y2]`, editable in the camera form. Blank means full frame. Apply a region only to a known calibrated source; UR Fall composite depth/RGB clips use `[0.5,0,1,1]` to isolate RGB. Pose coordinates are relative to that region, while full raw evidence is preserved. No automatic selection of a favorable body region occurs.
 
 Finite replays now finish once at EOF, instead of restarting and producing new incident UUIDs. Pending windows finalize with explicit truncation limitations; a final delivery attempt handles short replays that finish before the transport tick. Fixed replay sampling now matches the offline evaluator's schedule. PPE preview overlays render actual detected boxes/association status; the reference model is excluded from deployment after poor labeled results and unresolved licensing. Continuous real-camera interruption/fleet testing remains outstanding.
+
+## Final hardening status
+
+Local PPE is now explicitly rejected by policy updates and worker startup; offline adapters remain available for research. Optional `maximum_pose_people` (1–4, default 1) activates bounded geometric tracking with separate histories and expiry; crowded-scene accuracy is unvalidated. Detector clips carry SHA-256, duplicate UUID metadata must agree, and startup resumes persisted unfinished local-CV jobs in the single backend process. See FINAL_RELEASE_REPORT.md for tested scope and limitations.

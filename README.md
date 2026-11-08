@@ -1,10 +1,14 @@
 # SafetyLens
 
+> 🏆 **1st Place — The Executable World Hackathon | $25,000 Prize**
+>
+> SafetyLens secured first place among 384 participants at The Executable World Hackathon, earning a $25,000 prize.
+
+*Historically reported by the team; [contributor announcement](https://www.linkedin.com/posts/sean-aminov_hackathon-firstplace-artificialintelligence-activity-7507868872797151232-7QRY). The prize/384 denominator are not independently established by the organizer evidence reviewed. See [evidence qualifications](docs/README_RESTORATION.md).*
+
 **Computer vision evidence. Human-supervised response.**
 
 SafetyLens connects local camera observations, preserved incident evidence, optional multimodal investigation, company procedures, explicit human approval, and traceable simulated response. It is an experimental applied-AI platform, not a certified safety or medical system.
-
-**🏆 Historical team achievement: SafetyLens secured 1st place among 384 participants at The Executable World Hackathon, earning a $25,000 prize (team-reported).** See [the contributor announcement](https://www.linkedin.com/posts/sean-aminov_hackathon-firstplace-artificialintelligence-activity-7507868872797151232-7QRY) and [evidence qualifications](docs/README_RESTORATION.md).
 
 The original hackathon implementation and contributor history are preserved. Team members reported first place at The Executable World Hackathon; competition recognition does not validate detector performance. See [historical project documentation](docs/HISTORICAL_README.md) and [historical baseline](docs/HISTORICAL_BASELINE.md).
 
@@ -68,7 +72,7 @@ The repository also includes a PPE review workflow with camera-specific requirem
 ## Enhanced platform
 
 - Local MediaPipe pose estimation and temporal event logic, with a preserved legacy profile and conservative fall/person-down interpretation.
-- Optional real ONNX person/hard-hat/vest inference, exclusive association, ambiguity handling and temporal review. **Experimental: no labeled PPE accuracy established; reference model license metadata conflicts.**
+- Offline ONNX PPE evaluation, exclusive association and temporal review infrastructure. **Local PPE deployment is disabled:** neither the reference nor the evaluated replacement passed the labeled evaluation.
 - Automatic authenticated detector delivery through a bounded persistent SQLite outbox, retry/backoff and UUID acknowledgement/deduplication.
 - Camera registration/editing, facility/zone grouping labels, encrypted private sources, per-camera policies, heartbeat health and labeled latest-image previews.
 - Secure-by-default local users, scrypt passwords, revocable sessions, CSRF/Origin checks and administrator/manager/operator/viewer roles.
@@ -83,15 +87,38 @@ The repository also includes a PPE review workflow with camera-specific requirem
 
 The original **12-clip** external check detected 2/6 falls; those results remain preserved. Diagnosing its misses exposed a composite depth/RGB input error and a temporal-state bug. After freezing explicit RGB calibration and the state fix, **20 additional clips** gave TP8/FN2/FP2/TN8 (precision .8, recall .8, F1 .8), compared with TP5/FN5/FP2/TN8 (F1 .5882) for the preserved pre-change configuration on the same clips. No thresholds were lowered or tuned on the new set. These are small video-presence measurements with unknown subject separation and no independently annotated onsets.
 
-The candidate still falsely alerts on two intentional couch-reclining clips and misses two short forward falls. It is **not reliable enough for unattended workplace safety**. A real 24-image labeled PPE evaluation found poor performance (macro AP50:95 .003017); the reference model is excluded from deployment, and its license conflict remains unresolved. [Final detection validation](docs/DETECTION_VALIDATION.md) preserves raw predictions, hashes, uncertainty and negative findings. No operational adoption, certified safety accuracy or end-to-end latency is invented.
+A subsequently frozen evaluation on recordings 17–26 gives a more cautious result: on camera 0, **TP4/FN6/FP1/TN9, precision .80, recall .40, F1 .5333**. The preserved original configuration scored F1 .3077 on the same clips. Camera 1 detected 4/10 falls; no camera-1 negative set was available. Paired camera views are not independent events. Publisher-onset matching gives a mean 1.258 s annotation-to-rule delay among the four detected camera-0 falls; six misses remain. This is offline timing, not notification latency. The earlier 20 clips are now development data, not a reusable holdout.
+
+The detector remains **unsuitable for unattended workplace safety**. Intentional reclining, short falls, occlusion and camera geometry remain failure modes. A 24-image PPE evaluation found reference macro AP50:95 .003017; a separately inspected Qualcomm helmet/vest export produced zero IoU-.5 matches on the same small set. Local PPE deployment is enforced disabled. See [detection validation](docs/DETECTION_VALIDATION.md), [PPE findings](docs/PPE_VALIDATION.md), [performance](docs/PERFORMANCE_REPORT.md) and the [final report](docs/FINAL_RELEASE_REPORT.md) for raw evidence, source hashes, uncertainty and limitations.
 
 ## Architecture
 
-Camera → local pose/optional PPE inference → temporal event → pre/post evidence → durable device outbox → authenticated FastAPI ingestion → local-CV analysis/incident → notification → evidence review → stored SOP retrieval → cited response draft → human confirmation/approval → simulated actions → audit/report.
+Camera → local pose inference → temporal event → pre/post evidence → durable device outbox → authenticated FastAPI ingestion → local-CV analysis/incident → notification → evidence review → stored SOP retrieval → cited response draft → human confirmation/approval → simulated actions → audit/report.
 
 Uploaded video can instead use explicitly scripted Demo AI or configured OpenAI image/text analysis. Real detector imports are not silently passed through scripted analysis. Planning currently uses deterministic policy templates, including the historical OpenAI compatibility setting; no external LLM planning call is implied.
 
 Frontend: Next.js/React/TypeScript/Tailwind/Base UI/shadcn components. Backend: FastAPI/Pydantic/SQLAlchemy/SQLite. Optional PostgreSQL path. Vision: OpenCV, MediaPipe, ONNX Runtime. Infrastructure: Docker Compose, Alembic, pytest/unittest/Playwright. See [architecture](docs/ARCHITECTURE.md).
+
+The original system diagram is preserved below. “Approved Execution” currently means simulated actions; local CV and optional provider analysis are separate paths.
+
+```mermaid
+flowchart TD
+    A["Camera Feed"] --> B["Lightweight Event Detection"]
+    B --> C["Evidence Clip Preserved"]
+    C --> D["Multimodal Analysis"]
+    D --> E["Operator Alerted"]
+    E --> F["SOP and Draft Plan Prepared"]
+    F --> G{"Human Review"}
+    G -->|Reject| H["Close as False Alarm"]
+    G -->|More Information| I["Request Additional Review"]
+    G -->|Confirm| J["Approve Selected Actions"]
+    J --> K["Run Approved Actions"]
+    K --> L["Audit Trail and PDF Report"]
+```
+
+![Verified Docker incident response](docs/assets/enhanced/compose-verified-response.png)
+
+Actual local Docker workflow screenshot; source research footage is attributed in [asset notes](docs/assets/enhanced/README.md).
 
 ## Local setup
 
@@ -137,13 +164,13 @@ Browser tests generate isolated credentials/databases, exercise actual playback,
 
 ## Deployment and safeguards
 
-`docker compose up --build` is the local HTTP profile; bootstrap an administrator interactively. See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for production flags and the optional PostgreSQL path. The backend image and PostgreSQL 16 migration/authentication/restart persistence were verified. Full frontend-image runtime and the Compose PostgreSQL 17 profile remain unverified because of storage limits; see [deployment verification](docs/DEPLOYMENT_VERIFICATION.md).
+`docker compose up --build` is the local HTTP profile; bootstrap an administrator interactively. See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for production flags and the optional PostgreSQL path. The full frontend/backend/PostgreSQL 17 Compose profile was built and verified, including actual-model evidence playback, human approval, simulated response, PDF generation, service/database restart and isolated backup restoration. This establishes a local reproducible deployment, not an industrial deployment; see [deployment verification](docs/DEPLOYMENT_VERIFICATION.md).
 
 Never place secrets in NEXT_PUBLIC variables or Git. Evidence/report access is authenticated; private camera sources are encrypted. Retention runs are explicit and scoped. No facial recognition, identity inference or employee productivity scoring. All consequential action execution remains simulated; no emergency services, messaging platform or physical equipment is contacted.
 
 ## Limitations and future work
 
-Low measured recall; no disjoint PPE benchmark; unresolved reference-model license; single-pose tracking; no production camera-fleet benchmark; no browser video gateway/overlay transport; no tenant isolation or face blurring; no external dispatch; no certified audit ledger. These are research/engineering tasks, not hidden capabilities. See [SECURITY.md](docs/SECURITY.md), [MODEL_REGISTRY.md](docs/MODEL_REGISTRY.md), [platform audit](docs/PLATFORM_AUDIT.md) and [changelog](docs/CHANGELOG.md).
+Low measured recall; no disjoint PPE benchmark; unresolved reference-model license; experimental opt-in multi-pose tracking (up to four people, default one); no production camera-fleet benchmark; no browser video gateway/overlay transport; no tenant isolation or face blurring; no external dispatch; no certified audit ledger. These are research/engineering tasks, not hidden capabilities. See [SECURITY.md](docs/SECURITY.md), [MODEL_REGISTRY.md](docs/MODEL_REGISTRY.md), [platform audit](docs/PLATFORM_AUDIT.md) and [changelog](docs/CHANGELOG.md).
 
 ## Team and historical work
 
@@ -169,6 +196,6 @@ The original separate pose-preview process remains available, preserving the hac
 PYTHONPATH=detector/src detector/.venv/bin/python -m safetylens_detector.live --source 0 --model /path/pose_landmarker_lite.task --mirror
 ```
 
-The original demo used a Camo phone at camera index 1; indices and permissions vary. Keep the person and floor visible; press Q to stop. Local preview alone does not imply backend delivery. The enhanced worker connects delivery automatically. Historical PPE/demo statements above describe the hackathon configuration; current ONNX PPE remains a separately evaluated experimental adapter.
+The original demo used a Camo phone at camera index 1; indices and permissions vary. Keep the person and floor visible; press Q to stop. Local preview alone does not imply backend delivery. The enhanced worker connects delivery automatically. Historical PPE/demo statements above describe the hackathon configuration; current ONNX PPE adapters are offline evaluation tools with local deployment disabled.
 
 For the actual recorded-video-to-report test, set `SAFETYLENS_REAL_CLIP` and `SAFETYLENS_POSE_MODEL` as described in [end-to-end verification](docs/END_TO_END_VERIFICATION.md). Without them the default browser fixture is explicitly synthetic. See [final release report](docs/FINAL_RELEASE_REPORT.md) for acceptance gates and unresolved blockers.

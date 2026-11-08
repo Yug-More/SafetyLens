@@ -1,0 +1,177 @@
+{
+  "comparison": {
+    "original": {
+      "camera0": {
+        "clips": 20,
+        "tp": 2,
+        "fn": 8,
+        "fp": 1,
+        "tn": 9,
+        "precision": 0.6666666666666666,
+        "recall": 0.2,
+        "f1": 0.3076923076923077,
+        "recall_95pct_wilson": [
+          0.05668215145437519,
+          0.5098375284633583
+        ],
+        "precision_95pct_wilson": [
+          0.2076596008020477,
+          0.9385080552796037
+        ],
+        "negative_seconds": 67.666,
+        "fall_alarms_per_negative_camera_hour": 53.20249460585819,
+        "all_candidate_alarms_on_negative_clips": 1
+      },
+      "camera1": {
+        "clips": 10,
+        "tp": 4,
+        "fn": 6,
+        "fp": 0,
+        "tn": 0,
+        "precision": null,
+        "recall": 0.4,
+        "f1": null,
+        "recall_95pct_wilson": [
+          0.16818032970623614,
+          0.6873262302663417
+        ],
+        "precision_95pct_wilson": null,
+        "negative_seconds": 0,
+        "fall_alarms_per_negative_camera_hour": null,
+        "all_candidate_alarms_on_negative_clips": 0,
+        "scope": "Positive-only camera sensitivity; precision and F1 not estimated"
+      }
+    },
+    "lite": {
+      "camera0": {
+        "clips": 20,
+        "tp": 4,
+        "fn": 6,
+        "fp": 1,
+        "tn": 9,
+        "precision": 0.8,
+        "recall": 0.4,
+        "f1": 0.5333333333333333,
+        "recall_95pct_wilson": [
+          0.16818032970623614,
+          0.6873262302663417
+        ],
+        "precision_95pct_wilson": [
+          0.37553462976252533,
+          0.9637758913675698
+        ],
+        "negative_seconds": 67.666,
+        "fall_alarms_per_negative_camera_hour": 53.20249460585819,
+        "all_candidate_alarms_on_negative_clips": 1
+      },
+      "camera1": {
+        "clips": 10,
+        "tp": 4,
+        "fn": 6,
+        "fp": 0,
+        "tn": 0,
+        "precision": null,
+        "recall": 0.4,
+        "f1": null,
+        "recall_95pct_wilson": [
+          0.16818032970623614,
+          0.6873262302663417
+        ],
+        "precision_95pct_wilson": null,
+        "negative_seconds": 0,
+        "fall_alarms_per_negative_camera_hour": null,
+        "all_candidate_alarms_on_negative_clips": 0,
+        "scope": "Positive-only camera sensitivity; precision and F1 not estimated"
+      }
+    },
+    "full": {
+      "camera0": {
+        "clips": 20,
+        "tp": 4,
+        "fn": 6,
+        "fp": 0,
+        "tn": 10,
+        "precision": 1.0,
+        "recall": 0.4,
+        "f1": 0.5714285714285714,
+        "recall_95pct_wilson": [
+          0.16818032970623614,
+          0.6873262302663417
+        ],
+        "precision_95pct_wilson": [
+          0.5101091635454027,
+          1
+        ],
+        "negative_seconds": 67.666,
+        "fall_alarms_per_negative_camera_hour": 0.0,
+        "all_candidate_alarms_on_negative_clips": 0
+      },
+      "camera1": {
+        "clips": 10,
+        "tp": 4,
+        "fn": 6,
+        "fp": 0,
+        "tn": 0,
+        "precision": null,
+        "recall": 0.4,
+        "f1": null,
+        "recall_95pct_wilson": [
+          0.16818032970623614,
+          0.6873262302663417
+        ],
+        "precision_95pct_wilson": null,
+        "negative_seconds": 0,
+        "fall_alarms_per_negative_camera_hour": null,
+        "all_candidate_alarms_on_negative_clips": 0,
+        "scope": "Positive-only camera sensitivity; precision and F1 not estimated"
+      }
+    },
+    "tracked": {
+      "camera0": {
+        "clips": 20,
+        "tp": 5,
+        "fn": 5,
+        "fp": 2,
+        "tn": 8,
+        "precision": 0.7142857142857143,
+        "recall": 0.5,
+        "f1": 0.5882352941176471,
+        "recall_95pct_wilson": [
+          0.236593090512564,
+          0.7634069094874361
+        ],
+        "precision_95pct_wilson": [
+          0.35893445183261935,
+          0.9177810759959433
+        ],
+        "negative_seconds": 67.666,
+        "fall_alarms_per_negative_camera_hour": 106.40498921171638,
+        "all_candidate_alarms_on_negative_clips": 2
+      },
+      "camera1": {
+        "clips": 10,
+        "tp": 4,
+        "fn": 6,
+        "fp": 0,
+        "tn": 0,
+        "precision": null,
+        "recall": 0.4,
+        "f1": null,
+        "recall_95pct_wilson": [
+          0.16818032970623614,
+          0.6873262302663417
+        ],
+        "precision_95pct_wilson": null,
+        "negative_seconds": 0,
+        "fall_alarms_per_negative_camera_hour": null,
+        "all_candidate_alarms_on_negative_clips": 0,
+        "scope": "Positive-only camera sensitivity; precision and F1 not estimated"
+      }
+    }
+  },
+  "limitations": [
+    "Paired camera views share recording/subject; pooled clips are correlated",
+    "camera1 contains no negatives; its false-alarm performance is unmeasured",
+    "Video-presence metrics; independent onsets and subject separation unavailable"
+  ]
+}

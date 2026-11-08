@@ -1,0 +1,2126 @@
+{
+  "schema_version": "1.0",
+  "evaluation_level": "video-level event presence; not per-frame accuracy",
+  "profile": "tracked",
+  "model_sha256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a",
+  "manifest_sha256": "13e7b3f9d26f7f66dfd103ba392ab3770270e71f2f43cc3e23c7d93b5b8b5c9d",
+  "platform": "macOS-14.5-arm64-arm-64bit",
+  "python": "3.12.12",
+  "sample_fps": 12,
+  "parameters": {
+    "minimum_pose_quality": 0.6,
+    "maximum_observation_gap_seconds": 0.75,
+    "rapid_drop_velocity": 0.65,
+    "horizontal_angle_degrees": 58.0,
+    "minimum_horizontal_bbox_ratio": 1.25,
+    "down_bbox_width_height_ratio": 1.35,
+    "minimum_tilt_for_bbox_down_degrees": 25.0,
+    "overhead_shoulder_drop_ratio": 0.12,
+    "overhead_settled_motion_threshold": 0.75,
+    "overhead_hold_seconds": 1.2,
+    "recovery_angle_degrees": 35.0,
+    "maximum_recovery_bbox_ratio": 1.2,
+    "horizontal_hold_seconds": 0.5,
+    "down_posture_gap_tolerance_seconds": 0.2,
+    "low_motion_threshold": 0.18,
+    "low_motion_hold_seconds": 1.2,
+    "suspicion_timeout_seconds": 2.5,
+    "cooldown_seconds": 4.0,
+    "recovery_hold_seconds": 0.6,
+    "enable_overhead_displacement": false
+  },
+  "metrics": {
+    "samples": 20,
+    "true_positive": 8,
+    "false_positive": 3,
+    "true_negative": 7,
+    "false_negative": 2,
+    "precision": 0.7272727272727273,
+    "recall": 0.8,
+    "f1": 0.7619047619047619,
+    "false_positive_rate": 0.3,
+    "false_negative_rate": 0.2,
+    "recall_95pct_wilson": [
+      0.49016247153664183,
+      0.9433178485456247
+    ],
+    "precision_95pct_wilson": [
+      0.43435469882387084,
+      0.902539407099751
+    ],
+    "false_alarms_per_negative_camera_hour": 136.42220145011748,
+    "negative_camera_hours": 0.021990555555555555,
+    "processing_seconds": 31.928643499999907,
+    "processing_fps": 44.53610905223809,
+    "event_detection_latency": "Only available for samples with independently annotated onset; pre-onset alerts not matched.",
+    "cpu_utilization": null,
+    "gpu_utilization": null,
+    "peak_memory_bytes": null
+  },
+  "samples": [
+    {
+      "sample": {
+        "id": "fall-07",
+        "path": "fall-07.mp4",
+        "sha256": "7dff29fad343856c2cc20c0bd1ab6b7ef749d75b916d75fc68cf0861793b39cd",
+        "label": "fall",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-07-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/fall-07.mp4",
+        "duration_seconds": 5.2,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 156,
+        "analyzed_frames": 63,
+        "poses_detected": 62,
+        "missing_poses": 2,
+        "processing_seconds": 2.338,
+        "events": [
+          {
+            "schema_version": "1.0",
+            "event_id": "2552b43b-915a-483f-9252-506cd92b41d3",
+            "event_type": "possible_person_down",
+            "source_id": "fall-07",
+            "track_id": "pose-1",
+            "occurred_at_seconds": 4.166666666666667,
+            "source_timestamp_seconds": 4.166666666666667,
+            "state": "incident",
+            "trigger_signals": [
+              "rapid_drop",
+              "down_posture_persistence"
+            ],
+            "pose_quality": 0.9993671476840973,
+            "metrics": {
+              "timestamp_seconds": 4.166666666666667,
+              "pose_quality": 0.9993671476840973,
+              "shoulder_center_y": 0.9599148333072662,
+              "torso_angle_degrees_from_vertical": 69.21644796034053,
+              "bbox_width_height_ratio": 1.1414568538254681,
+              "downward_hip_velocity_body_lengths_per_second": 2.8214504490790384,
+              "mean_landmark_motion_body_lengths_per_second": 1.5499030808176453
+            },
+            "limitations": [
+              "single_person_pose_heuristic",
+              "not_a_medical_diagnosis",
+              "requires_human_verification"
+            ]
+          }
+        ],
+        "transitions": [
+          {
+            "timestamp_seconds": 0.0,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 3.167,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 3.6,
+            "previous_state": "suspected",
+            "state": "confirming",
+            "reasons": [
+              "rapid_drop",
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 3.833,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 4.167,
+            "previous_state": "confirming",
+            "state": "incident",
+            "reasons": [
+              "rapid_drop",
+              "down_posture_persistence"
+            ]
+          },
+          {
+            "timestamp_seconds": 4.267,
+            "previous_state": "incident",
+            "state": "cooldown",
+            "reasons": [
+              "rapid_drop",
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          }
+        ]
+      },
+      "fall_events_counted": 1,
+      "onset_latency_seconds": null
+    },
+    {
+      "sample": {
+        "id": "fall-08",
+        "path": "fall-08.mp4",
+        "sha256": "365d74ac9651b7dc7d61571614d4195d1517047ec0133330b5328ed0fe13055a",
+        "label": "fall",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-08-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/fall-08.mp4",
+        "duration_seconds": 3.033,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 91,
+        "analyzed_frames": 37,
+        "poses_detected": 37,
+        "missing_poses": 0,
+        "processing_seconds": 0.922,
+        "events": [
+          {
+            "schema_version": "1.0",
+            "event_id": "27bc1ad2-e960-43de-b760-a82200ac17f7",
+            "event_type": "possible_person_down",
+            "source_id": "fall-08",
+            "track_id": "pose-1",
+            "occurred_at_seconds": 2.6666666666666665,
+            "source_timestamp_seconds": 2.6666666666666665,
+            "state": "incident",
+            "trigger_signals": [
+              "rapid_drop",
+              "down_posture_persistence",
+              "wide_tilted_body_box"
+            ],
+            "pose_quality": 0.9996256530284882,
+            "metrics": {
+              "timestamp_seconds": 2.6666666666666665,
+              "pose_quality": 0.9996256530284882,
+              "shoulder_center_y": 0.8692255914211273,
+              "torso_angle_degrees_from_vertical": 82.12904779382816,
+              "bbox_width_height_ratio": 2.5538151336932327,
+              "downward_hip_velocity_body_lengths_per_second": 0.21656675540481082,
+              "mean_landmark_motion_body_lengths_per_second": 1.1829594537199846
+            },
+            "limitations": [
+              "single_person_pose_heuristic",
+              "not_a_medical_diagnosis",
+              "requires_human_verification"
+            ]
+          }
+        ],
+        "transitions": [
+          {
+            "timestamp_seconds": 0.0,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 1.433,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 1.6,
+            "previous_state": "suspected",
+            "state": "confirming",
+            "reasons": [
+              "rapid_drop",
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 2.667,
+            "previous_state": "confirming",
+            "state": "incident",
+            "reasons": [
+              "rapid_drop",
+              "down_posture_persistence",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 2.767,
+            "previous_state": "incident",
+            "state": "cooldown",
+            "reasons": [
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          }
+        ]
+      },
+      "fall_events_counted": 1,
+      "onset_latency_seconds": null
+    },
+    {
+      "sample": {
+        "id": "fall-09",
+        "path": "fall-09.mp4",
+        "sha256": "28061e57e2daf23dd3cfc1a79d43800035035285b89170b7304a652d910f63e4",
+        "label": "fall",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-09-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/fall-09.mp4",
+        "duration_seconds": 6.167,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 185,
+        "analyzed_frames": 74,
+        "poses_detected": 66,
+        "missing_poses": 8,
+        "processing_seconds": 1.659,
+        "events": [
+          {
+            "schema_version": "1.0",
+            "event_id": "5b00616e-a82f-41d9-8d90-e3a1be059258",
+            "event_type": "possible_person_down",
+            "source_id": "fall-09",
+            "track_id": "pose-1",
+            "occurred_at_seconds": 5.166666666666667,
+            "source_timestamp_seconds": 5.166666666666667,
+            "state": "incident",
+            "trigger_signals": [
+              "rapid_drop",
+              "down_posture_persistence"
+            ],
+            "pose_quality": 0.9999000132083893,
+            "metrics": {
+              "timestamp_seconds": 5.166666666666667,
+              "pose_quality": 0.9999000132083893,
+              "shoulder_center_y": 0.6843824982643127,
+              "torso_angle_degrees_from_vertical": 49.20074503385668,
+              "bbox_width_height_ratio": 1.0239099925164292,
+              "downward_hip_velocity_body_lengths_per_second": -4.941769584549024,
+              "mean_landmark_motion_body_lengths_per_second": 7.274028020823318
+            },
+            "limitations": [
+              "single_person_pose_heuristic",
+              "not_a_medical_diagnosis",
+              "requires_human_verification"
+            ]
+          }
+        ],
+        "transitions": [
+          {
+            "timestamp_seconds": 0.0,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 4.167,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 4.667,
+            "previous_state": "suspected",
+            "state": "confirming",
+            "reasons": [
+              "rapid_drop",
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 5.167,
+            "previous_state": "confirming",
+            "state": "incident",
+            "reasons": [
+              "rapid_drop",
+              "down_posture_persistence"
+            ]
+          },
+          {
+            "timestamp_seconds": 5.267,
+            "previous_state": "incident",
+            "state": "cooldown",
+            "reasons": []
+          }
+        ]
+      },
+      "fall_events_counted": 1,
+      "onset_latency_seconds": null
+    },
+    {
+      "sample": {
+        "id": "fall-10",
+        "path": "fall-10.mp4",
+        "sha256": "2e077041e7f929ce120fc4c4f2c1e7421b9826c52d5d776c7341c67cf125095b",
+        "label": "fall",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-10-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/fall-10.mp4",
+        "duration_seconds": 4.333,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 130,
+        "analyzed_frames": 52,
+        "poses_detected": 46,
+        "missing_poses": 6,
+        "processing_seconds": 1.282,
+        "events": [
+          {
+            "schema_version": "1.0",
+            "event_id": "9eeade5a-2fec-4bc3-8a69-85677495c00d",
+            "event_type": "possible_person_down",
+            "source_id": "fall-10",
+            "track_id": "pose-1",
+            "occurred_at_seconds": 2.3333333333333335,
+            "source_timestamp_seconds": 2.3333333333333335,
+            "state": "incident",
+            "trigger_signals": [
+              "rapid_drop",
+              "down_posture_persistence",
+              "wide_tilted_body_box"
+            ],
+            "pose_quality": 0.9957577735185623,
+            "metrics": {
+              "timestamp_seconds": 2.3333333333333335,
+              "pose_quality": 0.9957577735185623,
+              "shoulder_center_y": 0.8301289081573486,
+              "torso_angle_degrees_from_vertical": 81.06574155745112,
+              "bbox_width_height_ratio": 2.0714992962066425,
+              "downward_hip_velocity_body_lengths_per_second": 1.83089821291848,
+              "mean_landmark_motion_body_lengths_per_second": 1.8632660204884857
+            },
+            "limitations": [
+              "single_person_pose_heuristic",
+              "not_a_medical_diagnosis",
+              "requires_human_verification"
+            ]
+          }
+        ],
+        "transitions": [
+          {
+            "timestamp_seconds": 0.0,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 1.167,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 1.767,
+            "previous_state": "suspected",
+            "state": "confirming",
+            "reasons": [
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 2.333,
+            "previous_state": "confirming",
+            "state": "incident",
+            "reasons": [
+              "rapid_drop",
+              "down_posture_persistence",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 2.433,
+            "previous_state": "incident",
+            "state": "cooldown",
+            "reasons": [
+              "rapid_drop",
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          }
+        ]
+      },
+      "fall_events_counted": 1,
+      "onset_latency_seconds": null
+    },
+    {
+      "sample": {
+        "id": "fall-11",
+        "path": "fall-11.mp4",
+        "sha256": "d1274781ac2fb6f57d40b0337ab77573c882d06f86f5604073eb1568794382b4",
+        "label": "fall",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-11-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/fall-11.mp4",
+        "duration_seconds": 4.333,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 130,
+        "analyzed_frames": 52,
+        "poses_detected": 52,
+        "missing_poses": 0,
+        "processing_seconds": 1.209,
+        "events": [
+          {
+            "schema_version": "1.0",
+            "event_id": "43f58e04-529e-4dd2-81b3-11f8354ff99a",
+            "event_type": "possible_person_down",
+            "source_id": "fall-11",
+            "track_id": "pose-1",
+            "occurred_at_seconds": 2.7666666666666666,
+            "source_timestamp_seconds": 2.7666666666666666,
+            "state": "incident",
+            "trigger_signals": [
+              "rapid_drop",
+              "down_posture_persistence",
+              "wide_tilted_body_box"
+            ],
+            "pose_quality": 0.9997218996286392,
+            "metrics": {
+              "timestamp_seconds": 2.7666666666666666,
+              "pose_quality": 0.9997218996286392,
+              "shoulder_center_y": 0.7237993478775024,
+              "torso_angle_degrees_from_vertical": 66.91046540637937,
+              "bbox_width_height_ratio": 2.422534875686494,
+              "downward_hip_velocity_body_lengths_per_second": -0.771730633491683,
+              "mean_landmark_motion_body_lengths_per_second": 2.9674714066939547
+            },
+            "limitations": [
+              "single_person_pose_heuristic",
+              "not_a_medical_diagnosis",
+              "requires_human_verification"
+            ]
+          }
+        ],
+        "transitions": [
+          {
+            "timestamp_seconds": 0.0,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 1.933,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 2.267,
+            "previous_state": "suspected",
+            "state": "confirming",
+            "reasons": [
+              "rapid_drop",
+              "horizontal_posture"
+            ]
+          },
+          {
+            "timestamp_seconds": 2.767,
+            "previous_state": "confirming",
+            "state": "incident",
+            "reasons": [
+              "rapid_drop",
+              "down_posture_persistence",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 2.833,
+            "previous_state": "incident",
+            "state": "cooldown",
+            "reasons": [
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          }
+        ]
+      },
+      "fall_events_counted": 1,
+      "onset_latency_seconds": null
+    },
+    {
+      "sample": {
+        "id": "fall-12",
+        "path": "fall-12.mp4",
+        "sha256": "e3f463e492ff3d3119c318c4b24796c98e673a66d311c7eaa827be9c80b93e78",
+        "label": "fall",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-12-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/fall-12.mp4",
+        "duration_seconds": 3.667,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 110,
+        "analyzed_frames": 44,
+        "poses_detected": 44,
+        "missing_poses": 0,
+        "processing_seconds": 0.988,
+        "events": [
+          {
+            "schema_version": "1.0",
+            "event_id": "62ac49cf-4c56-4125-a392-a4e6e59b9b28",
+            "event_type": "possible_person_down",
+            "source_id": "fall-12",
+            "track_id": "pose-1",
+            "occurred_at_seconds": 1.9333333333333333,
+            "source_timestamp_seconds": 1.9333333333333333,
+            "state": "incident",
+            "trigger_signals": [
+              "rapid_drop",
+              "down_posture_persistence",
+              "wide_tilted_body_box"
+            ],
+            "pose_quality": 0.9996101409196854,
+            "metrics": {
+              "timestamp_seconds": 1.9333333333333333,
+              "pose_quality": 0.9996101409196854,
+              "shoulder_center_y": 0.7233805656433105,
+              "torso_angle_degrees_from_vertical": 73.1243255340766,
+              "bbox_width_height_ratio": 2.1370932356003185,
+              "downward_hip_velocity_body_lengths_per_second": 0.25042657427391435,
+              "mean_landmark_motion_body_lengths_per_second": 2.05025897773496
+            },
+            "limitations": [
+              "single_person_pose_heuristic",
+              "not_a_medical_diagnosis",
+              "requires_human_verification"
+            ]
+          }
+        ],
+        "transitions": [
+          {
+            "timestamp_seconds": 0.0,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 0.333,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 1.433,
+            "previous_state": "suspected",
+            "state": "confirming",
+            "reasons": [
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 1.933,
+            "previous_state": "confirming",
+            "state": "incident",
+            "reasons": [
+              "rapid_drop",
+              "down_posture_persistence",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 2.0,
+            "previous_state": "incident",
+            "state": "cooldown",
+            "reasons": [
+              "rapid_drop",
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          }
+        ]
+      },
+      "fall_events_counted": 1,
+      "onset_latency_seconds": null
+    },
+    {
+      "sample": {
+        "id": "fall-13",
+        "path": "fall-13.mp4",
+        "sha256": "172dee7c199de98348430713c5e8ad2c8be04ba38f7e6391c3c22047f968a024",
+        "label": "fall",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-13-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/fall-13.mp4",
+        "duration_seconds": 2.833,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 85,
+        "analyzed_frames": 34,
+        "poses_detected": 52,
+        "missing_poses": 0,
+        "processing_seconds": 0.999,
+        "events": [],
+        "transitions": [
+          {
+            "timestamp_seconds": 0.0,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 0.0,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 0.667,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 1.6,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 1.6,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 1.833,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 2.1,
+            "previous_state": "suspected",
+            "state": "confirming",
+            "reasons": [
+              "rapid_drop",
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          }
+        ]
+      },
+      "fall_events_counted": 0,
+      "onset_latency_seconds": null
+    },
+    {
+      "sample": {
+        "id": "fall-14",
+        "path": "fall-14.mp4",
+        "sha256": "3c38f85993855f27d0549c369f89fde0449be50152cb9cdc06e6ab11f66fe10b",
+        "label": "fall",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-14-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/fall-14.mp4",
+        "duration_seconds": 2.033,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 61,
+        "analyzed_frames": 25,
+        "poses_detected": 50,
+        "missing_poses": 0,
+        "processing_seconds": 0.81,
+        "events": [
+          {
+            "schema_version": "1.0",
+            "event_id": "790173e6-b1b2-40f4-bf9f-cfa6f15b66b3",
+            "event_type": "possible_person_down",
+            "source_id": "fall-14",
+            "track_id": "pose-1",
+            "occurred_at_seconds": 1.6,
+            "source_timestamp_seconds": 1.6,
+            "state": "incident",
+            "trigger_signals": [
+              "rapid_drop",
+              "down_posture_persistence",
+              "wide_tilted_body_box"
+            ],
+            "pose_quality": 0.9997298717498779,
+            "metrics": {
+              "timestamp_seconds": 1.6,
+              "pose_quality": 0.9997298717498779,
+              "shoulder_center_y": 0.8560713231563568,
+              "torso_angle_degrees_from_vertical": 81.28185878035265,
+              "bbox_width_height_ratio": 3.3184731896872695,
+              "downward_hip_velocity_body_lengths_per_second": -0.7583337035337865,
+              "mean_landmark_motion_body_lengths_per_second": 0.9000899938695929
+            },
+            "limitations": [
+              "single_person_pose_heuristic",
+              "not_a_medical_diagnosis",
+              "requires_human_verification"
+            ]
+          }
+        ],
+        "transitions": [
+          {
+            "timestamp_seconds": 0.0,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 0.0,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 0.1,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 0.433,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 0.5,
+            "previous_state": "suspected",
+            "state": "confirming",
+            "reasons": [
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 1.6,
+            "previous_state": "confirming",
+            "state": "incident",
+            "reasons": [
+              "rapid_drop",
+              "down_posture_persistence",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 1.667,
+            "previous_state": "incident",
+            "state": "cooldown",
+            "reasons": [
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          }
+        ]
+      },
+      "fall_events_counted": 1,
+      "onset_latency_seconds": null
+    },
+    {
+      "sample": {
+        "id": "fall-15",
+        "path": "fall-15.mp4",
+        "sha256": "85dd08909fb62efeb736ac159c595398521d8c70b7537663884dbd3b2dc583d9",
+        "label": "fall",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-15-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/fall-15.mp4",
+        "duration_seconds": 2.367,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 71,
+        "analyzed_frames": 29,
+        "poses_detected": 27,
+        "missing_poses": 4,
+        "processing_seconds": 0.706,
+        "events": [],
+        "transitions": [
+          {
+            "timestamp_seconds": 0.0,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 1.0,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 1.5,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 1.6,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 1.6,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 1.667,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop",
+              "horizontal_posture"
+            ]
+          },
+          {
+            "timestamp_seconds": 1.767,
+            "previous_state": "suspected",
+            "state": "confirming",
+            "reasons": [
+              "rapid_drop",
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          }
+        ]
+      },
+      "fall_events_counted": 0,
+      "onset_latency_seconds": null
+    },
+    {
+      "sample": {
+        "id": "fall-16",
+        "path": "fall-16.mp4",
+        "sha256": "0ef51830d8573303eb2e5d2ea897f7bcf619843e570fc84aba0cd3d3c8c9a0b2",
+        "label": "fall",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-16-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/fall-16.mp4",
+        "duration_seconds": 1.833,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 55,
+        "analyzed_frames": 22,
+        "poses_detected": 22,
+        "missing_poses": 0,
+        "processing_seconds": 0.588,
+        "events": [
+          {
+            "schema_version": "1.0",
+            "event_id": "b69e4ce1-0c5d-40d9-aa00-9603a8200b27",
+            "event_type": "possible_person_down",
+            "source_id": "fall-16",
+            "track_id": "pose-1",
+            "occurred_at_seconds": 1.6666666666666667,
+            "source_timestamp_seconds": 1.6666666666666667,
+            "state": "incident",
+            "trigger_signals": [
+              "rapid_drop",
+              "down_posture_persistence",
+              "wide_tilted_body_box"
+            ],
+            "pose_quality": 0.9997076839208603,
+            "metrics": {
+              "timestamp_seconds": 1.6666666666666667,
+              "pose_quality": 0.9997076839208603,
+              "shoulder_center_y": 0.8504346013069153,
+              "torso_angle_degrees_from_vertical": 80.60722555159171,
+              "bbox_width_height_ratio": 3.6001581147397053,
+              "downward_hip_velocity_body_lengths_per_second": -1.33072804168652,
+              "mean_landmark_motion_body_lengths_per_second": 1.375418557339494
+            },
+            "limitations": [
+              "single_person_pose_heuristic",
+              "not_a_medical_diagnosis",
+              "requires_human_verification"
+            ]
+          }
+        ],
+        "transitions": [
+          {
+            "timestamp_seconds": 0.0,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 1.1,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 1.167,
+            "previous_state": "suspected",
+            "state": "confirming",
+            "reasons": [
+              "rapid_drop",
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 1.667,
+            "previous_state": "confirming",
+            "state": "incident",
+            "reasons": [
+              "rapid_drop",
+              "down_posture_persistence",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 1.767,
+            "previous_state": "incident",
+            "state": "cooldown",
+            "reasons": [
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          }
+        ]
+      },
+      "fall_events_counted": 1,
+      "onset_latency_seconds": null
+    },
+    {
+      "sample": {
+        "id": "adl-07",
+        "path": "adl-07.mp4",
+        "sha256": "0b346e78321c0cdfd281a19f3f4fd9cb6d61ed27f4caa1a955ac182c5b66a954",
+        "label": "normal",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-07-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/adl-07.mp4",
+        "duration_seconds": 6.0,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 180,
+        "analyzed_frames": 72,
+        "poses_detected": 68,
+        "missing_poses": 5,
+        "processing_seconds": 1.546,
+        "events": [],
+        "transitions": [
+          {
+            "timestamp_seconds": 0.433,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 1.0,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 1.1,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 1.167,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 1.267,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 1.333,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 1.433,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 1.5,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 1.6,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 1.667,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 1.767,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 2.767,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 5.333,
+            "previous_state": "suspected",
+            "state": "monitoring",
+            "reasons": []
+          }
+        ]
+      },
+      "fall_events_counted": 0,
+      "onset_latency_seconds": null
+    },
+    {
+      "sample": {
+        "id": "adl-08",
+        "path": "adl-08.mp4",
+        "sha256": "85ae4a3c4539b1bcbb9542ae530f1c1b1ebc0c02124fa417d95f7944789dfa75",
+        "label": "normal",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-08-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/adl-08.mp4",
+        "duration_seconds": 6.0,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 180,
+        "analyzed_frames": 72,
+        "poses_detected": 62,
+        "missing_poses": 10,
+        "processing_seconds": 1.546,
+        "events": [],
+        "transitions": [
+          {
+            "timestamp_seconds": 0.833,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 3.933,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          }
+        ]
+      },
+      "fall_events_counted": 0,
+      "onset_latency_seconds": null
+    },
+    {
+      "sample": {
+        "id": "adl-09",
+        "path": "adl-09.mp4",
+        "sha256": "6a54b645ff4207cbcb22043f3ab84c22e14261e237418f2cb9ea23b1c8f39672",
+        "label": "normal",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-09-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/adl-09.mp4",
+        "duration_seconds": 5.0,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 150,
+        "analyzed_frames": 60,
+        "poses_detected": 60,
+        "missing_poses": 0,
+        "processing_seconds": 1.356,
+        "events": [],
+        "transitions": [
+          {
+            "timestamp_seconds": 0.0,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 0.433,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 3.0,
+            "previous_state": "suspected",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 3.6,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          }
+        ]
+      },
+      "fall_events_counted": 0,
+      "onset_latency_seconds": null
+    },
+    {
+      "sample": {
+        "id": "adl-10",
+        "path": "adl-10.mp4",
+        "sha256": "e8720d9d36f21c2e3222109b92d564ad3f1153927a9cf69dbd0eba0fcd003a23",
+        "label": "normal",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-10-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/adl-10.mp4",
+        "duration_seconds": 10.0,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 300,
+        "analyzed_frames": 120,
+        "poses_detected": 117,
+        "missing_poses": 3,
+        "processing_seconds": 2.541,
+        "events": [
+          {
+            "schema_version": "1.0",
+            "event_id": "dbe44bc3-39f8-4481-985d-c5505a9c3e33",
+            "event_type": "possible_person_down",
+            "source_id": "adl-10",
+            "track_id": "pose-1",
+            "occurred_at_seconds": 7.433333333333334,
+            "source_timestamp_seconds": 7.433333333333334,
+            "state": "incident",
+            "trigger_signals": [
+              "rapid_drop",
+              "down_posture_persistence"
+            ],
+            "pose_quality": 0.983128696680069,
+            "metrics": {
+              "timestamp_seconds": 7.433333333333334,
+              "pose_quality": 0.983128696680069,
+              "shoulder_center_y": 0.627204418182373,
+              "torso_angle_degrees_from_vertical": 44.81599221300764,
+              "bbox_width_height_ratio": 1.0380268484600108,
+              "downward_hip_velocity_body_lengths_per_second": -0.10704008877380289,
+              "mean_landmark_motion_body_lengths_per_second": 1.2086735612532122
+            },
+            "limitations": [
+              "single_person_pose_heuristic",
+              "not_a_medical_diagnosis",
+              "requires_human_verification"
+            ]
+          }
+        ],
+        "transitions": [
+          {
+            "timestamp_seconds": 0.267,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 0.333,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 2.933,
+            "previous_state": "suspected",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 4.333,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 6.933,
+            "previous_state": "suspected",
+            "state": "confirming",
+            "reasons": [
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 7.433,
+            "previous_state": "confirming",
+            "state": "incident",
+            "reasons": [
+              "rapid_drop",
+              "down_posture_persistence"
+            ]
+          },
+          {
+            "timestamp_seconds": 7.5,
+            "previous_state": "incident",
+            "state": "cooldown",
+            "reasons": []
+          }
+        ]
+      },
+      "fall_events_counted": 1,
+      "onset_latency_seconds": null
+    },
+    {
+      "sample": {
+        "id": "adl-11",
+        "path": "adl-11.mp4",
+        "sha256": "c798947d701b303ded1ed2b799a1423056564a71fe208639e517adc56ddfad7e",
+        "label": "normal",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-11-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/adl-11.mp4",
+        "duration_seconds": 10.0,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 300,
+        "analyzed_frames": 120,
+        "poses_detected": 109,
+        "missing_poses": 11,
+        "processing_seconds": 2.785,
+        "events": [
+          {
+            "schema_version": "1.0",
+            "event_id": "00c8576e-9778-4a8f-8240-a0fb1d9557af",
+            "event_type": "possible_person_down",
+            "source_id": "adl-11",
+            "track_id": "pose-1",
+            "occurred_at_seconds": 8.0,
+            "source_timestamp_seconds": 8.0,
+            "state": "incident",
+            "trigger_signals": [
+              "rapid_drop",
+              "down_posture_persistence"
+            ],
+            "pose_quality": 0.9992372244596481,
+            "metrics": {
+              "timestamp_seconds": 8.0,
+              "pose_quality": 0.9992372244596481,
+              "shoulder_center_y": 0.6492872536182404,
+              "torso_angle_degrees_from_vertical": 64.47610266316701,
+              "bbox_width_height_ratio": 1.3286740907866892,
+              "downward_hip_velocity_body_lengths_per_second": -2.4364602105424207,
+              "mean_landmark_motion_body_lengths_per_second": 2.6094987951826734
+            },
+            "limitations": [
+              "single_person_pose_heuristic",
+              "not_a_medical_diagnosis",
+              "requires_human_verification"
+            ]
+          }
+        ],
+        "transitions": [
+          {
+            "timestamp_seconds": 0.833,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 4.5,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 7.1,
+            "previous_state": "suspected",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 7.167,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 7.5,
+            "previous_state": "suspected",
+            "state": "confirming",
+            "reasons": [
+              "rapid_drop",
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 8.0,
+            "previous_state": "confirming",
+            "state": "incident",
+            "reasons": [
+              "rapid_drop",
+              "down_posture_persistence"
+            ]
+          },
+          {
+            "timestamp_seconds": 8.1,
+            "previous_state": "incident",
+            "state": "cooldown",
+            "reasons": [
+              "rapid_drop",
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          }
+        ]
+      },
+      "fall_events_counted": 1,
+      "onset_latency_seconds": null
+    },
+    {
+      "sample": {
+        "id": "adl-12",
+        "path": "adl-12.mp4",
+        "sha256": "77506f291304616dd5a1a7940ad43acbc5e1debccf675638eea3cea5d9481b42",
+        "label": "normal",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-12-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/adl-12.mp4",
+        "duration_seconds": 8.333,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 250,
+        "analyzed_frames": 100,
+        "poses_detected": 74,
+        "missing_poses": 26,
+        "processing_seconds": 2.114,
+        "events": [],
+        "transitions": [
+          {
+            "timestamp_seconds": 2.167,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 2.267,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 4.833,
+            "previous_state": "suspected",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 4.933,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 7.5,
+            "previous_state": "suspected",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 7.833,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          }
+        ]
+      },
+      "fall_events_counted": 0,
+      "onset_latency_seconds": null
+    },
+    {
+      "sample": {
+        "id": "adl-13",
+        "path": "adl-13.mp4",
+        "sha256": "80a371d2cdbf5dcf277b7aa45539da6c04b778192aba45f0873a428b4d16727a",
+        "label": "normal",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-13-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/adl-13.mp4",
+        "duration_seconds": 8.833,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 265,
+        "analyzed_frames": 106,
+        "poses_detected": 77,
+        "missing_poses": 29,
+        "processing_seconds": 1.935,
+        "events": [],
+        "transitions": [
+          {
+            "timestamp_seconds": 2.433,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 2.5,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 5.1,
+            "previous_state": "suspected",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 5.667,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 8.267,
+            "previous_state": "suspected",
+            "state": "monitoring",
+            "reasons": []
+          }
+        ]
+      },
+      "fall_events_counted": 0,
+      "onset_latency_seconds": null
+    },
+    {
+      "sample": {
+        "id": "adl-14",
+        "path": "adl-14.mp4",
+        "sha256": "d3d2f3e54b52da1d43b0445eb2f914cc1ea6922330dacb6f55ef65da3065b44e",
+        "label": "normal",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-14-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/adl-14.mp4",
+        "duration_seconds": 7.833,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 235,
+        "analyzed_frames": 94,
+        "poses_detected": 69,
+        "missing_poses": 25,
+        "processing_seconds": 1.747,
+        "events": [],
+        "transitions": [
+          {
+            "timestamp_seconds": 2.1,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 5.167,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 7.767,
+            "previous_state": "suspected",
+            "state": "monitoring",
+            "reasons": []
+          }
+        ]
+      },
+      "fall_events_counted": 0,
+      "onset_latency_seconds": null
+    },
+    {
+      "sample": {
+        "id": "adl-15",
+        "path": "adl-15.mp4",
+        "sha256": "202d009146a01f8cd367e89dab06866082f59f12934a72898bbe450b65d61768",
+        "label": "normal",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-15-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/adl-15.mp4",
+        "duration_seconds": 9.167,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 275,
+        "analyzed_frames": 110,
+        "poses_detected": 87,
+        "missing_poses": 29,
+        "processing_seconds": 2.129,
+        "events": [
+          {
+            "schema_version": "1.0",
+            "event_id": "10dd4c03-f1db-4ab7-8c92-678dfcc12073",
+            "event_type": "possible_person_down",
+            "source_id": "adl-15",
+            "track_id": "pose-3",
+            "occurred_at_seconds": 7.6,
+            "source_timestamp_seconds": 7.6,
+            "state": "incident",
+            "trigger_signals": [
+              "rapid_drop",
+              "down_posture_persistence",
+              "wide_tilted_body_box"
+            ],
+            "pose_quality": 0.9998107850551605,
+            "metrics": {
+              "timestamp_seconds": 7.6,
+              "pose_quality": 0.9998107850551605,
+              "shoulder_center_y": 0.45841895043849945,
+              "torso_angle_degrees_from_vertical": 79.93605315505967,
+              "bbox_width_height_ratio": 2.2724531805866186,
+              "downward_hip_velocity_body_lengths_per_second": -0.4197694227254639,
+              "mean_landmark_motion_body_lengths_per_second": 1.6363354027708037
+            },
+            "limitations": [
+              "single_person_pose_heuristic",
+              "not_a_medical_diagnosis",
+              "requires_human_verification"
+            ]
+          }
+        ],
+        "transitions": [
+          {
+            "timestamp_seconds": 2.433,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 2.667,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 5.167,
+            "previous_state": "suspected",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 5.5,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 6.267,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 6.267,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 6.333,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 6.433,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 6.433,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 6.5,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 6.6,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 6.667,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 6.767,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 7.1,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 7.167,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 7.267,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 7.333,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 7.433,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 7.5,
+            "previous_state": "suspected",
+            "state": "confirming",
+            "reasons": [
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 7.6,
+            "previous_state": "confirming",
+            "state": "incident",
+            "reasons": [
+              "rapid_drop",
+              "down_posture_persistence",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 7.667,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 7.667,
+            "previous_state": "no_person",
+            "state": "suspected",
+            "reasons": [
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 7.767,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 7.767,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 7.833,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 7.833,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "horizontal_posture",
+              "wide_tilted_body_box"
+            ]
+          },
+          {
+            "timestamp_seconds": 8.1,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          }
+        ]
+      },
+      "fall_events_counted": 1,
+      "onset_latency_seconds": null
+    },
+    {
+      "sample": {
+        "id": "adl-16",
+        "path": "adl-16.mp4",
+        "sha256": "9eb9d093c0fe04344591b2c2caf0d7d6204189d58a4a160b76d7eed7bf3b0f55",
+        "label": "normal",
+        "split": "test",
+        "group": "urfall-unknown-subjects",
+        "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-16-cam0.mp4",
+        "license": "CC-BY-NC-SA-4.0",
+        "pose_region": [
+          0.5,
+          0,
+          1,
+          1
+        ]
+      },
+      "result": {
+        "source": "/tmp/safetylens-hardening/development/adl-16.mp4",
+        "duration_seconds": 8.0,
+        "source_fps": 30.0,
+        "sample_fps": 12,
+        "decoded_frames": 240,
+        "analyzed_frames": 96,
+        "poses_detected": 65,
+        "missing_poses": 33,
+        "processing_seconds": 1.831,
+        "events": [],
+        "transitions": [
+          {
+            "timestamp_seconds": 2.667,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 2.833,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 5.333,
+            "previous_state": "no_person",
+            "state": "monitoring",
+            "reasons": []
+          },
+          {
+            "timestamp_seconds": 5.433,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 5.433,
+            "previous_state": "suspected",
+            "state": "monitoring",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 5.667,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 7.1,
+            "previous_state": "suspected",
+            "state": "confirming",
+            "reasons": [
+              "horizontal_posture"
+            ]
+          },
+          {
+            "timestamp_seconds": 7.267,
+            "previous_state": "confirming",
+            "state": "monitoring",
+            "reasons": [
+              "rapid_drop"
+            ]
+          },
+          {
+            "timestamp_seconds": 7.333,
+            "previous_state": "monitoring",
+            "state": "suspected",
+            "reasons": [
+              "rapid_drop"
+            ]
+          }
+        ]
+      },
+      "fall_events_counted": 0,
+      "onset_latency_seconds": null
+    }
+  ],
+  "limitations": [
+    "No threshold tuning on this test set",
+    "No industrial safety certification",
+    "Video-level metrics can credit an unrelated alert in a positive video; inspect events and supply onset annotations for event-level evaluation",
+    "Subject metadata must be verified by dataset owner; unknown subjects cannot establish subject-disjoint generalization"
+  ]
+}

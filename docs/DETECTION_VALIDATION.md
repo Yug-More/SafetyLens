@@ -53,3 +53,42 @@ PYTHONPATH=detector/src detector/.venv/bin/python -m safetylens_detector.ppe_eva
 ```
 
 The final manifests retain exact URLs/hashes; if upstream content changes acquisition refuses it. Original code can be checked out separately at `9c9315c` for the preserved baseline. Running that evaluator ignores the candidate pose-region field, reproducing the full-frame baseline. No model downloads occur implicitly in application startup.
+
+## Final hardening research — broader recording/camera check
+
+The earlier twelve and twenty-clip runs remain above and in their original JSON. They are development evidence for this phase. Before new predictions, `evaluation/hardening/freeze.json` fixed a comparison of the existing calibrated Lite single-pose profile, official Full model under the same rules, and an opt-in four-pose geometric tracker. No temporal thresholds were lowered. The tracker uses mutual unambiguous geometry, new IDs on ambiguous crossings, expiry and a 64-track memory cap. It cannot establish biometric identity or reliable occluded tracking. `test_tracking.py` checks order swaps, ambiguity, expiry and bounded memory. Full and tracked alternatives are not silently made defaults.
+
+New recording IDs17–26 supply twenty camera0 clips (ten fall/ten ADL) plus ten paired camera1 fall views. Camera1 negatives are unavailable. Both views of a recording share a group and remain in the test partition. They are **not thirty independent physical events**. Subject/session separation and pretrained overlap cannot be established. The [publisher](https://fenix.ur.edu.pl/~mkepski/ds/uf.html) identifies the two viewpoints and provides the labels/data; no industrial scenario or extra camera1 negatives are invented. Source hashes and all transitions are retained in `evaluation/hardening/`.
+
+Camera0 video-presence results on the same new clips:
+
+- Preserved `9c9315c` comparison code, full composite input: TP2/FN8/FP1/TN9; precision .6667, recall .2, F1 .3077.
+- Current calibrated Lite/default: **TP4/FN6/FP1/TN9**; precision .8, recall .4, F1 .5333.
+- Full model/same temporal rules: TP4/FN6/FP0/TN10; precision1 on four predictions, recall .4, F1 .5714.
+- Lite/four-pose tracking: TP5/FN5/FP2/TN8; precision .7143, recall .5, F1 .5882.
+
+All configurations found four of ten camera1 positives. Its false-positive rate is unmeasured. Do not pool the two camera views as independent trials. The default camera0 recall's nominal Wilson interval is [.1682,.6873]; precision [.3755,.9638]. These binomial intervals ignore unknown subject/session clustering and are not population guarantees. Negative exposure is only **67.666 seconds**: one default alert corresponds to an unstable53.20/hour. Full's zero observed alerts does not establish a zero operational rate. Raw all-candidate alerts on negatives equal1/0/2 for Lite/Full/tracked respectively, so slow person-down candidates are not hidden from the workload accounting on this set.
+
+The earlier F1 .8 does **not generalize** to this check. Development Full F1 .8 merely tied Lite while running more slowly; four-pose development F1 .7619 was worse than Lite. No new-set result was used to retune or silently select a default.
+
+### Inspected remaining failures
+
+Actual contact sheets and state histories were reviewed. Default camera0 misses: fall17 (33 poses/5 missing),18 (21/5),19 (29/11),21 (17/5),23 (26/4),25 (28/6). fall17/21/25 enter confirmation late and never complete it; fall18 returns from confirming to monitoring; fall19 loses the track; fall23 remains suspected without a confirmed down sequence. These are observed algorithmic failure paths, not proof of a single universal cause. Reviewed footage includes forward movement, lower-frame truncation, a seated additional person and short post-fall tails. The default false alert in adl17 occurs while bending/handling an object in low light; partial geometry can resemble sustained down posture. Intentional couch reclining false alerts from the prior development set remain unresolved. The alternative tracker has its own two new negative alerts. Exhaustive kneeling/running/camera-motion and occlusion validation is still absent.
+
+### Publisher-onset matching and latency
+
+Frame labels were subsequently acquired **without changing predictions or thresholds**. `scripts/match_publisher_onsets.py` implements the protocol recorded before label/prediction comparison in `onset-protocol.txt`: camera0 fall-category onset is the first publisher transition label0; match the first alert within five seconds or clip end; retain unmatched alerts and all misses. Labels span one-based indices matching decoded frame counts for all ten clips. For fall17, the raw95-frame RGB archive was checked at frames1/59/71 against the composite MP4's RGB half; mean absolute RGB pixel differences were approximately2.43/2.56/2.58 after resizing/compression. This is direct alignment evidence for that archive, not a guarantee of absolute depth/RGB sensor synchronization across the dataset.
+
+Matched event counts agree with the video-presence counts here: original2 detected/8 missed/1 unmatched alert; Lite4/6/1; Full4/6/0; tracked5/5/2. Default **detected-only** video-time delays: [1.700,1.067,1.067,1.200] seconds; mean1.258, median1.133. Six misses have no finite delay and must stay visible. Full mean1.300s on four matches; tracked mean1.240s on five. These are annotation-to-rule-event delays in fixed-rate video, **not live capture-to-notification latency**, medical response time or a percentile guarantee. Camera1 is excluded from onset matching. `onsets-*.json` retains every match/miss and source-label hash. True-negative counts denote negative videos, not a per-frame event confusion matrix.
+
+### Reproduction
+
+```sh
+python3 scripts/acquire_final_validation.py --kind hardening --directory /tmp/safetylens-hardening-holdout
+PYTHONPATH=detector/src detector/.venv/bin/python -m safetylens_detector.evaluation --manifest /tmp/safetylens-hardening-holdout/manifest.json --model /path/pose_landmarker_lite.task --profile conservative --output /tmp/lite.json
+# Use the same command with the official Full task, or --profile tracked with Lite.
+curl -fL https://fenix.ur.edu.pl/~mkepski/ds/data/urfall-cam0-falls.csv -o /tmp/publisher-labels.csv
+python3 scripts/match_publisher_onsets.py --results /tmp/lite.json --labels /tmp/publisher-labels.csv --output /tmp/onsets.json
+```
+
+Source model paths, file hashes, preprocessing and resource measurements are in the raw results, frozen manifest and PERFORMANCE_REPORT.md. No training of a TCN/RNN/transformer is claimed: trustworthy subject/session-separated training labels were not established, and fitting these small test sets would not justify a reliable classifier.
