@@ -39,7 +39,7 @@ def _year_prefix() -> str:
 def _next_code(db: Session, model, field_name: str, prefix: str) -> str:
     column = getattr(model, field_name)
     count = db.scalar(select(func.count()).select_from(model).where(column.like(f"{prefix}-%"))) or 0
-    return f"{prefix}-{count + 1:04d}"
+    return f"{prefix}-{uuid4().hex[:12].upper()}"
 
 
 def _get_plan(db: Session, identifier: str) -> ResponsePlan:
@@ -224,6 +224,9 @@ def approve_plan(
     incident = _resolve_incident(db, payload.incident_identifier) or _default_incident_for_plan(db, plan)
     if incident is not None and not plan.incident_id:
         plan.incident_id = incident.id
+    linked = _default_incident_for_plan(db, plan)
+    if incident and linked and incident.id != linked.id:
+        raise AppError("INCIDENT_PLAN_MISMATCH", "Incident does not belong to this plan.", 409)
     all_ids = {action.id for action in plan.actions}
     status = (
         PlanApprovalStatus.APPROVED
@@ -625,7 +628,14 @@ def retry_execution(
             status_code=409,
         )
 
+    from app.services.workflow import require_confirmed_analysis
+    require_confirmed_analysis(db, execution.plan)
+    active = _latest_approval(_get_plan(db, execution.plan_id))
     approval = execution.approval
+    if (not active or not approval or active.id != approval.id
+            or approval.status not in {"approved", "partially_approved"}
+            or execution.action_id not in json.loads(approval.selected_action_ids_json or "[]")):
+        raise AppError("APPROVAL_REQUIRED", "The original approval is no longer active.", 409)
     action = execution.action
     correlation_id = approval.correlation_id if approval else execution.correlation_id
     audit_service.append_audit_event(

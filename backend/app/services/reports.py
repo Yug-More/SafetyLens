@@ -54,7 +54,7 @@ def _next_report_code(db: Session) -> str:
         )
         or 0
     )
-    return f"RPT-{_year_prefix()}-{count + 1:04d}"
+    return f"RPT-{_year_prefix()}-{uuid4().hex[:12].upper()}"
 
 
 def _resolve_incident(db: Session, identifier: str) -> Incident:
@@ -403,6 +403,8 @@ def generate_incident_report(
             .order_by(ResponsePlan.created_at.desc())
         ).first()
 
+    if plan and plan.incident_id != incident.id:
+        raise AppError("INCIDENT_PLAN_MISMATCH", "Plan is not linked to this incident.", 409)
     approval = None
     executions: list[ActionExecution] = []
     if plan:
@@ -448,7 +450,11 @@ def generate_incident_report(
         if existing and plan and existing.approval_id == (approval.id if approval else None):
             # If execution count matches, return existing.
             prior_count = len((json.loads(existing.summary_json).get("executions") or []))
-            if prior_count == len(executions):
+            prior = json.loads(existing.summary_json).get("executions") or []
+            keys = ("execution_code", "status", "message", "external_reference")
+            fresh = [{k: getattr(x, k) for k in keys} for x in executions]
+            same = [{k: x.get(k) for k in keys} for x in prior] == fresh
+            if prior_count == len(executions) and same:
                 return _report_to_read(existing)
 
     summary = _build_summary(
@@ -534,7 +540,7 @@ def get_report(db: Session, report_identifier: str) -> IncidentReportRead:
     return _report_to_read(report)
 
 
-def get_report_pdf_bytes(db: Session, report_identifier: str) -> tuple[IncidentReport, bytes]:
+def get_report_pdf_bytes(db: Session, report_identifier: str, *, actor_name: str = "demo-reviewer") -> tuple[IncidentReport, bytes]:
     report = db.scalars(
         select(IncidentReport)
         .options(selectinload(IncidentReport.incident))
@@ -556,7 +562,7 @@ def get_report_pdf_bytes(db: Session, report_identifier: str) -> tuple[IncidentR
         db,
         event_type=AuditEventType.REPORT_DOWNLOADED,
         actor_type=AuditActorType.HUMAN,
-        actor_name="demo-reviewer",
+        actor_name=actor_name,
         correlation_id=report.report_code,
         incident_id=report.incident_id,
         plan_id=report.plan_id,

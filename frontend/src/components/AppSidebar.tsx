@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { Shield } from "lucide-react";
 import { cn } from "cn";
 import { navigationItems } from "@/lib/navigation";
-import { facilityInfo } from "@/data/mock";
+import { useSession } from "@/components/AuthBoundary";
 
 interface AppSidebarProps {
   className?: string;
@@ -14,6 +14,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ className, onNavigate }: AppSidebarProps) {
   const pathname = usePathname();
+  const session = useSession();
 
   return (
     <aside
@@ -72,20 +73,20 @@ export function AppSidebar({ className, onNavigate }: AppSidebarProps) {
       <div className="space-y-3 border-t border-sidebar-border p-4 text-xs">
         <div>
           <p className="text-muted-foreground">Facility</p>
-          <p className="mt-0.5 font-medium text-foreground">{facilityInfo.name}</p>
+          <p className="mt-0.5 font-medium text-foreground">SafetyLens installation</p>
         </div>
         <div>
           <p className="text-muted-foreground">Operational status</p>
           <p className="mt-0.5 inline-flex items-center gap-1.5 font-medium text-emerald-300">
             <span className="size-1.5 rounded-full bg-emerald-400" />
-            {facilityInfo.operationalStatus}
+            See camera health
           </p>
         </div>
         <div className="rounded-lg border border-border bg-secondary/40 p-3">
           <p className="text-muted-foreground">Current user</p>
-          <p className="mt-0.5 font-medium text-foreground">{facilityInfo.currentUser}</p>
+          <p className="mt-0.5 font-medium text-foreground">{session?.username ?? "Signed out"}</p>
           <p className="mt-2 text-muted-foreground">Role</p>
-          <p className="mt-0.5 font-medium text-foreground">{facilityInfo.role}</p>
+          <p className="mt-0.5 font-medium text-foreground">{session?.role.replaceAll("_", " ")}</p>
         </div>
       </div>
     </aside>

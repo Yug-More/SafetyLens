@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSession } from "@/components/AuthBoundary";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -85,6 +86,9 @@ function isPpeIncident(analysis: ApiIncidentAnalysis | null): boolean {
 }
 
 function analysisModeLabel(analysis: ApiIncidentAnalysis | null): string {
+  if (analysis?.analysis_mode === "local_cv" || analysis?.provider_name === "local_cv") {
+    return "Local computer vision · Uncalibrated · Human verification required";
+  }
   if (analysis?.analysis_mode === "configured_demo") {
     return "Configured PPE Demo · Human verification required";
   }
@@ -131,6 +135,8 @@ function uniqueProcedureCitations(plan: ApiResponsePlan | null) {
 }
 
 export function PolicyResponseWorkspace() {
+  const session = useSession();
+  const managerAccess = session?.role === "administrator" || session?.role === "safety_manager";
   const router = useRouter();
   const searchParams = useSearchParams();
   const context = useMemo(
@@ -169,7 +175,7 @@ export function PolicyResponseWorkspace() {
   const isConfirmed = reviewDecision === "confirmed";
   const isRejected = reviewDecision === "rejected";
   const isNeedsMoreInfo = reviewDecision === "needs_more_info";
-  const canReview = !reviewDecision || reviewDecision === "pending";
+  const canReview = session?.role !== "viewer" && (!reviewDecision || reviewDecision === "pending");
   const incidentCode = workflow?.incident_code ?? null;
 
   const badgeSeverity = toBadgeSeverity(
@@ -321,6 +327,32 @@ export function PolicyResponseWorkspace() {
     return () => window.clearTimeout(timer);
   }, [loadIncident]);
 
+  useEffect(() => {
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const refresh = () => {
+      clearTimeout(timer);
+      timer = setTimeout(async () => {
+        if (!analysisId || busy) return;
+        try {
+          const [latestWorkflow, latestAnalysis] = await Promise.all([
+            fetchWorkflowStatus(analysisId), fetchAnalysis(analysisId),
+          ]);
+          if (cancelled) return;
+          setWorkflow(latestWorkflow);
+          setAnalysis(latestAnalysis);
+          if (latestWorkflow.plan_code) {
+            const latestPlan = await fetchResponsePlan(latestWorkflow.plan_code);
+            if (cancelled) return;
+            setPlan(latestPlan); // Preserve the operator's current action selection and notes.
+          }
+        } catch { /* Keep the current evidence visible; mutations still revalidate server-side. */ }
+      }, 250);
+    };
+    window.addEventListener("platform-update", refresh);
+    return () => { cancelled = true; clearTimeout(timer); window.removeEventListener("platform-update", refresh); };
+  }, [analysisId, busy]);
+
   async function handleReview(
     decision: "confirmed" | "rejected" | "needs_more_info"
   ) {
@@ -359,6 +391,7 @@ export function PolicyResponseWorkspace() {
         confirmed: true,
       });
       await loadPlanAndExecutions(plan.plan_code);
+      if (analysisId) setWorkflow(await fetchWorkflowStatus(analysisId));
       await refreshAudit(incidentCode);
     } catch (err) {
       setActionError(
@@ -380,6 +413,7 @@ export function PolicyResponseWorkspace() {
         reason: approvalNotes || "Rejected in demo review",
       });
       await loadPlanAndExecutions(plan.plan_code);
+      if (analysisId) setWorkflow(await fetchWorkflowStatus(analysisId));
       await refreshAudit(incidentCode);
     } catch (err) {
       setActionError(
@@ -398,6 +432,7 @@ export function PolicyResponseWorkspace() {
       const result = await executeResponsePlan(plan.plan_code);
       setExecutions(result.executions);
       await loadPlanAndExecutions(plan.plan_code);
+      if (analysisId) setWorkflow(await fetchWorkflowStatus(analysisId));
       await refreshAudit(incidentCode);
       try {
         const reports = await fetchIncidentReports(incidentCode);
@@ -429,6 +464,7 @@ export function PolicyResponseWorkspace() {
       const response = await fetchPlanExecutions(plan.plan_code);
       setExecutions(response.data);
       await loadPlanAndExecutions(plan.plan_code);
+      if (analysisId) setWorkflow(await fetchWorkflowStatus(analysisId));
       await refreshAudit(incidentCode);
     } catch (err) {
       setActionError(err instanceof ApiError ? err.message : "Retry failed.");
@@ -466,7 +502,7 @@ export function PolicyResponseWorkspace() {
   }
 
   const canApprove =
-    isConfirmed &&
+    managerAccess && isConfirmed &&
     !isRejected &&
     !isNeedsMoreInfo &&
     plan?.status === "completed" &&
@@ -474,7 +510,7 @@ export function PolicyResponseWorkspace() {
     (plan.execution_status === "none" || !plan.execution_status);
 
   const canExecute =
-    isConfirmed &&
+    managerAccess && plan?.execution_status !== "executed" && isConfirmed &&
     !isRejected &&
     !isNeedsMoreInfo &&
     (plan?.approval_status === "approved" ||
@@ -634,7 +670,7 @@ export function PolicyResponseWorkspace() {
               Incident Command Center
             </h2>
             <p className="mt-1 text-xs text-amber-100">
-              Demo AI analysis · Human review required
+              {analysisModeLabel(analysis)}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">

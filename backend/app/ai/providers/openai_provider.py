@@ -104,11 +104,14 @@ class OpenAIProvider(AIProvider):
 
                 normalized = normalize_incident_type(result.incident_type) or result.incident_type
                 if normalized not in ALLOWED_ANALYSIS_TYPES:
-                    normalized = (
-                        "insufficient_evidence"
-                        if result.inconclusive or not result.incident_detected
-                        else result.incident_type
-                    )
+                    raise AIProviderError("Provider returned unsupported incident type", retryable=False)
+                supported = {"hard_hat", "high_visibility_vest"}
+                if not (set(result.observed_ppe) | set(result.possibly_missing_ppe) | set(result.required_ppe)) <= supported:
+                    raise AIProviderError("Provider returned unsupported PPE class", retryable=False)
+                if set(result.observed_ppe) & set(result.possibly_missing_ppe):
+                    raise AIProviderError("Provider returned contradictory PPE observations", retryable=False)
+                if set(result.possibly_missing_ppe) - set(required_ppe or []):
+                    raise AIProviderError("Provider inferred missing PPE outside camera policy", retryable=False)
                 # Never claim PPE noncompliance without a configured camera policy.
                 if normalized == "ppe_noncompliance" and not required_ppe:
                     normalized = "insufficient_evidence"

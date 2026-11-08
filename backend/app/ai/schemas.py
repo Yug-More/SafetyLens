@@ -44,7 +44,7 @@ class IncidentAnalysisResult(BaseModel):
     required_ppe: list[str] = Field(default_factory=list)
     observed_ppe: list[str] = Field(default_factory=list)
     possibly_missing_ppe: list[str] = Field(default_factory=list)
-    analysis_mode: Literal["configured_demo", "multimodal", "demo_heuristic"] = (
+    analysis_mode: Literal["configured_demo", "multimodal", "demo_heuristic", "local_cv"] = (
         "demo_heuristic"
     )
     human_review_required: bool = True

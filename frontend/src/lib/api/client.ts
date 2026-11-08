@@ -1,3 +1,7 @@
+let csrfToken = "";
+export function setCsrfToken(token: string) { csrfToken = token; }
+export function getCsrfToken() { return csrfToken; }
+
 import type {
   ApiCollectionResponse,
   ApiErrorPayload,
@@ -23,7 +27,7 @@ export function getApiBaseUrl(): string {
 
 export function isDemoFallbackEnabled(): boolean {
   const value = process.env.NEXT_PUBLIC_DEMO_FALLBACK?.trim().toLowerCase();
-  return value === undefined || value === "" || value === "true" || value === "1";
+  return value === "true" || value === "1";
 }
 
 function buildUrl(path: string, query?: Record<string, string | number | boolean | undefined>) {
@@ -38,6 +42,7 @@ function buildUrl(path: string, query?: Record<string, string | number | boolean
 }
 
 async function parseError(response: Response): Promise<ApiError> {
+  if (response.status === 401 && typeof window !== "undefined") window.dispatchEvent(new Event("session-expired"));
   try {
     const payload = (await response.json()) as ApiErrorPayload;
     if (payload?.error?.code && payload?.error?.message) {
@@ -60,9 +65,11 @@ export async function apiGetItem<T>(
 ): Promise<T> {
   const response = await fetch(buildUrl(path, query), {
     ...init,
+    credentials: "include",
     method: "GET",
     headers: {
       Accept: "application/json",
+      ...(csrfToken ? { "X-CSRF-Token": csrfToken } : {}),
       ...(init?.headers ?? {}),
     },
     cache: "no-store",
@@ -83,9 +90,11 @@ export async function apiGetCollection<T>(
 ): Promise<ApiCollectionResponse<T>> {
   const response = await fetch(buildUrl(path, query), {
     ...init,
+    credentials: "include",
     method: "GET",
     headers: {
       Accept: "application/json",
+      ...(csrfToken ? { "X-CSRF-Token": csrfToken } : {}),
       ...(init?.headers ?? {}),
     },
     cache: "no-store",
@@ -105,10 +114,12 @@ export async function apiPostJson<T>(
 ): Promise<T> {
   const response = await fetch(buildUrl(path), {
     ...init,
+    credentials: "include",
     method: "POST",
     body: body === undefined ? undefined : JSON.stringify(body),
     headers: {
       Accept: "application/json",
+      ...(csrfToken ? { "X-CSRF-Token": csrfToken } : {}),
       ...(body === undefined ? {} : { "Content-Type": "application/json" }),
       ...(init?.headers ?? {}),
     },
@@ -130,10 +141,12 @@ export async function apiPostMultipart<T>(
 ): Promise<T> {
   const response = await fetch(buildUrl(path), {
     ...init,
+    credentials: "include",
     method: "POST",
     body: formData,
     headers: {
       Accept: "application/json",
+      ...(csrfToken ? { "X-CSRF-Token": csrfToken } : {}),
       ...(init?.headers ?? {}),
     },
     cache: "no-store",

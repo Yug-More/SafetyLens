@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -13,7 +13,7 @@ router = APIRouter(tags=["health"])
 
 
 @router.get("/api/health", response_model=ItemResponse[HealthRead])
-def health(db: Session = Depends(get_db)) -> ItemResponse[HealthRead]:
+def health(response: Response, db: Session = Depends(get_db)) -> ItemResponse[HealthRead]:
     settings = get_settings()
     database_status = "ok"
     try:
@@ -21,6 +21,8 @@ def health(db: Session = Depends(get_db)) -> ItemResponse[HealthRead]:
     except Exception:
         database_status = "unavailable"
 
+    if database_status != "ok":
+        response.status_code = 503
     return ItemResponse(
         data=HealthRead(
             status="ok" if database_status == "ok" else "degraded",

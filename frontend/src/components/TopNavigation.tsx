@@ -15,7 +15,7 @@ import {
 import { MobileNavigation } from "@/components/MobileNavigation";
 import { LiveClock } from "@/components/LiveClock";
 import { getPageTitle } from "@/lib/navigation";
-import { facilityInfo } from "@/data/mock";
+import { useSession } from "@/components/AuthBoundary";
 import {
   dismissOperatorNotification,
   fetchOperatorNotifications,
@@ -26,6 +26,7 @@ import { buildResponseHref } from "@/lib/incident-context";
 const POLL_INTERVAL_MS = 8000;
 
 export function TopNavigation() {
+  const session = useSession();
   const pathname = usePathname();
   const pageTitle = getPageTitle(pathname);
   const [notifications, setNotifications] = useState<ApiOperatorNotification[]>(
@@ -95,9 +96,9 @@ export function TopNavigation() {
       <MobileNavigation />
 
       <div className="min-w-0 flex-1">
-        <h1 className="truncate text-sm font-semibold text-foreground sm:text-base">
+        <p className="truncate text-sm font-semibold text-foreground sm:text-base">
           {pageTitle}
-        </h1>
+        </p>
         <LiveClock className="hidden text-xs text-muted-foreground sm:block" />
       </div>
 
@@ -217,9 +218,9 @@ export function TopNavigation() {
               <button
                 type="button"
                 className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                aria-label={`${facilityInfo.currentUser}, ${facilityInfo.role}`}
+                aria-label={`${session?.username}, ${session?.role}`}
                 onClick={() =>
-                  toast.message(`${facilityInfo.currentUser} · ${facilityInfo.role}`)
+                  toast.message(`${session?.username} · ${session?.role}`)
                 }
               />
             }

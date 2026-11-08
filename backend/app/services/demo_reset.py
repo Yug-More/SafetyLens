@@ -58,6 +58,8 @@ def reset_demo_state(
     settings: Settings | None = None,
 ) -> DemoResetResponse:
     cfg = settings or get_settings()
+    if cfg.auth_enabled:
+        raise AppError("SECURE_RESET_DISABLED", "Bulk demo reset is disabled in authenticated installations. Use scoped retention.", 403)
     if not cfg.demo_mode:
         raise AppError(
             "DEMO_RESET_DISABLED",

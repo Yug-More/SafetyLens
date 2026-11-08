@@ -303,6 +303,9 @@ def run_live(
     camera_warmup_seconds: float = 15.0,
     arming_seconds: float = 1.5,
     overhead_camera: bool = False,
+    outbox_directory: str | Path | None = None,
+    camera_id: str | None = None,
+    location: str = "Unassigned",
 ) -> int:
     if sample_fps <= 0:
         raise ValueError("sample_fps must be positive.")
@@ -322,6 +325,10 @@ def run_live(
             'OpenCV is required. Install with: pip install -e "detector[video]"'
         ) from error
 
+    if outbox_directory and not camera_id:
+        raise ValueError("camera_id is required for automatic event delivery")
+    from .delivery import EventOutbox
+    outbox = EventOutbox(outbox_directory) if outbox_directory else None
     capture = _open_capture(cv2, capture_source)
     if not capture.isOpened():
         capture.release()
@@ -342,7 +349,7 @@ def run_live(
         json.dumps(
             {
                 "type": "live_started",
-                "source": capture_source,
+                "source": "camera-stream" if isinstance(capture_source, str) else capture_source,
                 "source_id": source_id,
                 "sample_fps": sample_fps,
                 "decision_log": str(session_log.resolve()),
@@ -552,6 +559,12 @@ def run_live(
                             output_directory=Path(events_directory),
                             fps=sample_fps,
                         )
+                        if outbox:
+                            event_data = json.loads((Path(events_directory) / f"{completed.event_id}.json").read_text())
+                            from datetime import datetime, timezone, timedelta
+                            event_data["occurred_at"] = (datetime.now(timezone.utc) - timedelta(seconds=max(0, timestamp - completed.event_timestamp_seconds))).isoformat()
+                            offset = sum(1 for sample in completed.frames if sample.timestamp_seconds < completed.event_timestamp_seconds) / sample_fps
+                            outbox.enqueue(event_data, path, camera_id=camera_id, location=location, clip_event_offset_seconds=offset)
                         print(
                             json.dumps(
                                 {
@@ -647,6 +660,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description="Run SafetyLens fall detection on a webcam or phone stream."
     )
+    parser.add_argument("--outbox", type=Path)
+    parser.add_argument("--camera-id")
+    parser.add_argument("--location", default="Unassigned")
     parser.add_argument("--source", default="0", help="Camera index or stream URL")
     parser.add_argument("--model", type=Path, required=True)
     parser.add_argument("--sample-fps", type=float, default=12.0)
@@ -681,6 +697,7 @@ def main() -> int:
         camera_warmup_seconds=args.camera_warmup_seconds,
         arming_seconds=args.arming_seconds,
         overhead_camera=args.overhead_camera,
+        outbox_directory=args.outbox, camera_id=args.camera_id, location=args.location,
     )
     return 0
 

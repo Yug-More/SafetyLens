@@ -78,7 +78,10 @@ class MediaPipePoseProvider:
 
         self._mp = mp
         options = mp.tasks.vision.PoseLandmarkerOptions(
-            base_options=mp.tasks.BaseOptions(model_asset_path=str(model.resolve())),
+            base_options=mp.tasks.BaseOptions(
+                model_asset_path=str(model.resolve()),
+                delegate=mp.tasks.BaseOptions.Delegate.CPU,
+            ),
             running_mode=mp.tasks.vision.RunningMode.VIDEO,
             num_poses=1,
             min_pose_detection_confidence=min_detection_confidence,

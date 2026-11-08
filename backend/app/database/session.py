@@ -28,6 +28,14 @@ def init_db() -> None:
     # Import models so metadata is registered.
     from app import models  # noqa: F401
 
+    if get_settings().environment == "production":
+        from sqlalchemy import text, inspect
+        if not inspect(engine).has_table("alembic_version"):
+            raise RuntimeError("Apply Alembic migrations before production startup")
+        with engine.connect() as connection:
+            if connection.execute(text("SELECT version_num FROM alembic_version")).scalar() != "0001_platform":
+                raise RuntimeError("Database migration revision is not supported by this release")
+        return
     Base.metadata.create_all(bind=engine)
     _ensure_sqlite_columns()
 

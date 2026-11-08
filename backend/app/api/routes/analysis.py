@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, BackgroundTasks, Depends, Query
+from fastapi import Request, APIRouter, BackgroundTasks, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.database.session import get_db
@@ -89,8 +89,12 @@ def get_analysis(
 def submit_analysis_review(
     analysis_identifier: str,
     payload: AnalysisReviewCreate,
+    request: Request,
     db: Session = Depends(get_db),
 ) -> ItemResponse[IncidentAnalysisRead]:
+    actor = getattr(request.state, "actor", {})
+    if actor.get("mode") == "session":
+        payload = payload.model_copy(update={"reviewer_name": actor["username"]})
     return ItemResponse(
         data=analysis_service.submit_review(db, analysis_identifier, payload)
     )

@@ -233,6 +233,8 @@ async def _store_uploaded_clip(
 
 
 def _store_local_clip(source: Path, settings: Settings) -> tuple[str, str, int, str]:
+    if source.stat().st_size > settings.max_video_size_bytes:
+        raise AppError("FILE_TOO_LARGE", "Detector clip exceeds upload size limit.", 413)
     original_filename = storage.sanitize_original_filename(source.name)
     extension = storage.validate_extension(original_filename)
     mime_type = "video/mp4" if extension == ".mp4" else storage.validate_mime_type("video/mp4")
@@ -493,7 +495,7 @@ async def ingest_detector_event(
         location=payload.location,
         incident_id=incident.id if incident else None,
         correlation_id=correlation_id,
-        is_simulated=True,
+        is_simulated=payload.incident_identifier is not None,
     )
     db.add(row)
     db.flush()

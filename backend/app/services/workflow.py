@@ -77,7 +77,7 @@ def _year_prefix() -> str:
 def _next_code(db: Session, model, field_name: str, prefix: str) -> str:
     column = getattr(model, field_name)
     count = db.scalar(select(func.count()).select_from(model).where(column.like(f"{prefix}-%"))) or 0
-    return f"{prefix}-{count + 1:04d}"
+    return f"{prefix}-{uuid4().hex[:12].upper()}"
 
 
 def _get_analysis(db: Session, identifier: str) -> IncidentAnalysis:
@@ -200,6 +200,9 @@ def ensure_notification(db: Session, analysis: IncidentAnalysis) -> OperatorNoti
         detected_at=analysis.completed_at or utc_now(),
     )
     db.add(note)
+    from app.models.platform import StreamEvent
+    import json
+    db.add(StreamEvent(kind="operator_notification", payload_json=json.dumps({"incident_id": note.incident_id, "analysis_id": analysis.id})))
     db.add(
         ActivityEvent(
             id=str(uuid4()),

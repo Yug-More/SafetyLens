@@ -1,0 +1,31 @@
+{
+  "status": "real_inference_smoke_only",
+  "manifest": {
+    "weights": "ppe.onnx",
+    "sha256": "b99fed37bae1d111ddb622a0ef9077d42918a4daebd4a0bffbd8faaba273f246",
+    "source": "https://huggingface.co/Hexmon/vyra-yolo-ppe-detection",
+    "license": "CC-BY-4.0 (publisher-declared; base model obligations require review)",
+    "input_size": 640,
+    "number_of_classes": 14,
+    "classes": {
+      "3": "hard_hat",
+      "11": "person",
+      "13": "high_visibility_vest"
+    }
+  },
+  "image": "docs/assets/demo/normal-standing.png",
+  "seconds": 0.9946540000019013,
+  "detections": [],
+  "metrics": null,
+  "limitations": [
+    "Unlabeled historical screenshot; no precision, recall or mAP inferred",
+    "Not held-out PPE validation"
+  ],
+  "embedded_license": "AGPL-3.0",
+  "publisher_license": "CC-BY-4.0",
+  "license_status": "Conflicting model-card and embedded metadata; no redistribution, experimental research-only verification",
+  "runtime": {
+    "onnxruntime": "1.31.1",
+    "provider": "CPUExecutionProvider"
+  }
+}

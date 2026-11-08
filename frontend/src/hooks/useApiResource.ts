@@ -40,6 +40,13 @@ export function useApiResource<T>({
   }, []);
 
   useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    const update = () => { clearTimeout(timer); timer = setTimeout(reload, 250); };
+    window.addEventListener("platform-update", update);
+    return () => { clearTimeout(timer); window.removeEventListener("platform-update", update); };
+  }, [reload]);
+
+  useEffect(() => {
     if (!enabled) {
       return;
     }

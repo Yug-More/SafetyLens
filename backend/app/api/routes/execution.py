@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import Request, APIRouter, Depends, Query
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
@@ -33,8 +33,12 @@ router = APIRouter(tags=["execution"])
 def approve_response_plan(
     plan_identifier: str,
     payload: PlanApproveRequest,
+    request: Request,
     db: Session = Depends(get_db),
 ) -> ItemResponse[PlanApprovalRead]:
+    actor = getattr(request.state, "actor", {})
+    if actor.get("mode") == "session":
+        payload = payload.model_copy(update={"reviewer_name": actor["username"]})
     return ItemResponse(data=approval_service.approve_plan(db, plan_identifier, payload))
 
 
@@ -45,8 +49,12 @@ def approve_response_plan(
 def reject_response_plan(
     plan_identifier: str,
     payload: PlanRejectRequest,
+    request: Request,
     db: Session = Depends(get_db),
 ) -> ItemResponse[PlanApprovalRead]:
+    actor = getattr(request.state, "actor", {})
+    if actor.get("mode") == "session":
+        payload = payload.model_copy(update={"reviewer_name": actor["username"]})
     return ItemResponse(data=approval_service.reject_plan(db, plan_identifier, payload))
 
 
@@ -70,7 +78,9 @@ def execute_response_plan(
     payload: ExecutePlanRequest | None = None,
     db: Session = Depends(get_db),
 ) -> ItemResponse[ExecutePlanResponse]:
-    request = payload or ExecutePlanRequest(confirmed=False)
+    if payload is None:
+        raise AppError("CONFIRMATION_REQUIRED", "Explicit execution confirmation is required.", 422)
+    request = payload
     if not request.confirmed:
         raise AppError(
             "CONFIRMATION_REQUIRED",
@@ -177,9 +187,10 @@ def get_report(
 @router.get("/api/reports/{report_identifier}/download")
 def download_report(
     report_identifier: str,
+    request: Request,
     db: Session = Depends(get_db),
 ) -> Response:
-    report, content = report_service.get_report_pdf_bytes(db, report_identifier)
+    report, content = report_service.get_report_pdf_bytes(db, report_identifier, actor_name=request.state.actor.get("username", "demo-reviewer"))
     filename = f"{report.report_code}.pdf"
     return Response(
         content=content,

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
 from enum import Enum
+from math import isfinite
 from typing import Mapping
 
 
@@ -38,11 +39,11 @@ class PoseObservation:
     frame_aspect_ratio: float = 1.0
 
     def __post_init__(self) -> None:
-        if self.timestamp_seconds < 0:
+        if not isfinite(self.timestamp_seconds) or self.timestamp_seconds < 0:
             raise ValueError("timestamp_seconds must be non-negative.")
         if not self.track_id.strip():
             raise ValueError("track_id must not be blank.")
-        if self.frame_aspect_ratio <= 0:
+        if not isfinite(self.frame_aspect_ratio) or self.frame_aspect_ratio <= 0:
             raise ValueError("frame_aspect_ratio must be positive.")
 
 

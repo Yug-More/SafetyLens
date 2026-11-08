@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import Field, field_validator
 
@@ -24,18 +24,18 @@ class DetectorEventPayload(APIModel):
 
     schema_version: str
     event_id: str
-    event_type: str = "possible_person_down"
+    event_type: Literal["possible_person_down", "prolonged_person_down", "ppe_noncompliance"] = "possible_person_down"
     source_id: str
     camera_id: str | None = None
     track_id: str | None = None
     occurred_at: datetime | None = None
-    occurred_at_seconds: float | None = None
-    source_timestamp_seconds: float | None = None
-    clip_event_offset_seconds: float | None = None
+    occurred_at_seconds: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    source_timestamp_seconds: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    clip_event_offset_seconds: float | None = Field(default=None, ge=0, allow_inf_nan=False)
     state: str | None = None
     trigger_signals: list[str] = Field(default_factory=list)
-    pose_quality: float | None = None
-    heuristic_score: float | None = None
+    pose_quality: float | None = Field(default=None, ge=0, le=1, allow_inf_nan=False)
+    heuristic_score: float | None = Field(default=None, ge=0, le=1, allow_inf_nan=False)
     metrics: dict[str, Any] = Field(default_factory=dict)
     evidence: DetectorEvidencePayload | None = None
     limitations: list[str] = Field(default_factory=list)
@@ -87,13 +87,13 @@ class DetectorEventRead(APIModel):
     camera_name: str | None = None
     track_id: str | None = None
     occurred_at: datetime | None = None
-    source_timestamp_seconds: float | None = None
-    clip_event_offset_seconds: float | None = None
+    source_timestamp_seconds: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    clip_event_offset_seconds: float | None = Field(default=None, ge=0, allow_inf_nan=False)
     detector_state: str | None = None
     trigger_signals: list[str] = Field(default_factory=list)
-    pose_quality: float | None = None
+    pose_quality: float | None = Field(default=None, ge=0, le=1, allow_inf_nan=False)
     pose_quality_label: str = "landmark reliability (not fall probability)"
-    heuristic_score: float | None = None
+    heuristic_score: float | None = Field(default=None, ge=0, le=1, allow_inf_nan=False)
     heuristic_score_note: str = (
         "Null or heuristic only — not a calibrated probability"
     )
