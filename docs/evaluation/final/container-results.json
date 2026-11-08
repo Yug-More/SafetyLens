@@ -1,0 +1,20 @@
+{
+  "backend_image": "safetylens-final-verify-backend",
+  "database_image": "postgres:16",
+  "daemon_version": "28.5.1",
+  "health_status": 200,
+  "migration_revision": "0001_platform",
+  "camera_persisted_after_both_restarts": true,
+  "session_persisted_after_both_restarts": true,
+  "api_camera_inventory_20_requests_ms": {
+    "minimum": 9.61700000334531,
+    "mean": 12.121160349488491,
+    "maximum": 25.963000000047032
+  },
+  "total_verification_seconds": 4.223141874994326,
+  "limitations": [
+    "PostgreSQL16 tested; Compose17 not runtime tested",
+    "No frontend image runtime verified",
+    "Local loopback development profile, not HTTPS production"
+  ]
+}

@@ -1,0 +1,17 @@
+# README restoration
+
+Source: `178f0f8:README.md` (original main baseline); screenshots introduced by `2345b08`, caption clarification `6ba6896`, award wording `8061193`. These versions and origin/main contain exactly two local image references: `docs/assets/demo/normal-standing.png` and `docs/assets/demo/fall-detected.png`. Both tracked files survived the enhancement unchanged; no asset recreation or generated replacement is needed.
+
+Restore both inline in the primary README, alongside original captions explaining the staged green NORMAL/red FALL DETECTED views. Preserve the original problem/solution narrative, historical demo steps, original three team credits and award description. New operational screenshots must be separately labeled as captures from the running enhanced application. The preserved full historical README remains HISTORICAL_README.md.
+
+Award evidence checked November 7, 2026: contributor Sean Aminov's [public announcement](https://www.linkedin.com/posts/sean-aminov_hackathon-firstplace-artificialintelligence-activity-7507868872797151232-7QRY) reports first place and $25,000; his [portfolio](https://seanaminov.com/) repeats the 384 figure. The [organizer report](https://www.figstudio.vc/events/executable-world-2026) confirms SafetyLens and its three members but does not establish that placement, amount or 384 denominator; it lists 408 RSVPs, approximately 100 attendees and 25 submissions. Preserve the historical award wording with team-reported attribution rather than converting it to independently verified event statistics. No competition evidence establishes detector accuracy or sub-0.5-second alert latency.
+
+Asset-reference and visual-render verification results are recorded in FINAL_RELEASE_REPORT.md after the restored README is rendered.
+
+Verification: all README-changing commits across all locally available branches were scanned for Markdown image references. The original two image paths were recovered from the main/relevant showcase versions; both assets match baseline Git bytes exactly. The restored main README has four image embeds (two original, two enhanced), and the historical README's two image paths were corrected from `docs/assets/...` to `assets/...` because it lives inside docs/. A repository README/docs image-reference scan found six valid local references and zero missing files. A private local Python-Markdown render plus Playwright loaded all four main images with positive natural dimensions; the rendered page was visually inspected. Original image dimensions: 871×734 and 854×558. No screenshot was generated to pretend a model worked.
+
+GitHub Markdown API rendering was rejected by automatic approval review because uploading unverified README contents could disclose private information. No upload was performed; local rendering completed instead. This did not block asset verification.
+
+## Final top placement verification
+
+The exact trophy/award quotation now appears immediately below `# SafetyLens`, followed by explicit team-report attribution for the uncorroborated prize/participant count. Both original screenshot files remain byte-identical to commit `178f0f8`. The original Mermaid architecture diagram is retained with current simulated-execution clarification. New captures are actual browser renders; historical images remain intact. All local Markdown image references were checked, and the top placement was inspected in a private local browser render (`assets/enhanced/readme-achievement.png`).

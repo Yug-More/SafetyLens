@@ -1,0 +1,16 @@
+{
+  "architecture": "gear_guard_net",
+  "weights": "gear_guard_net.onnx",
+  "source": "https://huggingface.co/qualcomm/PPE-Detection",
+  "release": "v0.65.0",
+  "license": "BSD-3-Clause (official publisher declaration; retain notices)",
+  "classes": {
+    "0": "hard_hat",
+    "1": "high_visibility_vest"
+  },
+  "files_sha256": {
+    "gear_guard_net.onnx": "05fe69bc1a291bed00d775cd677539753ac56d3af78dde9dcd8ecd4bfbfb84b4",
+    "gear_guard_net.data": "4ef8dec29b4543233e4846dff8f2940976ac08a8267ed404bf86f23e17e90f7f"
+  },
+  "deployment_status": "excluded; no person model/association validation"
+}

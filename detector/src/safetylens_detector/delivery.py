@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 import json
+import hashlib
 import random
 import shutil
 import sqlite3
@@ -54,6 +55,7 @@ class EventOutbox:
             **event,
             "camera_id": camera_id,
             "clip_event_offset_seconds": clip_event_offset_seconds,
+            "evidence": {**event.get("evidence", {}), "clip_sha256": hashlib.sha256(source.read_bytes()).hexdigest()},
         }
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")

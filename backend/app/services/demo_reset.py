@@ -108,7 +108,7 @@ def reset_demo_state(
     cfg.detector_events_path.mkdir(parents=True, exist_ok=True)
 
     # Re-seed cameras/incidents/procedures without wiping seed IDs.
-    seed_database(db)
+    seed_database(db, reset_existing=True)
 
     return DemoResetResponse(
         reset=True,

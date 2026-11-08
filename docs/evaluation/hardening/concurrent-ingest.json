@@ -1,0 +1,13 @@
+{
+  "real_model_event_id": "be5ded33-977a-4f23-a920-64b518c80732",
+  "source_model_time_seconds": 4.5,
+  "fixture_bytes": 4250361,
+  "sha256": "405b393b113e5748a03eeaae0df5233438591501ae3bd8b2ca8b1f9ff86a3994",
+  "concurrent_http_statuses": [
+    202,
+    202
+  ],
+  "single_asset_mapping": "VID-2026-C63EB32F3FE6",
+  "pair_wall_seconds": 0.2845452910005406,
+  "scope": "Actual recorded footage/model event with free-box padding for transport only; not an evaluation video or production latency claim"
+}

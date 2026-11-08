@@ -44,6 +44,8 @@ export interface ManagedCamera {
   policy: {
     detectors?: string[];
     sample_fps?: number;
+    maximum_pose_people?: number;
+    pose_region?: [number, number, number, number] | null;
     required_ppe?: string[];
     confidence_threshold?: number;
     pre_event_seconds?: number;

@@ -67,7 +67,7 @@ SafetyLens continuously senses body posture and movement from a live camera feed
 
 | Normal activity | Confirmed fall |
 | --- | --- |
-| ![SafetyLens tracking a standing person with a green normal status](docs/assets/demo/normal-standing.png) | ![SafetyLens showing a red fall-detected alert with the person on the floor](docs/assets/demo/fall-detected.png) |
+| ![SafetyLens tracking a standing person with a green normal status](assets/demo/normal-standing.png) | ![SafetyLens showing a red fall-detected alert with the person on the floor](assets/demo/fall-detected.png) |
 | Full-body pose tracking follows the person while the detector reports **NORMAL**. | A sustained fall changes the tracked state to **FALL DETECTED** and calls for human review. |
 
 ---

@@ -1,0 +1,23 @@
+{
+  "baseline": {
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "duration_description": "1.1m, synthetic default delivery fixture"
+  },
+  "hardened_full_suite": {
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "duration_ms": 64595.274,
+    "actual_model_fixture": true
+  },
+  "final_response_text_regression": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "duration_seconds": 14.4,
+    "actual_model_fixture": true
+  },
+  "counts_note": "Repeated cases are not added to unique test counts."
+}

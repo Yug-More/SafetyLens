@@ -1,0 +1,172 @@
+{
+  "publisher_label_url": "https://fenix.ur.edu.pl/~mkepski/ds/data/urfall-cam0-falls.csv",
+  "publisher_labels_sha256": "4ed29af7040098ba0150d1030eeadd97bbfde5c3a4fb9b07df786d673e22a65c",
+  "prediction_file_sha256": "6c91713eeb1d6ee878b230b223d54baef0191c7bf76a96321aba181846c3ad5b",
+  "protocol": "Frozen post-hoc matching: one first-transition label0 per fall-category camera0 video; first alert within5s or clip end. Unmatched alerts retained. No classifier retuning.",
+  "matched_true_events": 5,
+  "missed_true_events": 5,
+  "unmatched_false_alerts": 2,
+  "negative_videos_without_alert": 8,
+  "detected_only_delay_seconds": {
+    "count": 5,
+    "mean": 1.24,
+    "median": 1.1,
+    "maximum": 1.7,
+    "values": [
+      1.1,
+      1.7,
+      1.0666666666666667,
+      1.0666666666666667,
+      1.2666666666666666
+    ]
+  },
+  "samples": [
+    {
+      "sample": "fall-17-cam0",
+      "publisher_first_transition_frame": 59,
+      "onset_video_seconds": 1.9333333333333333,
+      "matching_window_end_seconds": 3.167,
+      "matched": false,
+      "delay_video_seconds": null,
+      "unmatched_alerts": 0
+    },
+    {
+      "sample": "fall-18-cam0",
+      "publisher_first_transition_frame": 16,
+      "onset_video_seconds": 0.5,
+      "matching_window_end_seconds": 2.167,
+      "matched": true,
+      "delay_video_seconds": 1.1,
+      "unmatched_alerts": 0
+    },
+    {
+      "sample": "fall-19-cam0",
+      "publisher_first_transition_frame": 25,
+      "onset_video_seconds": 0.8,
+      "matching_window_end_seconds": 3.333,
+      "matched": false,
+      "delay_video_seconds": null,
+      "unmatched_alerts": 0
+    },
+    {
+      "sample": "fall-20-cam0",
+      "publisher_first_transition_frame": 18,
+      "onset_video_seconds": 0.5666666666666667,
+      "matching_window_end_seconds": 3.667,
+      "matched": true,
+      "delay_video_seconds": 1.7,
+      "unmatched_alerts": 0
+    },
+    {
+      "sample": "fall-21-cam0",
+      "publisher_first_transition_frame": 21,
+      "onset_video_seconds": 0.6666666666666666,
+      "matching_window_end_seconds": 1.833,
+      "matched": false,
+      "delay_video_seconds": null,
+      "unmatched_alerts": 0
+    },
+    {
+      "sample": "fall-22-cam0",
+      "publisher_first_transition_frame": 4,
+      "onset_video_seconds": 0.1,
+      "matching_window_end_seconds": 1.867,
+      "matched": true,
+      "delay_video_seconds": 1.0666666666666667,
+      "unmatched_alerts": 0
+    },
+    {
+      "sample": "fall-23-cam0",
+      "publisher_first_transition_frame": 27,
+      "onset_video_seconds": 0.8666666666666667,
+      "matching_window_end_seconds": 2.5,
+      "matched": false,
+      "delay_video_seconds": null,
+      "unmatched_alerts": 0
+    },
+    {
+      "sample": "fall-24-cam0",
+      "publisher_first_transition_frame": 12,
+      "onset_video_seconds": 0.36666666666666664,
+      "matching_window_end_seconds": 2.0,
+      "matched": true,
+      "delay_video_seconds": 1.0666666666666667,
+      "unmatched_alerts": 0
+    },
+    {
+      "sample": "fall-25-cam0",
+      "publisher_first_transition_frame": 45,
+      "onset_video_seconds": 1.4666666666666666,
+      "matching_window_end_seconds": 2.833,
+      "matched": false,
+      "delay_video_seconds": null,
+      "unmatched_alerts": 0
+    },
+    {
+      "sample": "fall-26-cam0",
+      "publisher_first_transition_frame": 13,
+      "onset_video_seconds": 0.4,
+      "matching_window_end_seconds": 2.033,
+      "matched": true,
+      "delay_video_seconds": 1.2666666666666666,
+      "unmatched_alerts": 0
+    },
+    {
+      "sample": "adl-17-cam0",
+      "negative_category": true,
+      "unmatched_alerts": 0
+    },
+    {
+      "sample": "adl-18-cam0",
+      "negative_category": true,
+      "unmatched_alerts": 0
+    },
+    {
+      "sample": "adl-19-cam0",
+      "negative_category": true,
+      "unmatched_alerts": 1
+    },
+    {
+      "sample": "adl-20-cam0",
+      "negative_category": true,
+      "unmatched_alerts": 0
+    },
+    {
+      "sample": "adl-21-cam0",
+      "negative_category": true,
+      "unmatched_alerts": 0
+    },
+    {
+      "sample": "adl-22-cam0",
+      "negative_category": true,
+      "unmatched_alerts": 0
+    },
+    {
+      "sample": "adl-23-cam0",
+      "negative_category": true,
+      "unmatched_alerts": 1
+    },
+    {
+      "sample": "adl-24-cam0",
+      "negative_category": true,
+      "unmatched_alerts": 0
+    },
+    {
+      "sample": "adl-25-cam0",
+      "negative_category": true,
+      "unmatched_alerts": 0
+    },
+    {
+      "sample": "adl-26-cam0",
+      "negative_category": true,
+      "unmatched_alerts": 0
+    }
+  ],
+  "limitations": [
+    "Publisher posture labels, not independent workplace accident verification",
+    "One-based frame alignment checked by counts for all clips, raw RGB pixel correspondence separately checked for fall17",
+    "Video-relative delay, not live capture-to-operator or medical response time",
+    "Camera1 excluded because independent sampling and no applicable frame labels",
+    "True negative counts use negative videos; this is not a per-frame confusion matrix"
+  ]
+}

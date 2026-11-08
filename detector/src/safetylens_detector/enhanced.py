@@ -80,3 +80,9 @@ class EnhancedDetectorEngine:
         return EnhancedResult(
             self.engine.mark_missing(track_id), SafetyState.INCONCLUSIVE
         )
+
+    def forget_track(self, track_id):
+        """Discard expired/ambiguous identities; never bridge motion across people."""
+        self.engine._previous.pop(track_id, None)
+        self.engine.machine._tracks.pop(track_id, None)
+        self.active.pop(track_id, None)

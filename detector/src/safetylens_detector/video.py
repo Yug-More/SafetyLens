@@ -48,6 +48,8 @@ def analyze_video(
     missing_pose_grace_seconds: float = 0.50,
     source_id: str | None = None,
     config: DetectorConfig | None = None,
+    pose_region: tuple[float, float, float, float] | None = None,
+    maximum_pose_people: int = 1,
 ) -> VideoAnalysis:
     if sample_fps <= 0:
         raise ValueError("sample_fps must be positive.")
@@ -74,6 +76,8 @@ def analyze_video(
     duration = frame_count / source_fps if frame_count > 0 else 0.0
     source = source_id or path.stem
     engine = DetectorEngine(config)
+    from .tracking import PoseTracker
+    tracker = PoseTracker() if maximum_pose_people > 1 else None
     transitions: list[StateTransition] = []
     events: list[DetectionEvent] = []
     decoded = analyzed = detected = missing = 0
@@ -83,7 +87,7 @@ def analyze_video(
     started = perf_counter()
 
     try:
-        with MediaPipePoseProvider(model_path) as provider:
+        with MediaPipePoseProvider(model_path, **({"region": pose_region} if pose_region else {}), **({"num_poses": maximum_pose_people} if tracker else {})) as provider:
             while True:
                 ok, frame = capture.read()
                 if not ok or frame is None:
@@ -95,38 +99,51 @@ def analyze_video(
                 next_sample_seconds += 1.0 / sample_fps
                 analyzed += 1
 
-                observation = provider.detect(
-                    frame,
-                    timestamp_seconds=timestamp,
-                    source_id=source,
-                )
-                if observation is None:
-                    missing += 1
-                    missing_since = timestamp if missing_since is None else missing_since
-                    if (
-                        not track_marked_missing
-                        and timestamp - missing_since >= missing_pose_grace_seconds
-                    ):
-                        result = engine.mark_missing("person-1")
-                        track_marked_missing = True
-                    else:
-                        continue
+                if tracker:
+                    observations = provider.detect_many(frame,timestamp_seconds=timestamp,source_id=source)
+                    linked, expired, _ = tracker.update(timestamp,observations)
+                    for track_id in expired:
+                        engine._previous.pop(track_id,None)
+                        engine.machine._tracks.pop(track_id,None)
+                    detected += len(linked)
+                    missing += not bool(linked)
+                    results = [engine.process(o) for o in linked]
                 else:
-                    detected += 1
-                    missing_since = None
-                    track_marked_missing = False
-                    result = engine.process(observation)
-                if result.state != result.previous_state:
-                    transitions.append(
-                        StateTransition(
-                            timestamp_seconds=round(timestamp, 3),
-                            previous_state=result.previous_state.value,
-                            state=result.state.value,
-                            reasons=result.reasons,
-                        )
+                    observation = provider.detect(
+                        frame,
+                        timestamp_seconds=timestamp,
+                        source_id=source,
                     )
-                if result.event is not None:
-                    events.append(result.event)
+                    if observation is None:
+                        missing += 1
+                        missing_since = timestamp if missing_since is None else missing_since
+                        if (
+                            not track_marked_missing
+                            and timestamp - missing_since >= missing_pose_grace_seconds
+                        ):
+                            result = engine.mark_missing("person-1")
+                            track_marked_missing = True
+                        else:
+                            continue
+                    else:
+                        detected += 1
+                        missing_since = None
+                        track_marked_missing = False
+                        result = engine.process(observation)
+                    results = [result]
+                for result in results:
+                    if result.state != result.previous_state:
+                        transitions.append(
+                            StateTransition(
+                                timestamp_seconds=round(timestamp, 3),
+                                previous_state=result.previous_state.value,
+                                state=result.state.value,
+                                reasons=result.reasons,
+                            )
+                        )
+                    if result.event is not None:
+                        events.append(result.event)
+
     finally:
         capture.release()
 

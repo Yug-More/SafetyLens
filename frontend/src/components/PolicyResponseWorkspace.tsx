@@ -940,9 +940,11 @@ export function PolicyResponseWorkspace() {
                 <h3 className="text-base font-semibold text-foreground">
                   Response plan actions
                 </h3>
-                {plan.summary ? (
+                {plan.summary || executions.length > 0 ? (
                   <p className="mt-2 text-sm text-muted-foreground">
-                    {plan.summary}
+                    {executions.length > 0
+                      ? `${executions.length} simulated action results recorded. Review the outcomes below.`
+                      : plan.summary}
                   </p>
                 ) : null}
 

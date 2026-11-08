@@ -491,7 +491,7 @@ export function VideoAnalysisWorkspace({
             </p>
           </div>
           {pipelineStage === "human_review_required" && reviewHref ? (
-            <Button size="sm" render={<Link href={reviewHref} />}>
+            <Button size="sm" nativeButton={false} render={<Link href={reviewHref} />}>
               Review Incident
             </Button>
           ) : null}
@@ -592,7 +592,7 @@ export function VideoAnalysisWorkspace({
               Review required
             </p>
             <div className="mt-3">
-              <Button size="sm" render={<Link href={reviewHref} />}>
+              <Button size="sm" nativeButton={false} render={<Link href={reviewHref} />}>
                 Review Incident
               </Button>
             </div>

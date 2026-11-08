@@ -13,6 +13,7 @@ SUPPORTED_SCHEMA_VERSION = "1.0"
 
 
 class DetectorEvidencePayload(APIModel):
+    clip_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     clip_relative_path: str | None = None
     pre_event_seconds: float | None = None
     post_event_seconds: float | None = None

@@ -133,6 +133,9 @@ export function CameraManagement({ monitor = false }: { monitor?: boolean }) {
             ...(form.get("vest") === "on" ? ["high_visibility_vest"] : []),
           ],
           sample_fps: Number(form.get("fps")),
+          maximum_pose_people: Number(form.get("people")),
+          pose_region: String(form.get("pose_region") ?? "").trim()
+            ? String(form.get("pose_region")).split(",").map(Number) : null,
           confidence_threshold: Number(form.get("confidence")),
           pre_event_seconds: Number(form.get("pre")),
           post_event_seconds: Number(form.get("post")),
@@ -370,7 +373,20 @@ export function CameraManagement({ monitor = false }: { monitor?: boolean }) {
                 placeholder="Index, path or stream URL"
               />
             </label>
+            <div className="text-sm">
+              <label htmlFor="pose-region">Pose region (normalized x1,y1,x2,y2)</label>
+              <Input id="pose-region" name="pose_region" aria-describedby="pose-region-help"
+                defaultValue={editing?.policy.pose_region?.join(",") ?? ""}
+                placeholder="Blank: full frame; RGB right panel: 0.5,0,1,1" />
+              <p id="pose-region-help" className="text-xs text-muted-foreground">Calibrate only for a known camera layout. Evidence retains the full frame.</p>
+            </div>
             {[
+              [
+                "people",
+                "Maximum poses (experimental above 1)",
+                editing?.policy.maximum_pose_people ?? 1,
+                1,4,1,
+              ],
               [
                 "fps",
                 "Sample FPS",
@@ -431,7 +447,7 @@ export function CameraManagement({ monitor = false }: { monitor?: boolean }) {
                 ["enabled", "Enable camera", editing?.enabled ?? false],
                 [
                   "ppe",
-                  "Enable experimental ONNX PPE",
+                  "PPE deployment excluded — model not validated",
                   editing?.policy.detectors?.includes("ppe") ?? false,
                 ],
                 [
@@ -451,7 +467,8 @@ export function CameraManagement({ monitor = false }: { monitor?: boolean }) {
                   <input
                     type="checkbox"
                     name={String(name)}
-                    defaultChecked={Boolean(checked)}
+                    defaultChecked={name === "ppe" ? false : Boolean(checked)}
+                    disabled={name === "ppe"}
                     className="mr-2"
                   />
                   {label}

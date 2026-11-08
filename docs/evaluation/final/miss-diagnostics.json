@@ -1,0 +1,345 @@
+[
+  {
+    "sample": "fall-01",
+    "poses": 27,
+    "missing": 37,
+    "state_changes": [
+      {
+        "t": 0.6,
+        "state": "monitoring",
+        "reasons": [],
+        "metrics": {
+          "timestamp_seconds": 0.6,
+          "pose_quality": 0.9994117766618729,
+          "shoulder_center_y": 0.68606036901474,
+          "torso_angle_degrees_from_vertical": 21.525438889795943,
+          "bbox_width_height_ratio": 0.6675070567235688,
+          "downward_hip_velocity_body_lengths_per_second": null,
+          "mean_landmark_motion_body_lengths_per_second": null
+        }
+      },
+      {
+        "t": 1.7666666666666666,
+        "state": "suspected",
+        "reasons": [
+          "horizontal_posture"
+        ],
+        "metrics": {
+          "timestamp_seconds": 1.7666666666666666,
+          "pose_quality": 0.9868975877761841,
+          "shoulder_center_y": 0.56096550822258,
+          "torso_angle_degrees_from_vertical": 60.12179018656787,
+          "bbox_width_height_ratio": 1.2633874242677714,
+          "downward_hip_velocity_body_lengths_per_second": -0.6765657937650237,
+          "mean_landmark_motion_body_lengths_per_second": 3.297234013769794
+        }
+      },
+      {
+        "t": 1.8333333333333333,
+        "state": "confirming",
+        "reasons": [
+          "horizontal_posture",
+          "wide_tilted_body_box"
+        ],
+        "metrics": {
+          "timestamp_seconds": 1.8333333333333333,
+          "pose_quality": 0.951710507273674,
+          "shoulder_center_y": 0.5557219386100769,
+          "torso_angle_degrees_from_vertical": 61.426343604707185,
+          "bbox_width_height_ratio": 1.4780129515987506,
+          "downward_hip_velocity_body_lengths_per_second": -2.1779278537706475,
+          "mean_landmark_motion_body_lengths_per_second": 2.5554512566146284
+        }
+      },
+      {
+        "t": 2.6666666666666665,
+        "state": "monitoring",
+        "reasons": [],
+        "metrics": {
+          "timestamp_seconds": 2.6666666666666665,
+          "pose_quality": 0.9967483729124069,
+          "shoulder_center_y": 0.5459536015987396,
+          "torso_angle_degrees_from_vertical": 46.627769607605,
+          "bbox_width_height_ratio": 1.2558668295482978,
+          "downward_hip_velocity_body_lengths_per_second": 0.1648748682909296,
+          "mean_landmark_motion_body_lengths_per_second": 1.1544544807322912
+        }
+      },
+      {
+        "t": 3.1,
+        "state": "suspected",
+        "reasons": [
+          "rapid_drop"
+        ],
+        "metrics": {
+          "timestamp_seconds": 3.1,
+          "pose_quality": 0.9978680461645126,
+          "shoulder_center_y": 0.36478640139102936,
+          "torso_angle_degrees_from_vertical": 7.296948886356551,
+          "bbox_width_height_ratio": 0.4947369581855945,
+          "downward_hip_velocity_body_lengths_per_second": 1.1547250871672252,
+          "mean_landmark_motion_body_lengths_per_second": 2.801762252081852
+        }
+      },
+      {
+        "t": 4.933333333333334,
+        "state": "confirming",
+        "reasons": [
+          "horizontal_posture",
+          "wide_tilted_body_box"
+        ],
+        "metrics": {
+          "timestamp_seconds": 4.933333333333334,
+          "pose_quality": 0.9327969998121262,
+          "shoulder_center_y": 0.5821916162967682,
+          "torso_angle_degrees_from_vertical": 65.0612888954936,
+          "bbox_width_height_ratio": 1.3770519033846635,
+          "downward_hip_velocity_body_lengths_per_second": 0.23128093095673735,
+          "mean_landmark_motion_body_lengths_per_second": 2.0380472048698994
+        }
+      }
+    ]
+  },
+  {
+    "sample": "fall-03",
+    "poses": 86,
+    "missing": 0,
+    "state_changes": [
+      {
+        "t": 0.0,
+        "state": "suspected",
+        "reasons": [
+          "horizontal_posture",
+          "wide_tilted_body_box"
+        ],
+        "metrics": {
+          "timestamp_seconds": 0.0,
+          "pose_quality": 0.9993847757577896,
+          "shoulder_center_y": 0.6935301721096039,
+          "torso_angle_degrees_from_vertical": 42.07852079801363,
+          "bbox_width_height_ratio": 1.3959130301529306,
+          "downward_hip_velocity_body_lengths_per_second": null,
+          "mean_landmark_motion_body_lengths_per_second": null
+        }
+      },
+      {
+        "t": 0.1,
+        "state": "confirming",
+        "reasons": [
+          "rapid_drop",
+          "horizontal_posture",
+          "wide_tilted_body_box"
+        ],
+        "metrics": {
+          "timestamp_seconds": 0.1,
+          "pose_quality": 0.9997210651636124,
+          "shoulder_center_y": 0.6462443172931671,
+          "torso_angle_degrees_from_vertical": 31.793015915646315,
+          "bbox_width_height_ratio": 1.3608962683271586,
+          "downward_hip_velocity_body_lengths_per_second": 2.5868246298051387,
+          "mean_landmark_motion_body_lengths_per_second": 13.658059637639449
+        }
+      },
+      {
+        "t": 0.16666666666666666,
+        "state": "monitoring",
+        "reasons": [
+          "rapid_drop"
+        ],
+        "metrics": {
+          "timestamp_seconds": 0.16666666666666666,
+          "pose_quality": 0.9997368901968002,
+          "shoulder_center_y": 0.6127969026565552,
+          "torso_angle_degrees_from_vertical": 24.558554318409538,
+          "bbox_width_height_ratio": 0.5635633660834981,
+          "downward_hip_velocity_body_lengths_per_second": 3.6332838159839485,
+          "mean_landmark_motion_body_lengths_per_second": 8.809948011965545
+        }
+      },
+      {
+        "t": 0.26666666666666666,
+        "state": "suspected",
+        "reasons": [
+          "rapid_drop"
+        ],
+        "metrics": {
+          "timestamp_seconds": 0.26666666666666666,
+          "pose_quality": 0.9997417628765106,
+          "shoulder_center_y": 0.6220821142196655,
+          "torso_angle_degrees_from_vertical": 25.63523755632364,
+          "bbox_width_height_ratio": 0.7251673511000002,
+          "downward_hip_velocity_body_lengths_per_second": 0.722620028085891,
+          "mean_landmark_motion_body_lengths_per_second": 3.5446591439219906
+        }
+      },
+      {
+        "t": 2.8333333333333335,
+        "state": "monitoring",
+        "reasons": [],
+        "metrics": {
+          "timestamp_seconds": 2.8333333333333335,
+          "pose_quality": 0.9971529096364975,
+          "shoulder_center_y": 0.5783458650112152,
+          "torso_angle_degrees_from_vertical": 2.3548513455191826,
+          "bbox_width_height_ratio": 0.21371287562342403,
+          "downward_hip_velocity_body_lengths_per_second": 0.007338319267305822,
+          "mean_landmark_motion_body_lengths_per_second": 0.7257635633925675
+        }
+      }
+    ]
+  },
+  {
+    "sample": "fall-04",
+    "poses": 39,
+    "missing": 0,
+    "state_changes": [
+      {
+        "t": 0.0,
+        "state": "monitoring",
+        "reasons": [],
+        "metrics": {
+          "timestamp_seconds": 0.0,
+          "pose_quality": 0.9990822225809097,
+          "shoulder_center_y": 0.37876051664352417,
+          "torso_angle_degrees_from_vertical": 28.964601380421698,
+          "bbox_width_height_ratio": 0.5086998751535411,
+          "downward_hip_velocity_body_lengths_per_second": null,
+          "mean_landmark_motion_body_lengths_per_second": null
+        }
+      },
+      {
+        "t": 0.9333333333333333,
+        "state": "suspected",
+        "reasons": [
+          "horizontal_posture",
+          "wide_tilted_body_box"
+        ],
+        "metrics": {
+          "timestamp_seconds": 0.9333333333333333,
+          "pose_quality": 0.999529629945755,
+          "shoulder_center_y": 0.5445067286491394,
+          "torso_angle_degrees_from_vertical": 66.52705888958894,
+          "bbox_width_height_ratio": 1.5020723554865667,
+          "downward_hip_velocity_body_lengths_per_second": 0.6480463523675606,
+          "mean_landmark_motion_body_lengths_per_second": 2.488937867665609
+        }
+      },
+      {
+        "t": 1.0,
+        "state": "confirming",
+        "reasons": [
+          "horizontal_posture",
+          "wide_tilted_body_box"
+        ],
+        "metrics": {
+          "timestamp_seconds": 1.0,
+          "pose_quality": 0.9995545744895935,
+          "shoulder_center_y": 0.5757076144218445,
+          "torso_angle_degrees_from_vertical": 72.82498611391814,
+          "bbox_width_height_ratio": 1.6301304460638333,
+          "downward_hip_velocity_body_lengths_per_second": 0.3487189712043727,
+          "mean_landmark_motion_body_lengths_per_second": 5.380136736443064
+        }
+      }
+    ]
+  },
+  {
+    "sample": "fall-05",
+    "poses": 31,
+    "missing": 30,
+    "state_changes": [
+      {
+        "t": 0.5,
+        "state": "monitoring",
+        "reasons": [],
+        "metrics": {
+          "timestamp_seconds": 0.5,
+          "pose_quality": 0.9990304261445999,
+          "shoulder_center_y": 0.5743979215621948,
+          "torso_angle_degrees_from_vertical": 47.051689702673784,
+          "bbox_width_height_ratio": 1.0257692916920578,
+          "downward_hip_velocity_body_lengths_per_second": null,
+          "mean_landmark_motion_body_lengths_per_second": null
+        }
+      },
+      {
+        "t": 1.6,
+        "state": "suspected",
+        "reasons": [
+          "rapid_drop"
+        ],
+        "metrics": {
+          "timestamp_seconds": 1.6,
+          "pose_quality": 0.9992484748363495,
+          "shoulder_center_y": 0.554957926273346,
+          "torso_angle_degrees_from_vertical": 47.212113923081766,
+          "bbox_width_height_ratio": 1.088996414337319,
+          "downward_hip_velocity_body_lengths_per_second": 1.0960785122598564,
+          "mean_landmark_motion_body_lengths_per_second": 3.4229622571231606
+        }
+      },
+      {
+        "t": 2.5,
+        "state": "confirming",
+        "reasons": [
+          "rapid_drop",
+          "horizontal_posture",
+          "wide_tilted_body_box"
+        ],
+        "metrics": {
+          "timestamp_seconds": 2.5,
+          "pose_quality": 0.9946566969156265,
+          "shoulder_center_y": 0.5698896944522858,
+          "torso_angle_degrees_from_vertical": 58.92400330534807,
+          "bbox_width_height_ratio": 2.437154947442842,
+          "downward_hip_velocity_body_lengths_per_second": 1.974397454395815,
+          "mean_landmark_motion_body_lengths_per_second": 2.5016183648599144
+        }
+      },
+      {
+        "t": 2.7666666666666666,
+        "state": "monitoring",
+        "reasons": [],
+        "metrics": {
+          "timestamp_seconds": 2.7666666666666666,
+          "pose_quality": 0.999265655875206,
+          "shoulder_center_y": 0.3133068382740021,
+          "torso_angle_degrees_from_vertical": 11.798257105593105,
+          "bbox_width_height_ratio": 0.6201851442345444,
+          "downward_hip_velocity_body_lengths_per_second": -1.0734385439806597,
+          "mean_landmark_motion_body_lengths_per_second": 6.959554861083182
+        }
+      },
+      {
+        "t": 2.8333333333333335,
+        "state": "suspected",
+        "reasons": [
+          "rapid_drop"
+        ],
+        "metrics": {
+          "timestamp_seconds": 2.8333333333333335,
+          "pose_quality": 0.9991504848003387,
+          "shoulder_center_y": 0.32439637184143066,
+          "torso_angle_degrees_from_vertical": 2.9272130246423935,
+          "bbox_width_height_ratio": 0.27063602412233806,
+          "downward_hip_velocity_body_lengths_per_second": 0.8706744388032459,
+          "mean_landmark_motion_body_lengths_per_second": 2.530065324100564
+        }
+      },
+      {
+        "t": 4.266666666666667,
+        "state": "monitoring",
+        "reasons": [],
+        "metrics": {
+          "timestamp_seconds": 4.266666666666667,
+          "pose_quality": 0.9994887709617615,
+          "shoulder_center_y": 0.6559247970581055,
+          "torso_angle_degrees_from_vertical": 9.460953314331446,
+          "bbox_width_height_ratio": 1.106759627555362,
+          "downward_hip_velocity_body_lengths_per_second": -0.4366711986512117,
+          "mean_landmark_motion_body_lengths_per_second": 2.4838288070780843
+        }
+      }
+    ]
+  }
+]

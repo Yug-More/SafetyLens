@@ -43,6 +43,17 @@ class DetectionPolicy(BaseModel):
     )
     confidence_threshold: float = Field(default=0.5, ge=0.05, le=0.99)
     sample_fps: float = Field(default=8, ge=1, le=30)
+    maximum_pose_people: int = Field(default=1, ge=1, le=4)
+    pose_region: tuple[float, float, float, float] | None = None
+
+    @field_validator("pose_region")
+    @classmethod
+    def valid_region(cls, value):
+        if value is not None:
+            x1, y1, x2, y2 = value
+            if not (0 <= x1 < x2 <= 1 and 0 <= y1 < y2 <= 1):
+                raise ValueError("pose_region must be normalized nonempty xyxy")
+        return value
     pre_event_seconds: float = Field(default=3, ge=0.5, le=30)
     post_event_seconds: float = Field(default=3, ge=0.5, le=30)
     retention_days: int = Field(default=30, ge=1, le=3650)
@@ -139,6 +150,8 @@ def camera_inventory(db: Session = Depends(get_db)):
 
 
 def save_camera(db, payload, camera_id=None):
+    if "ppe" in payload.policy.detectors:
+        raise AppError("PPE_DEPLOYMENT_DISABLED", "Local PPE monitoring is excluded: no validated, license-cleared model. Offline evaluation remains available.", 409)
     duplicate = db.scalar(select(Camera).where(Camera.name == payload.name))
     if duplicate and duplicate.id != camera_id:
         raise AppError("DUPLICATE_CAMERA", "Camera name is already in use.", 409)
@@ -532,7 +545,12 @@ def update_operations(
     if not op:
         op = IncidentOperation(incident_id=incident_id, version=1)
         db.add(op)
-        db.flush()
+        from sqlalchemy.exc import IntegrityError
+        try:
+            db.flush()
+        except IntegrityError as exc:
+            db.rollback()
+            raise AppError("STALE_VERSION", "Another operator initialized this incident. Reload before saving.", 409) from exc
     # Compare-and-swap at SQL level prevents stale concurrent writes.
     from sqlalchemy import update
 
@@ -699,8 +717,8 @@ def public_configuration():
             "external_actions": "simulated_only",
             "installation_scope": "single installation; organization isolation not implemented",
             "detectors": {
-                "pose_fall": "experimental; external 12-clip results in docs/evaluation",
-                "ppe_onnx": "experimental; weights/license review required",
+                "pose_fall": "experimental; see documented held-out results and unresolved false alerts",
+                "ppe_onnx": "deployment_disabled; poor reference performance and unresolved licensing",
                 "fire_smoke": "planned",
             },
         }

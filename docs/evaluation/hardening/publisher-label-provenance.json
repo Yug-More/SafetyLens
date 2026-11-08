@@ -1,0 +1,19 @@
+{
+  "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/urfall-cam0-falls.csv",
+  "sha256": "4ed29af7040098ba0150d1030eeadd97bbfde5c3a4fb9b07df786d673e22a65c",
+  "one_based_label_max_matches_decoded_frames_for_all10_camera0_falls": true,
+  "raw_rgb_archive_source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-17-cam0-rgb.zip",
+  "raw_rgb_archive_sha256": "126f585c98536565b0d60391f2579a15ae17b532eff4218b0564140d72428b7c",
+  "raw_rgb_frames": 95,
+  "pixel_comparison_frames": [
+    1,
+    59,
+    71
+  ],
+  "mean_absolute_rgb_difference": [
+    2.4342664930555555,
+    2.562239583333333,
+    2.5755208333333335
+  ],
+  "limitations": "One archive directly pixel checked; timing is video-relative, not sensor/response time"
+}

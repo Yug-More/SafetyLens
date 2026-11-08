@@ -176,7 +176,7 @@ export function CameraMonitor({
             <Upload data-icon="inline-start" />
             Upload Demo Video
           </Button>
-          <Button variant="secondary" render={<Link href="/monitor" />}>
+          <Button variant="secondary" nativeButton={false} render={<Link href="/monitor" />}>
             <Grid3X3 data-icon="inline-start" />
             View All Cameras
           </Button>

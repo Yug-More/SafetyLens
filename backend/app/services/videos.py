@@ -239,7 +239,23 @@ async def create_upload(
     return response, video.id
 
 
+from threading import Lock
+from weakref import WeakValueDictionary
+_job_locks = WeakValueDictionary()
+_job_locks_guard = Lock()
+
+
 def process_video_job(video_id: str, job_id: str) -> None:
+    with _job_locks_guard:
+        lock = _job_locks.get(video_id)
+        if lock is None:
+            lock = Lock()
+            _job_locks[video_id] = lock
+    with lock:
+        _process_video_job(video_id,job_id)
+
+
+def _process_video_job(video_id: str, job_id: str) -> None:
     """Background worker: metadata + frame sampling with progress updates."""
     cfg = get_settings()
     db = SessionLocal()
@@ -247,6 +263,8 @@ def process_video_job(video_id: str, job_id: str) -> None:
         video = db.get(VideoAsset, video_id)
         job = db.get(ProcessingJob, job_id)
         if video is None or job is None:
+            return
+        if video.status == VideoStatus.READY.value and job.status == JobStatus.COMPLETED.value:
             return
 
         def update_job(progress: int, step: str, status: JobStatus = JobStatus.PROCESSING) -> None:

@@ -1,0 +1,1097 @@
+{
+  "dataset": "SH17 COCO mirror test, first24 filenames, pretrained overlap unknown",
+  "images": [
+    {
+      "id": "91",
+      "path": "construction-site-build-construction-work-159358_jpeg.rf.894f1abe324abfb7565fe8322034b549.jpg",
+      "sha256": "beffc2ee31d0b7b4c39a03f4bc0acb91978ceda1937023ff481e7095b925bffa",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/construction-site-build-construction-work-159358_jpeg.rf.894f1abe324abfb7565fe8322034b549.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "construction-site-build-construction-work-159358",
+      "boxes": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            349,
+            300,
+            355.5,
+            307.5
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            310,
+            305,
+            315.5,
+            311.5
+          ]
+        },
+        {
+          "label": "high_visibility_vest",
+          "xyxy": [
+            288,
+            337,
+            292.5,
+            343.5
+          ]
+        },
+        {
+          "label": "high_visibility_vest",
+          "xyxy": [
+            315,
+            327,
+            319,
+            335
+          ]
+        },
+        {
+          "label": "high_visibility_vest",
+          "xyxy": [
+            348,
+            334,
+            354,
+            342
+          ]
+        },
+        {
+          "label": "high_visibility_vest",
+          "xyxy": [
+            342,
+            328,
+            346,
+            337
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            286,
+            292,
+            322.5,
+            379.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            340,
+            286,
+            363,
+            382.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            249,
+            389,
+            291,
+            526
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            181,
+            86,
+            207,
+            165.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "667",
+      "path": "floor-flooring-hand-man-1388944_jpeg.rf.bc7345609a89171bc1721e52de55236a.jpg",
+      "sha256": "ac160a79d9dc0d455dbb241dad5fe9672a3941b6776c8d959939314d23bddfd0",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/floor-flooring-hand-man-1388944_jpeg.rf.bc7345609a89171bc1721e52de55236a.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "floor-flooring-hand-man-1388944",
+      "boxes": [
+        {
+          "label": "person",
+          "xyxy": [
+            0,
+            1,
+            587,
+            394
+          ]
+        }
+      ]
+    },
+    {
+      "id": "402",
+      "path": "pexels-photo-10040011_jpeg.rf.c14c77f9d5f0de0fafe25b335790f2d2.jpg",
+      "sha256": "2ce943f35d82143079639eb489143ab8f6e79fb5bf37e0987ca8dd7e249d7d33",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-10040011_jpeg.rf.c14c77f9d5f0de0fafe25b335790f2d2.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-10040011",
+      "boxes": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            429,
+            135,
+            470,
+            209.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            568,
+            408,
+            569.5,
+            412.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            349,
+            83,
+            563,
+            640
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            62,
+            256,
+            309,
+            637.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "106",
+      "path": "pexels-photo-1018568_jpeg.rf.b0cf88012970478bea203110b8ee4cc0.jpg",
+      "sha256": "c8b8beedf3e4937bef1f9d7837caa9f0fbe252f9f92053c5b445541b933d6703",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-1018568_jpeg.rf.b0cf88012970478bea203110b8ee4cc0.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-1018568",
+      "boxes": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            290,
+            173,
+            330,
+            256.5
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            445,
+            188,
+            475.5,
+            265
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            387,
+            130,
+            568.5,
+            537.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            238,
+            145,
+            376,
+            507.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "477",
+      "path": "pexels-photo-10341108_jpeg.rf.42d47d39f377691356841c219c083bf3.jpg",
+      "sha256": "4ff64b64119ce6151682f4f091f34480a1412e7e220fab51704d84fb02303f80",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-10341108_jpeg.rf.42d47d39f377691356841c219c083bf3.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-10341108",
+      "boxes": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            346,
+            80,
+            467,
+            199
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            108,
+            44,
+            559,
+            640
+          ]
+        }
+      ]
+    },
+    {
+      "id": "316",
+      "path": "pexels-photo-10341122_jpeg.rf.c01088425bf9a00686352914839e33e4.jpg",
+      "sha256": "d49fd72ae5808dc78d77c21df7c0f07b62181743188be7e37e9da717190c87b3",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-10341122_jpeg.rf.c01088425bf9a00686352914839e33e4.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-10341122",
+      "boxes": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            333,
+            0,
+            475.5,
+            131
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            137,
+            0,
+            637,
+            640
+          ]
+        }
+      ]
+    },
+    {
+      "id": "596",
+      "path": "pexels-photo-10367886_jpeg.rf.95737bd40f192a3f23aeca618437dbec.jpg",
+      "sha256": "28037e5074e365a3f7578a58a2a35a92b2d613ac271460a4b1539a607c59e09f",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-10367886_jpeg.rf.95737bd40f192a3f23aeca618437dbec.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-10367886",
+      "boxes": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            330,
+            447,
+            340.5,
+            463.5
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            549,
+            456,
+            559,
+            475.5
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            186,
+            448,
+            195,
+            467.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            317,
+            440,
+            370.5,
+            617.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            171,
+            442,
+            219,
+            618.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            340,
+            434,
+            356,
+            498.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            522,
+            441,
+            585,
+            622
+          ]
+        }
+      ]
+    },
+    {
+      "id": "602",
+      "path": "pexels-photo-10375931_jpeg.rf.d3fd65df60f027d818f89b311b24871d.jpg",
+      "sha256": "8b2d508369dafb8daa6d773e3b4d5c9cdc3d945b44154f1f8b0aaf7726a8cbd2",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-10375931_jpeg.rf.d3fd65df60f027d818f89b311b24871d.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-10375931",
+      "boxes": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            155,
+            301,
+            194.5,
+            393
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            204,
+            290,
+            232,
+            349
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            499,
+            336,
+            530.5,
+            413
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            77,
+            276,
+            219,
+            640
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            431,
+            315,
+            592,
+            624.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "64",
+      "path": "pexels-photo-10375955_jpeg.rf.d1f404c0bca6745c2f4141cf4ce214ad.jpg",
+      "sha256": "7b7efc268c963647b2a2a0d15d9d3ccaca43de5e80b0cdeeaa357e9f7468d2d4",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-10375955_jpeg.rf.d1f404c0bca6745c2f4141cf4ce214ad.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-10375955",
+      "boxes": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            183,
+            245,
+            221,
+            394.5
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            406,
+            181,
+            445,
+            268
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            64,
+            205,
+            338.5,
+            635.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            340,
+            135,
+            526.5,
+            504.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "789",
+      "path": "pexels-photo-10375956_jpeg.rf.e8860149deca5876fa120cee3f36ebde.jpg",
+      "sha256": "61a17a2406d33f21305eb84a49c13a17107a4b5db6d9a3d3affb7fad9a339bb1",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-10375956_jpeg.rf.e8860149deca5876fa120cee3f36ebde.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-10375956",
+      "boxes": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            454,
+            179,
+            499,
+            283.5
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            35,
+            113,
+            107.5,
+            283.5
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            66,
+            269,
+            106,
+            317.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            0,
+            65,
+            324,
+            633
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            291,
+            147,
+            636,
+            633
+          ]
+        }
+      ]
+    },
+    {
+      "id": "556",
+      "path": "pexels-photo-10682438_jpeg.rf.16296f700e7bd7cba9e1c0cd572d1021.jpg",
+      "sha256": "04a2199191eb0f7d8b0d79559a59e907c7abc3055c960cdc5a0dff06fd033a9b",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-10682438_jpeg.rf.16296f700e7bd7cba9e1c0cd572d1021.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-10682438",
+      "boxes": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            200,
+            119,
+            433,
+            248.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            0,
+            14,
+            635,
+            636
+          ]
+        }
+      ]
+    },
+    {
+      "id": "659",
+      "path": "pexels-photo-10716309_jpeg.rf.b307be665bc3e3b0f707995d8d31b23a.jpg",
+      "sha256": "3962101dc552b40d5abf2d9f4a483cc128e66985154a835fe0c0a819c8a00a94",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-10716309_jpeg.rf.b307be665bc3e3b0f707995d8d31b23a.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-10716309",
+      "boxes": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            267,
+            231,
+            344,
+            306
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            147,
+            220,
+            469,
+            625
+          ]
+        }
+      ]
+    },
+    {
+      "id": "657",
+      "path": "pexels-photo-10871621_jpeg.rf.f4eae129b2553911aabeea93a47a5fe9.jpg",
+      "sha256": "d9b1463b08b9c6f55879e75295794cd72ddc6588629f93fa9e7272a8c5d040f4",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-10871621_jpeg.rf.f4eae129b2553911aabeea93a47a5fe9.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-10871621",
+      "boxes": [
+        {
+          "label": "person",
+          "xyxy": [
+            176,
+            423,
+            297,
+            640
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            194,
+            330,
+            326.5,
+            522.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            413,
+            134,
+            468,
+            542.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            512,
+            127,
+            574.5,
+            386.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            394,
+            112,
+            432,
+            226.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            362,
+            133,
+            427,
+            473
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            305,
+            136,
+            361,
+            398.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            250,
+            134,
+            311.5,
+            428.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            227,
+            149,
+            272,
+            305.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            222,
+            270,
+            286,
+            387.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "413",
+      "path": "pexels-photo-10932215_jpeg.rf.a1253158a53b4dda95bb90b5e7d89b3f.jpg",
+      "sha256": "c7174efa005a1804f330f35af069814db1e72c741659810a18cd48e6999ccbd4",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-10932215_jpeg.rf.a1253158a53b4dda95bb90b5e7d89b3f.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-10932215",
+      "boxes": [
+        {
+          "label": "person",
+          "xyxy": [
+            0,
+            4,
+            216,
+            640
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            361,
+            9,
+            640,
+            639
+          ]
+        }
+      ]
+    },
+    {
+      "id": "206",
+      "path": "pexels-photo-1093926_jpeg.rf.1f0fe29b6cd25c5dba09ccb7530df323.jpg",
+      "sha256": "f78999610cbb848777d48be186abd4a26d247e9ff690b4bb39fc4892284a94a5",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-1093926_jpeg.rf.1f0fe29b6cd25c5dba09ccb7530df323.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-1093926",
+      "boxes": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            246,
+            139,
+            298.5,
+            235
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            117,
+            121,
+            336,
+            640
+          ]
+        }
+      ]
+    },
+    {
+      "id": "511",
+      "path": "pexels-photo-11461858_jpeg.rf.ef3f278d9d7c57dccb5dc28fbdfb7b89.jpg",
+      "sha256": "0affb3f8d67d5d9ffdf3f7936a8703766c535b16b89708c4632c64dfad9b3cbf",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-11461858_jpeg.rf.ef3f278d9d7c57dccb5dc28fbdfb7b89.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-11461858",
+      "boxes": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            267,
+            69,
+            285.5,
+            101.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            321,
+            192,
+            446.5,
+            567.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            147,
+            186,
+            288.5,
+            571.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            244,
+            50,
+            333,
+            250.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "142",
+      "path": "pexels-photo-11590840_jpeg.rf.4e30d3c6f57b1f4ca397949cff95d783.jpg",
+      "sha256": "36eda69f24e41b474bbc17da6aad5352091360ea5599389d3cb30bc24b5fbe0e",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-11590840_jpeg.rf.4e30d3c6f57b1f4ca397949cff95d783.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-11590840",
+      "boxes": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            308,
+            254,
+            333.5,
+            289
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            215,
+            248,
+            454,
+            590
+          ]
+        }
+      ]
+    },
+    {
+      "id": "113",
+      "path": "pexels-photo-11644973_jpeg.rf.a59e151a8207ab6840bb4642b756dccc.jpg",
+      "sha256": "c395af871a47370e0f1d66a7153ce6f88b4520c4162dbe34bafc264954c0a416",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-11644973_jpeg.rf.a59e151a8207ab6840bb4642b756dccc.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-11644973",
+      "boxes": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            341,
+            300,
+            346,
+            308
+          ]
+        },
+        {
+          "label": "high_visibility_vest",
+          "xyxy": [
+            382,
+            368,
+            388,
+            377.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            333,
+            291,
+            353,
+            382.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            350,
+            334,
+            375,
+            387.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            355,
+            348,
+            384.5,
+            415
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            509,
+            311,
+            530.5,
+            373
+          ]
+        }
+      ]
+    },
+    {
+      "id": "333",
+      "path": "pexels-photo-11679689_jpeg.rf.d830044ca7f2cefa542aa7f42c69113c.jpg",
+      "sha256": "bf08ae9611dec54d72e85539b0890c8abb2512044cbe4402bfd4951aae600f98",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-11679689_jpeg.rf.d830044ca7f2cefa542aa7f42c69113c.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-11679689",
+      "boxes": [
+        {
+          "label": "person",
+          "xyxy": [
+            1,
+            79,
+            199.5,
+            639.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            203,
+            180,
+            249.5,
+            259
+          ]
+        }
+      ]
+    },
+    {
+      "id": "199",
+      "path": "pexels-photo-11739070_jpeg.rf.913d7dfa4e6184dd76107ccbf4e6bf91.jpg",
+      "sha256": "049280fe0a42fd8839419859ef31290f69a1569f12ebafc47439d0c19a29e2e7",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-11739070_jpeg.rf.913d7dfa4e6184dd76107ccbf4e6bf91.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-11739070",
+      "boxes": [
+        {
+          "label": "high_visibility_vest",
+          "xyxy": [
+            241,
+            341,
+            249,
+            347
+          ]
+        },
+        {
+          "label": "high_visibility_vest",
+          "xyxy": [
+            274,
+            350,
+            281.5,
+            356.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "783",
+      "path": "pexels-photo-11765530_jpeg.rf.07dd870820df1238d388af0cc397b9a8.jpg",
+      "sha256": "7300235b4eba8460f994f36eccd78a68b9ec404f63e79798332466afd6dd8f96",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-11765530_jpeg.rf.07dd870820df1238d388af0cc397b9a8.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-11765530",
+      "boxes": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            466,
+            268,
+            482,
+            289.5
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            140,
+            305,
+            158,
+            330
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            92,
+            292,
+            161,
+            496
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            465,
+            259,
+            497.5,
+            458
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            417,
+            259,
+            435,
+            332
+          ]
+        }
+      ]
+    },
+    {
+      "id": "718",
+      "path": "pexels-photo-1181474_jpeg.rf.54e0cfbfb99051a410affcb6078ada1b.jpg",
+      "sha256": "a47baead2fcc232e690d353f531c6a052da4964af36808893762c4679977d17d",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-1181474_jpeg.rf.54e0cfbfb99051a410affcb6078ada1b.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-1181474",
+      "boxes": [
+        {
+          "label": "person",
+          "xyxy": [
+            0,
+            0,
+            332.5,
+            639
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            377,
+            0,
+            639,
+            640
+          ]
+        }
+      ]
+    },
+    {
+      "id": "159",
+      "path": "pexels-photo-11877840_jpeg.rf.f8a89dfdc90571e48564c58cde45f2bd.jpg",
+      "sha256": "25d5e675e2bc55824dc7d8198c768be57a899192438acf6a16ee9d51bdf0d5d7",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-11877840_jpeg.rf.f8a89dfdc90571e48564c58cde45f2bd.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-11877840",
+      "boxes": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            158,
+            98,
+            184.5,
+            149.5
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            455,
+            207,
+            483,
+            234
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            133,
+            82,
+            231,
+            293
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            439,
+            169,
+            547,
+            353.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "702",
+      "path": "pexels-photo-11885299_jpeg.rf.625f7aa7230b98982f8d264a6c82f3f7.jpg",
+      "sha256": "e8fed9bdd7cf172354e116bb51a1ca852ace564772eee3ea7e0af3e75c959d4d",
+      "source": "https://huggingface.co/datasets/fathansanum/SH-17-Dataset/resolve/main/SH17-dataset-1/test/pexels-photo-11885299_jpeg.rf.625f7aa7230b98982f8d264a6c82f3f7.jpg",
+      "license": "CC-BY-4.0 (mirror declaration; see upstream source)",
+      "split": "test",
+      "group": "pexels-photo-11885299",
+      "boxes": [
+        {
+          "label": "person",
+          "xyxy": [
+            228,
+            421,
+            258,
+            519.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            273,
+            428,
+            298.5,
+            522.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            344,
+            397,
+            366.5,
+            488.5
+          ]
+        }
+      ]
+    }
+  ]
+}

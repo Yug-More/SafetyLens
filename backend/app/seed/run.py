@@ -19,7 +19,7 @@ def main() -> None:
     db = SessionLocal()
     try:
         counts = seed_database(db)
-        print("Seed completed successfully.")
+        print("Seed ensured successfully; existing records preserved.")
         for key, value in counts.items():
             print(f"  {key}: {value}")
     finally:

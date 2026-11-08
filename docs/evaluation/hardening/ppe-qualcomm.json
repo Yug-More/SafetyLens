@@ -1,0 +1,1265 @@
+{
+  "status": "evaluated_on_supplied_manifest",
+  "model": {
+    "architecture": "gear_guard_net",
+    "weights": "gear_guard_net.onnx",
+    "source": "https://huggingface.co/qualcomm/PPE-Detection",
+    "release": "v0.65.0",
+    "license": "BSD-3-Clause (official publisher declaration; retain notices)",
+    "classes": {
+      "0": "hard_hat",
+      "1": "high_visibility_vest"
+    },
+    "files_sha256": {
+      "gear_guard_net.onnx": "05fe69bc1a291bed00d775cd677539753ac56d3af78dde9dcd8ecd4bfbfb84b4",
+      "gear_guard_net.data": "4ef8dec29b4543233e4846dff8f2940976ac08a8267ed404bf86f23e17e90f7f"
+    },
+    "deployment_status": "excluded; no person model/association validation"
+  },
+  "manifest_sha256": "1342ec736ed360e0c10d55cfe182e217de5f5c1b7f82e337c233cba967b7c19c",
+  "images": 24,
+  "supported_classes": [
+    "hard_hat",
+    "high_visibility_vest"
+  ],
+  "prediction_threshold": 0.05,
+  "metrics": {
+    "person": {
+      "iou_50": {
+        "ground_truth_boxes": 57,
+        "predicted_boxes": 0,
+        "precision": null,
+        "recall": 0.0,
+        "ap": 0.0
+      },
+      "ap_50_95": 0.0
+    },
+    "hard_hat": {
+      "iou_50": {
+        "ground_truth_boxes": 28,
+        "predicted_boxes": 5,
+        "precision": 0.0,
+        "recall": 0.0,
+        "ap": 0.0
+      },
+      "ap_50_95": 0.0
+    },
+    "high_visibility_vest": {
+      "iou_50": {
+        "ground_truth_boxes": 7,
+        "predicted_boxes": 14,
+        "precision": 0.0,
+        "recall": 0.0,
+        "ap": 0.0
+      },
+      "ap_50_95": 0.0
+    }
+  },
+  "map_50_95": 0.0,
+  "processing_seconds": 0.9221170829996481,
+  "samples": [
+    {
+      "id": "91",
+      "ground_truth": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            349,
+            300,
+            355.5,
+            307.5
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            310,
+            305,
+            315.5,
+            311.5
+          ]
+        },
+        {
+          "label": "high_visibility_vest",
+          "xyxy": [
+            288,
+            337,
+            292.5,
+            343.5
+          ]
+        },
+        {
+          "label": "high_visibility_vest",
+          "xyxy": [
+            315,
+            327,
+            319,
+            335
+          ]
+        },
+        {
+          "label": "high_visibility_vest",
+          "xyxy": [
+            348,
+            334,
+            354,
+            342
+          ]
+        },
+        {
+          "label": "high_visibility_vest",
+          "xyxy": [
+            342,
+            328,
+            346,
+            337
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            286,
+            292,
+            322.5,
+            379.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            340,
+            286,
+            363,
+            382.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            249,
+            389,
+            291,
+            526
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            181,
+            86,
+            207,
+            165.5
+          ]
+        }
+      ],
+      "predictions": [],
+      "inference_decode_seconds": 0.0428972499998963
+    },
+    {
+      "id": "667",
+      "ground_truth": [
+        {
+          "label": "person",
+          "xyxy": [
+            0,
+            1,
+            587,
+            394
+          ]
+        }
+      ],
+      "predictions": [
+        {
+          "label": "hard_hat",
+          "score": 0.12862151861190796,
+          "xyxy": [
+            538.4490966796875,
+            0,
+            640,
+            196.1980692545573
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "score": 0.05905946344137192,
+          "xyxy": [
+            509.1582743326823,
+            4.1937255859375,
+            639.3269348144531,
+            241.17146809895834
+          ]
+        }
+      ],
+      "inference_decode_seconds": 0.0357160409998869
+    },
+    {
+      "id": "402",
+      "ground_truth": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            429,
+            135,
+            470,
+            209.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            568,
+            408,
+            569.5,
+            412.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            349,
+            83,
+            563,
+            640
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            62,
+            256,
+            309,
+            637.5
+          ]
+        }
+      ],
+      "predictions": [],
+      "inference_decode_seconds": 0.03453075000015815
+    },
+    {
+      "id": "106",
+      "ground_truth": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            290,
+            173,
+            330,
+            256.5
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            445,
+            188,
+            475.5,
+            265
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            387,
+            130,
+            568.5,
+            537.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            238,
+            145,
+            376,
+            507.5
+          ]
+        }
+      ],
+      "predictions": [],
+      "inference_decode_seconds": 0.04205987500017727
+    },
+    {
+      "id": "477",
+      "ground_truth": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            346,
+            80,
+            467,
+            199
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            108,
+            44,
+            559,
+            640
+          ]
+        }
+      ],
+      "predictions": [
+        {
+          "label": "high_visibility_vest",
+          "score": 0.08535127341747284,
+          "xyxy": [
+            62.322235107421875,
+            238.3019510904948,
+            566.5462748209636,
+            639.2326354980469
+          ]
+        },
+        {
+          "label": "high_visibility_vest",
+          "score": 0.06644115597009659,
+          "xyxy": [
+            230.6621297200521,
+            138.37041219075522,
+            564.853515625,
+            631.5245056152344
+          ]
+        }
+      ],
+      "inference_decode_seconds": 0.03560454099988419
+    },
+    {
+      "id": "316",
+      "ground_truth": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            333,
+            0,
+            475.5,
+            131
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            137,
+            0,
+            637,
+            640
+          ]
+        }
+      ],
+      "predictions": [
+        {
+          "label": "high_visibility_vest",
+          "score": 0.7693250179290771,
+          "xyxy": [
+            31.41863505045573,
+            199.41680908203125,
+            640,
+            640
+          ]
+        },
+        {
+          "label": "high_visibility_vest",
+          "score": 0.05646276846528053,
+          "xyxy": [
+            90.00813802083334,
+            133.64512125651044,
+            640,
+            552.8772989908855
+          ]
+        }
+      ],
+      "inference_decode_seconds": 0.03621950000024299
+    },
+    {
+      "id": "596",
+      "ground_truth": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            330,
+            447,
+            340.5,
+            463.5
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            549,
+            456,
+            559,
+            475.5
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            186,
+            448,
+            195,
+            467.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            317,
+            440,
+            370.5,
+            617.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            171,
+            442,
+            219,
+            618.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            340,
+            434,
+            356,
+            498.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            522,
+            441,
+            585,
+            622
+          ]
+        }
+      ],
+      "predictions": [],
+      "inference_decode_seconds": 0.03525945799992769
+    },
+    {
+      "id": "602",
+      "ground_truth": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            155,
+            301,
+            194.5,
+            393
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            204,
+            290,
+            232,
+            349
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            499,
+            336,
+            530.5,
+            413
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            77,
+            276,
+            219,
+            640
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            431,
+            315,
+            592,
+            624.5
+          ]
+        }
+      ],
+      "predictions": [
+        {
+          "label": "high_visibility_vest",
+          "score": 0.21922124922275543,
+          "xyxy": [
+            0.7979456583658855,
+            0,
+            188.96981557210287,
+            479.74639892578125
+          ]
+        },
+        {
+          "label": "high_visibility_vest",
+          "score": 0.15784944593906403,
+          "xyxy": [
+            0,
+            0,
+            175.6139373779297,
+            338.2566324869792
+          ]
+        },
+        {
+          "label": "high_visibility_vest",
+          "score": 0.11954575031995773,
+          "xyxy": [
+            0.47728220621744794,
+            46.07098897298177,
+            198.61817677815756,
+            634.9159749348959
+          ]
+        }
+      ],
+      "inference_decode_seconds": 0.03510712500019508
+    },
+    {
+      "id": "64",
+      "ground_truth": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            183,
+            245,
+            221,
+            394.5
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            406,
+            181,
+            445,
+            268
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            64,
+            205,
+            338.5,
+            635.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            340,
+            135,
+            526.5,
+            504.5
+          ]
+        }
+      ],
+      "predictions": [
+        {
+          "label": "high_visibility_vest",
+          "score": 0.5695016980171204,
+          "xyxy": [
+            0.08089383443196616,
+            175.13509114583334,
+            77.91966756184897,
+            546.6099039713542
+          ]
+        }
+      ],
+      "inference_decode_seconds": 0.03531204199998683
+    },
+    {
+      "id": "789",
+      "ground_truth": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            454,
+            179,
+            499,
+            283.5
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            35,
+            113,
+            107.5,
+            283.5
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            66,
+            269,
+            106,
+            317.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            0,
+            65,
+            324,
+            633
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            291,
+            147,
+            636,
+            633
+          ]
+        }
+      ],
+      "predictions": [],
+      "inference_decode_seconds": 0.03548666699998648
+    },
+    {
+      "id": "556",
+      "ground_truth": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            200,
+            119,
+            433,
+            248.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            0,
+            14,
+            635,
+            636
+          ]
+        }
+      ],
+      "predictions": [
+        {
+          "label": "hard_hat",
+          "score": 0.10599696636199951,
+          "xyxy": [
+            148.67780049641928,
+            0,
+            500.40720621744794,
+            489.9363199869792
+          ]
+        }
+      ],
+      "inference_decode_seconds": 0.03492374999996173
+    },
+    {
+      "id": "659",
+      "ground_truth": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            267,
+            231,
+            344,
+            306
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            147,
+            220,
+            469,
+            625
+          ]
+        }
+      ],
+      "predictions": [],
+      "inference_decode_seconds": 0.037808749999840074
+    },
+    {
+      "id": "657",
+      "ground_truth": [
+        {
+          "label": "person",
+          "xyxy": [
+            176,
+            423,
+            297,
+            640
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            194,
+            330,
+            326.5,
+            522.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            413,
+            134,
+            468,
+            542.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            512,
+            127,
+            574.5,
+            386.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            394,
+            112,
+            432,
+            226.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            362,
+            133,
+            427,
+            473
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            305,
+            136,
+            361,
+            398.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            250,
+            134,
+            311.5,
+            428.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            227,
+            149,
+            272,
+            305.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            222,
+            270,
+            286,
+            387.5
+          ]
+        }
+      ],
+      "predictions": [],
+      "inference_decode_seconds": 0.034998457999790844
+    },
+    {
+      "id": "413",
+      "ground_truth": [
+        {
+          "label": "person",
+          "xyxy": [
+            0,
+            4,
+            216,
+            640
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            361,
+            9,
+            640,
+            639
+          ]
+        }
+      ],
+      "predictions": [
+        {
+          "label": "hard_hat",
+          "score": 0.153824120759964,
+          "xyxy": [
+            504.49610392252606,
+            0,
+            640,
+            439.0178934733073
+          ]
+        }
+      ],
+      "inference_decode_seconds": 0.035737082999730774
+    },
+    {
+      "id": "206",
+      "ground_truth": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            246,
+            139,
+            298.5,
+            235
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            117,
+            121,
+            336,
+            640
+          ]
+        }
+      ],
+      "predictions": [],
+      "inference_decode_seconds": 0.034645166999780486
+    },
+    {
+      "id": "511",
+      "ground_truth": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            267,
+            69,
+            285.5,
+            101.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            321,
+            192,
+            446.5,
+            567.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            147,
+            186,
+            288.5,
+            571.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            244,
+            50,
+            333,
+            250.5
+          ]
+        }
+      ],
+      "predictions": [],
+      "inference_decode_seconds": 0.034705041000052006
+    },
+    {
+      "id": "142",
+      "ground_truth": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            308,
+            254,
+            333.5,
+            289
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            215,
+            248,
+            454,
+            590
+          ]
+        }
+      ],
+      "predictions": [],
+      "inference_decode_seconds": 0.036064333000012994
+    },
+    {
+      "id": "113",
+      "ground_truth": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            341,
+            300,
+            346,
+            308
+          ]
+        },
+        {
+          "label": "high_visibility_vest",
+          "xyxy": [
+            382,
+            368,
+            388,
+            377.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            333,
+            291,
+            353,
+            382.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            350,
+            334,
+            375,
+            387.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            355,
+            348,
+            384.5,
+            415
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            509,
+            311,
+            530.5,
+            373
+          ]
+        }
+      ],
+      "predictions": [
+        {
+          "label": "high_visibility_vest",
+          "score": 0.17336931824684143,
+          "xyxy": [
+            0.5134073893229167,
+            228.57223510742188,
+            621.6905212402344,
+            639.8962910970052
+          ]
+        }
+      ],
+      "inference_decode_seconds": 0.03625987500026895
+    },
+    {
+      "id": "333",
+      "ground_truth": [
+        {
+          "label": "person",
+          "xyxy": [
+            1,
+            79,
+            199.5,
+            639.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            203,
+            180,
+            249.5,
+            259
+          ]
+        }
+      ],
+      "predictions": [
+        {
+          "label": "high_visibility_vest",
+          "score": 0.8861385583877563,
+          "xyxy": [
+            572.8562418619792,
+            237.51205444335938,
+            639.9940999348959,
+            584.8900858561199
+          ]
+        },
+        {
+          "label": "high_visibility_vest",
+          "score": 0.7647168636322021,
+          "xyxy": [
+            2.5322278340657554,
+            186.8529001871745,
+            146.09258015950522,
+            498.5704549153646
+          ]
+        },
+        {
+          "label": "high_visibility_vest",
+          "score": 0.5782161355018616,
+          "xyxy": [
+            344.84100341796875,
+            116.66310628255209,
+            509.4756062825521,
+            478.63118489583337
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "score": 0.06006764993071556,
+          "xyxy": [
+            18.701047897338867,
+            86.22762044270834,
+            106.64052327473959,
+            200.09292602539062
+          ]
+        }
+      ],
+      "inference_decode_seconds": 0.03537599999981467
+    },
+    {
+      "id": "199",
+      "ground_truth": [
+        {
+          "label": "high_visibility_vest",
+          "xyxy": [
+            241,
+            341,
+            249,
+            347
+          ]
+        },
+        {
+          "label": "high_visibility_vest",
+          "xyxy": [
+            274,
+            350,
+            281.5,
+            356.5
+          ]
+        }
+      ],
+      "predictions": [
+        {
+          "label": "high_visibility_vest",
+          "score": 0.10277916491031647,
+          "xyxy": [
+            2.56317138671875,
+            326.7093912760417,
+            472.64546712239587,
+            638.135986328125
+          ]
+        },
+        {
+          "label": "high_visibility_vest",
+          "score": 0.08393941074609756,
+          "xyxy": [
+            105.92971801757812,
+            310.96384684244794,
+            640,
+            640
+          ]
+        }
+      ],
+      "inference_decode_seconds": 0.03515395800013721
+    },
+    {
+      "id": "783",
+      "ground_truth": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            466,
+            268,
+            482,
+            289.5
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            140,
+            305,
+            158,
+            330
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            92,
+            292,
+            161,
+            496
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            465,
+            259,
+            497.5,
+            458
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            417,
+            259,
+            435,
+            332
+          ]
+        }
+      ],
+      "predictions": [],
+      "inference_decode_seconds": 0.041743624999980966
+    },
+    {
+      "id": "718",
+      "ground_truth": [
+        {
+          "label": "person",
+          "xyxy": [
+            0,
+            0,
+            332.5,
+            639
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            377,
+            0,
+            639,
+            640
+          ]
+        }
+      ],
+      "predictions": [],
+      "inference_decode_seconds": 0.03421166699990863
+    },
+    {
+      "id": "159",
+      "ground_truth": [
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            158,
+            98,
+            184.5,
+            149.5
+          ]
+        },
+        {
+          "label": "hard_hat",
+          "xyxy": [
+            455,
+            207,
+            483,
+            234
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            133,
+            82,
+            231,
+            293
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            439,
+            169,
+            547,
+            353.5
+          ]
+        }
+      ],
+      "predictions": [],
+      "inference_decode_seconds": 0.0352065419997416
+    },
+    {
+      "id": "702",
+      "ground_truth": [
+        {
+          "label": "person",
+          "xyxy": [
+            228,
+            421,
+            258,
+            519.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            273,
+            428,
+            298.5,
+            522.5
+          ]
+        },
+        {
+          "label": "person",
+          "xyxy": [
+            344,
+            397,
+            366.5,
+            488.5
+          ]
+        }
+      ],
+      "predictions": [],
+      "inference_decode_seconds": 0.03533745799995813
+    }
+  ],
+  "association_accuracy": null,
+  "compliance_accuracy": null,
+  "limitations": [
+    "AP uses 101-point interpolation and greedy per-image class matching; no COCO crowd/ignore annotations",
+    "mAP excludes classes without ground-truth boxes; inspect support counts",
+    "Association/compliance accuracy require additional per-person relation and assessability labels; not inferred from object AP"
+  ]
+}

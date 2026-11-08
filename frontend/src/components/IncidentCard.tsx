@@ -113,7 +113,7 @@ export function IncidentCard({
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2">
-          <Button render={<Link href={reviewHref} />}>Review Incident</Button>
+          <Button nativeButton={false} render={<Link href={reviewHref} />}>Review Incident</Button>
           <Button variant="outline" onClick={() => setDismissOpen(true)}>
             Dismiss
           </Button>

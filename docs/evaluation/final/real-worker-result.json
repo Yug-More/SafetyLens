@@ -1,0 +1,44 @@
+{
+  "event_id": "2b722ab9-5906-4e43-821f-c35d9a1bfc55",
+  "events": 1,
+  "mode": "real_mediapipe_worker",
+  "clip": "/private/tmp/safetylens-final-evaluation/fall-07.mp4",
+  "delivery_wall_seconds": 2.5303628749970812,
+  "event": {
+    "schema_version": "1.0",
+    "event_id": "2b722ab9-5906-4e43-821f-c35d9a1bfc55",
+    "event_type": "possible_person_down",
+    "source_id": "cam-03",
+    "track_id": "person-1",
+    "occurred_at_seconds": 4.5,
+    "source_timestamp_seconds": 4.5,
+    "state": "incident",
+    "trigger_signals": [
+      "rapid_drop",
+      "down_posture_persistence",
+      "wide_tilted_body_box"
+    ],
+    "pose_quality": 0.9986735284328461,
+    "metrics": {
+      "timestamp_seconds": 4.5,
+      "pose_quality": 0.9986735284328461,
+      "shoulder_center_y": 0.9796510636806488,
+      "torso_angle_degrees_from_vertical": 80.74463144952314,
+      "bbox_width_height_ratio": 1.990409315356419,
+      "downward_hip_velocity_body_lengths_per_second": -0.3826528756947997,
+      "mean_landmark_motion_body_lengths_per_second": 3.4357274016334416
+    },
+    "limitations": [
+      "single_person_pose_heuristic",
+      "not_a_medical_diagnosis",
+      "requires_human_verification",
+      "uncalibrated_temporal_rules",
+      "falling_motion_observed",
+      "post_event_window_truncated_at_source_end"
+    ],
+    "occurred_at": "2026-11-08T01:16:12.404718+00:00",
+    "camera_id": "cam-03",
+    "clip_event_offset_seconds": 2.0
+  },
+  "source_consumed_once": true
+}

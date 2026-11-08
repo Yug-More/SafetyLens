@@ -162,6 +162,8 @@ class OnnxPpeDetector:
     def __init__(self, manifest_path: str | Path, *, threshold=0.5, nms_iou=0.45):
         import onnxruntime as ort
 
+        if not (0 <= threshold <= 1 and 0 < nms_iou <= 1):
+            raise ValueError("PPE thresholds must be finite probability/IoU values")
         self.manifest = json.loads(Path(manifest_path).read_text())
         for key in ["weights", "sha256", "source", "license", "classes", "input_size"]:
             if not self.manifest.get(key):
@@ -183,7 +185,10 @@ class OnnxPpeDetector:
         self.session = ort.InferenceSession(
             str(weights), sess_options=options, providers=["CPUExecutionProvider"]
         )
-        self.input = self.session.get_inputs()[0].name
+        inputs = self.session.get_inputs()
+        if len(inputs) != 1 or inputs[0].type != "tensor(float)" or inputs[0].shape != [1, 3, self.size, self.size]:
+            raise ValueError("Unsupported ONNX input; expected float32 fixed [1,3,size,size]")
+        self.input = inputs[0].name
 
     def detect(self, frame):
         import cv2
@@ -241,3 +246,19 @@ class OnnxPpeDetector:
             ):
                 kept.append(box)
         return kept
+
+
+def draw_ppe_overlay(frame, boxes, people):
+    """Render actual detections; candidate absence stays explicitly unconfirmed."""
+    import cv2
+    output = frame.copy()
+    for box in boxes:
+        x1, y1, x2, y2 = map(round, box.xyxy)
+        cv2.rectangle(output, (x1, y1), (x2, y2), (255, 180, 0), 2)
+        cv2.putText(output, f"{box.label} {box.score:.2f}", (x1, max(15, y1-5)),
+                    cv2.FONT_HERSHEY_SIMPLEX, .4, (255, 180, 0), 1)
+    for person in people:
+        x1, y1, _, _ = map(round, person['box'])
+        label = 'REVIEW: possible missing PPE' if person.get('review_required') else person['status']
+        cv2.putText(output, label, (x1, y1+18), cv2.FONT_HERSHEY_SIMPLEX, .4, (0, 200, 255), 1)
+    return output
