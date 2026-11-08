@@ -7,7 +7,12 @@ services:
       - "8000:8000"
     environment:
       APP_NAME: SafetyLens API
-      ENVIRONMENT: production
+      ENVIRONMENT: development
+      AUTH_ENABLED: "true"
+      COOKIE_SECURE: "false"
+      CAMERA_ENCRYPTION_KEY: ${CAMERA_ENCRYPTION_KEY:-}
+      DETECTOR_API_TOKEN: ${DETECTOR_API_TOKEN:-}
+      DETECTOR_CAMERA_IDS: ${DETECTOR_CAMERA_IDS:-}
       DEMO_MODE: "true"
       AI_PROVIDER: demo
       AI_DEMO_MODE: "true"
@@ -38,7 +43,7 @@ services:
       - "3000:3000"
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8000
-      NEXT_PUBLIC_DEMO_FALLBACK: "true"
+      NEXT_PUBLIC_DEMO_FALLBACK: "false"
     depends_on:
       backend:
         condition: service_healthy
