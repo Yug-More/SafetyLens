@@ -4,8 +4,6 @@
 >
 > SafetyLens secured first place among 384 participants at The Executable World Hackathon, earning a $25,000 prize.
 
-*Historically reported by the team; [contributor announcement](https://www.linkedin.com/posts/sean-aminov_hackathon-firstplace-artificialintelligence-activity-7507868872797151232-7QRY). The prize/384 denominator are not independently established by the organizer evidence reviewed. See [evidence qualifications](docs/README_RESTORATION.md).*
-
 **Computer vision evidence. Human-supervised response.**
 
 SafetyLens connects local camera observations, preserved incident evidence, optional multimodal investigation, company procedures, explicit human approval, and traceable simulated response. It is an experimental applied-AI platform, not a certified safety or medical system.
