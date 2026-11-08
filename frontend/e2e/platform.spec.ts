@@ -225,6 +225,7 @@ test(`${process.env.SAFETYLENS_REAL_CLIP ? "actual recorded fall worker" : "synt
   await expect(
     page.getByRole("link", { name: "Download PDF", exact: true }),
   ).toBeVisible();
+  await expect(page.getByText(/simulated action results recorded/)).toBeVisible();
   const href = await page
     .getByRole("link", { name: "Download PDF", exact: true })
     .getAttribute("href");

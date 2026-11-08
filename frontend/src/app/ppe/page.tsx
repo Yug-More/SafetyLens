@@ -5,7 +5,7 @@ export default function PpePage() {
   return (
     <div className="space-y-5">
       <p className="rounded-xl border border-amber-500/20 p-4 text-sm text-muted-foreground">
-        ONNX PPE inference is experimental. Configured demo observations remain
+        Local PPE deployment is disabled: no validated, license-cleared model is available. Offline inference evaluation and historical reviews remain available. Configured demo observations remain
         labeled.{" "}
         <Link href="/cameras" className="text-blue-400">
           Manage camera-specific PPE requirements

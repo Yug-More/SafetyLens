@@ -16,11 +16,11 @@ root = Path(__file__).resolve().parents[1]
 clip = Path(os.environ['SAFETYLENS_REAL_CLIP']).resolve(strict=True)
 model = Path(os.environ['SAFETYLENS_POSE_MODEL']).resolve(strict=True)
 folder = Path(tempfile.mkdtemp(prefix='safetylens-real-worker-'))
-base = 'http://127.0.0.1:8107'
+base = os.environ.get('SAFETYLENS_E2E_BACKEND', 'http://127.0.0.1:8107')
 started = time.perf_counter()
 with httpx.Client(base_url=base, timeout=30) as client:
     response = client.post('/api/auth/login', json={
-        'username':'qa-admin','password':os.environ['SAFETYLENS_E2E_PASSWORD']})
+        'username':os.environ.get('SAFETYLENS_E2E_USERNAME','qa-admin'),'password':os.environ['SAFETYLENS_E2E_PASSWORD']})
     response.raise_for_status()
     client.headers['X-CSRF-Token'] = response.json()['data']['csrf_token']
     # Configure the already registered, explicitly device-scoped test camera.
