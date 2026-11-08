@@ -482,6 +482,8 @@ export function VideoAnalysisWorkspace({
               <span className="text-foreground">
                 {analysis?.analysisMode === "configured_demo"
                   ? "Configured PPE Demo · Human verification required"
+                  : analysis?.analysisMode === "local_cv"
+                    ? "Local computer vision · Human verification required"
                   : analysis && !analysis.isDemo
                     ? "Multimodal analysis · Human verification required"
                     : "Demo AI analysis · Human verification required"}

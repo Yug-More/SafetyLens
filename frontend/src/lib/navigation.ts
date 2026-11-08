@@ -17,7 +17,11 @@ export interface NavItem {
 
 export const navigationItems: NavItem[] = [
   { title: "Overview", href: "/", icon: LayoutDashboard },
-  { title: "Live Monitor", href: "/monitor", icon: Monitor },
+  { title: "Camera Operations", href: "/camera-operations", icon: Monitor },
+  { title: "Cameras & Zones", href: "/cameras", icon: Monitor },
+  { title: "Safety Analytics", href: "/analytics", icon: BarChart3 },
+  { title: "PPE Review", href: "/ppe", icon: AlertTriangle },
+  { title: "Recorded Evidence", href: "/monitor", icon: Monitor },
   { title: "Incidents", href: "/incidents", icon: AlertTriangle },
   { title: "Procedures", href: "/procedures", icon: FileText },
   { title: "Reports", href: "/reports", icon: BarChart3 },

@@ -1,5 +1,6 @@
 "use client";
 
+import { AuthBoundary } from "@/components/AuthBoundary";
 import type { ReactNode } from "react";
 import { AppSidebar } from "@/components/AppSidebar";
 import { TopNavigation } from "@/components/TopNavigation";
@@ -10,7 +11,7 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   return (
-    <div className="flex min-h-screen bg-background text-foreground">
+    <AuthBoundary><div className="flex min-h-screen bg-background text-foreground">
       <div className="hidden lg:block">
         <div className="sticky top-0 h-screen">
           <AppSidebar />
@@ -23,6 +24,6 @@ export function AppShell({ children }: AppShellProps) {
           {children}
         </main>
       </div>
-    </div>
+    </div></AuthBoundary>
   );
 }
