@@ -92,7 +92,7 @@ function OperatorNotificationAlert({
         </div>
       </div>
       <div className="flex shrink-0 flex-wrap items-center gap-2">
-        <Button size="sm" render={<Link href={reviewHref} />}>
+        <Button size="sm" nativeButton={false} render={<Link href={reviewHref} />}>
           Review Incident
         </Button>
         {onDismiss ? (

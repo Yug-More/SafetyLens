@@ -133,6 +133,8 @@ export function CameraManagement({ monitor = false }: { monitor?: boolean }) {
             ...(form.get("vest") === "on" ? ["high_visibility_vest"] : []),
           ],
           sample_fps: Number(form.get("fps")),
+          pose_region: String(form.get("pose_region") ?? "").trim()
+            ? String(form.get("pose_region")).split(",").map(Number) : null,
           confidence_threshold: Number(form.get("confidence")),
           pre_event_seconds: Number(form.get("pre")),
           post_event_seconds: Number(form.get("post")),
@@ -370,6 +372,13 @@ export function CameraManagement({ monitor = false }: { monitor?: boolean }) {
                 placeholder="Index, path or stream URL"
               />
             </label>
+            <div className="text-sm">
+              <label htmlFor="pose-region">Pose region (normalized x1,y1,x2,y2)</label>
+              <Input id="pose-region" name="pose_region" aria-describedby="pose-region-help"
+                defaultValue={editing?.policy.pose_region?.join(",") ?? ""}
+                placeholder="Blank: full frame; RGB right panel: 0.5,0,1,1" />
+              <p id="pose-region-help" className="text-xs text-muted-foreground">Calibrate only for a known camera layout. Evidence retains the full frame.</p>
+            </div>
             {[
               [
                 "fps",

@@ -2,9 +2,10 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const nextConfig: NextConfig = {
-  webpack(config, { dev }) {
+  output: "standalone",
+  webpack(config) {
     // Browser verification can run on storage-constrained development machines.
-    if (dev && process.env.SAFETYLENS_DISABLE_BUILD_CACHE === "true") config.cache = false;
+    if (process.env.SAFETYLENS_DISABLE_BUILD_CACHE === "true") config.cache = false;
     return config;
   },
   turbopack: {
