@@ -100,9 +100,12 @@ def evaluate(manifest_path, model_manifest, output):
             rows.append(image)
     if not rows:
         raise ValueError("No held-out images supplied")
-    detector = OnnxPpeDetector(
-        model_manifest, threshold=manifest.get("prediction_threshold", 0.05)
-    )
+    model_spec=json.loads(Path(model_manifest).read_text())
+    detector_class=OnnxPpeDetector
+    if model_spec.get("architecture")=="gear_guard_net":
+        from .gear_guard import GearGuardDetector
+        detector_class=GearGuardDetector
+    detector = detector_class(model_manifest, threshold=manifest.get("prediction_threshold", 0.05))
     samples = []
     started = perf_counter()
     for row in rows:
@@ -112,9 +115,11 @@ def evaluate(manifest_path, model_manifest, output):
         frame = cv2.imread(str(path))
         if frame is None:
             raise ValueError("Unreadable test image")
+        inference_started=perf_counter()
         predictions = [x.__dict__ for x in detector.detect(frame)]
+        inference_seconds=perf_counter()-inference_started
         samples.append(
-            {"id": row["id"], "ground_truth": row["boxes"], "predictions": predictions}
+            {"id": row["id"], "ground_truth": row["boxes"], "predictions": predictions, "inference_decode_seconds":inference_seconds}
         )
     metrics = {}
     for label in CLASSES:
@@ -132,6 +137,7 @@ def evaluate(manifest_path, model_manifest, output):
         "model": detector.manifest,
         "manifest_sha256": hashlib.sha256(Path(manifest_path).read_bytes()).hexdigest(),
         "images": len(rows),
+        "supported_classes": sorted(set(detector.classes.values())),
         "prediction_threshold": detector.threshold,
         "metrics": metrics,
         "map_50_95": sum(available) / len(available) if available else None,

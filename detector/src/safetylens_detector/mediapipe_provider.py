@@ -65,6 +65,7 @@ class MediaPipePoseProvider:
         min_presence_confidence: float = 0.5,
         min_tracking_confidence: float = 0.5,
         region: tuple[float, float, float, float] | None = None,
+        num_poses: int = 1,
     ) -> None:
         try:
             import mediapipe as mp
@@ -81,6 +82,8 @@ class MediaPipePoseProvider:
             x1, y1, x2, y2 = region
             if not (0 <= x1 < x2 <= 1 and 0 <= y1 < y2 <= 1):
                 raise ValueError("Pose region must be normalized nonempty xyxy")
+        if not 1 <= num_poses <= 4:
+            raise ValueError("num_poses must be between one and four")
         self.region = region
         self._mp = mp
         options = mp.tasks.vision.PoseLandmarkerOptions(
@@ -89,7 +92,7 @@ class MediaPipePoseProvider:
                 delegate=mp.tasks.BaseOptions.Delegate.CPU,
             ),
             running_mode=mp.tasks.vision.RunningMode.VIDEO,
-            num_poses=1,
+            num_poses=num_poses,
             min_pose_detection_confidence=min_detection_confidence,
             min_pose_presence_confidence=min_presence_confidence,
             min_tracking_confidence=min_tracking_confidence,
@@ -98,14 +101,14 @@ class MediaPipePoseProvider:
         self._landmarker = mp.tasks.vision.PoseLandmarker.create_from_options(options)
         self._last_timestamp_ms = -1
 
-    def detect(
+    def detect_many(
         self,
         frame_bgr: Any,
         *,
         timestamp_seconds: float,
         source_id: str,
         track_id: str = "person-1",
-    ) -> PoseObservation | None:
+    ) -> list[PoseObservation]:
         import cv2
 
         if self.region is not None:
@@ -122,15 +125,15 @@ class MediaPipePoseProvider:
         rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
         image = self._mp.Image(image_format=self._mp.ImageFormat.SRGB, data=rgb)
         result = self._landmarker.detect_for_video(image, timestamp_ms)
-        if not result.pose_landmarks:
-            return None
-        return landmarks_to_observation(
-            result.pose_landmarks[0],
-            timestamp_seconds=timestamp_seconds,
-            source_id=source_id,
-            track_id=track_id,
-            frame_aspect_ratio=frame_bgr.shape[1] / frame_bgr.shape[0],
-        )
+        return [landmarks_to_observation(
+            raw, timestamp_seconds=timestamp_seconds, source_id=source_id,
+            track_id=f"unlinked-{i}", frame_aspect_ratio=frame_bgr.shape[1]/frame_bgr.shape[0],
+        ) for i,raw in enumerate(result.pose_landmarks)]
+
+    def detect(self, frame_bgr, *, timestamp_seconds, source_id, track_id="person-1"):
+        from dataclasses import replace
+        observations = self.detect_many(frame_bgr, timestamp_seconds=timestamp_seconds, source_id=source_id)
+        return replace(observations[0],track_id=track_id) if observations else None
 
     def close(self) -> None:
         self._landmarker.close()

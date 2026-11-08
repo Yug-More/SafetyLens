@@ -79,9 +79,10 @@ def evaluate_manifest(
             sample_fps=sample_fps,
             config=cfg,
             pose_region=row.get("pose_region"),
+            maximum_pose_people=4 if profile == "tracked" else 1,
         )
         events = list(result.events)
-        if profile == "conservative":
+        if profile in {"conservative", "tracked"}:
             events = [e for e in events if "rapid_drop" in e.trigger_signals]
         positive = row["label"] == "fall"
         predicted = bool(events)
@@ -171,7 +172,7 @@ def main():
     p.add_argument("--model", required=True, type=Path)
     p.add_argument("--output", required=True, type=Path)
     p.add_argument("--sample-fps", default=12, type=float)
-    p.add_argument("--profile", choices=["legacy", "conservative"], default="legacy")
+    p.add_argument("--profile", choices=["legacy", "conservative", "tracked"], default="legacy")
     a = p.parse_args()
     out = evaluate_manifest(
         a.manifest, a.model, a.output, sample_fps=a.sample_fps, profile=a.profile

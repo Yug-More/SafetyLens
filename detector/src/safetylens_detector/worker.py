@@ -83,8 +83,8 @@ def run_camera(
                     stop.wait(5)
                     continue
                 policy = config["policy"]
-                if "ppe" in policy.get("detectors", []) and not ppe_manifest:
-                    raise RuntimeError("PPE policy requires a validated model manifest")
+                if "ppe" in policy.get("detectors", []):
+                    raise RuntimeError("PPE deployment excluded; use offline evaluation until model validation and licensing are resolved")
                 fps = policy.get("sample_fps", 8)
                 source = config["source"]
                 kind = config["source_kind"]
@@ -133,11 +133,13 @@ def run_camera(
 
                 notified = set()
                 missing_since = None
+                from .tracking import PoseTracker
+                tracker = PoseTracker() if policy.get("maximum_pose_people",1)>1 else None
                 frame_number = 0
                 connection_started = time.monotonic()
                 next_sample = connection_started
                 last_config_check = time.monotonic()
-                with MediaPipePoseProvider(pose_model, region=policy.get("pose_region")) as pose:
+                with MediaPipePoseProvider(pose_model, region=policy.get("pose_region"), num_poses=policy.get("maximum_pose_people",1)) as pose:
                     while not stop.is_set():
                         if (
                             max_seconds is not None
@@ -209,25 +211,34 @@ def run_camera(
                         if kind != "simulator" and "fall" in policy.get(
                             "detectors", []
                         ):
-                            observation = pose.detect(
-                                frame, timestamp_seconds=timestamp, source_id=camera_id
-                            )
-                            if observation is not None:
-                                missing_since = None
-                                result = engine.process(observation)
+                            if tracker:
+                                observations = pose.detect_many(frame,timestamp_seconds=timestamp,source_id=camera_id)
+                                linked, expired, _ = tracker.update(timestamp,observations)
+                                for track_id in expired:
+                                    engine.forget_track(track_id)
+                                results = [engine.process(o) for o in linked]
                             else:
-                                missing_since = (
-                                    timestamp
-                                    if missing_since is None
-                                    else missing_since
+                                observation = pose.detect(
+                                    frame, timestamp_seconds=timestamp, source_id=camera_id
                                 )
-                                result = (
-                                    engine.mark_missing("person-1")
-                                    if timestamp - missing_since >= 0.5
-                                    else None
-                                )
-                            if result and result.event:
-                                current.append(result.event.to_dict())
+                                if observation is not None:
+                                    missing_since = None
+                                    result = engine.process(observation)
+                                else:
+                                    missing_since = (
+                                        timestamp
+                                        if missing_since is None
+                                        else missing_since
+                                    )
+                                    result = (
+                                        engine.mark_missing("person-1")
+                                        if timestamp - missing_since >= 0.5
+                                        else None
+                                    )
+                                results = [result] if result else []
+                            for result in results:
+                                if result.event:
+                                    current.append(result.event.to_dict())
                         preview = frame
                         if ppe and kind != "simulator":
                             boxes = ppe.detect(frame)
@@ -346,6 +357,12 @@ def run_camera(
             pass
         stop.set()
         sender.join(timeout=6)
+        elapsed=time.monotonic()-started
+        with lock:
+            summary={k:v for k,v in state.items() if k != "preview"}
+        summary.update(kind="camera_worker_summary",camera_id=camera_id,wall_seconds=elapsed,
+                       average_sampled_fps=summary["frames_processed"]/max(elapsed,.001))
+        print(json.dumps(summary,allow_nan=False),flush=True)
 
 
 def main():
