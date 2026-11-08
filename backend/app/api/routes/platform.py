@@ -43,6 +43,16 @@ class DetectionPolicy(BaseModel):
     )
     confidence_threshold: float = Field(default=0.5, ge=0.05, le=0.99)
     sample_fps: float = Field(default=8, ge=1, le=30)
+    pose_region: tuple[float, float, float, float] | None = None
+
+    @field_validator("pose_region")
+    @classmethod
+    def valid_region(cls, value):
+        if value is not None:
+            x1, y1, x2, y2 = value
+            if not (0 <= x1 < x2 <= 1 and 0 <= y1 < y2 <= 1):
+                raise ValueError("pose_region must be normalized nonempty xyxy")
+        return value
     pre_event_seconds: float = Field(default=3, ge=0.5, le=30)
     post_event_seconds: float = Field(default=3, ge=0.5, le=30)
     retention_days: int = Field(default=30, ge=1, le=3650)

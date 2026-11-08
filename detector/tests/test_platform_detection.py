@@ -175,3 +175,27 @@ class BenchmarkMathTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class ConfirmationRegressionTests(unittest.TestCase):
+    def test_descent_during_confirmation_is_retained(self):
+        from safetylens_detector.models import DetectorConfig, PoseMetrics
+        from safetylens_detector.state_machine import FallStateMachine
+        from test_detector import pose
+        engine = FallStateMachine(DetectorConfig(enable_overhead_displacement=False))
+        event = None
+        for t, velocity in [(0,0), (.1,0), (.2,1.0), (.7,0)]:
+            _, _, event, _ = engine.process(pose(t, horizontal=True), PoseMetrics(
+                t,.99,.7,80,2,velocity,.3))
+        self.assertIsNotNone(event)
+        self.assertIn('rapid_drop', event.trigger_signals)
+
+    def test_eof_retains_partial_evidence_once(self):
+        from safetylens_detector.evidence_buffer import EvidenceWindowBuffer
+        buffer = EvidenceWindowBuffer(pre_event_seconds=2)
+        buffer.add(0, 'a')
+        buffer.start_capture(event_id='late', event_timestamp_seconds=0, post_event_seconds=3)
+        buffer.add(.5, 'b')
+        self.assertEqual(buffer.finish_pending(), ('late',))
+        self.assertEqual(buffer.finish_pending(), ())
+        self.assertEqual([x.frame for x in buffer.pop_completed().frames], ['a','b'])
+        self.assertIsNone(buffer.pop_completed())

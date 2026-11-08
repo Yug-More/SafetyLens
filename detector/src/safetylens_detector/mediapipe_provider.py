@@ -64,6 +64,7 @@ class MediaPipePoseProvider:
         min_detection_confidence: float = 0.5,
         min_presence_confidence: float = 0.5,
         min_tracking_confidence: float = 0.5,
+        region: tuple[float, float, float, float] | None = None,
     ) -> None:
         try:
             import mediapipe as mp
@@ -76,6 +77,11 @@ class MediaPipePoseProvider:
         if not model.is_file():
             raise FileNotFoundError(f"Pose model was not found: {model}")
 
+        if region is not None:
+            x1, y1, x2, y2 = region
+            if not (0 <= x1 < x2 <= 1 and 0 <= y1 < y2 <= 1):
+                raise ValueError("Pose region must be normalized nonempty xyxy")
+        self.region = region
         self._mp = mp
         options = mp.tasks.vision.PoseLandmarkerOptions(
             base_options=mp.tasks.BaseOptions(
@@ -102,6 +108,12 @@ class MediaPipePoseProvider:
     ) -> PoseObservation | None:
         import cv2
 
+        if self.region is not None:
+            h, w = frame_bgr.shape[:2]
+            x1, y1, x2, y2 = self.region
+            frame_bgr = frame_bgr[round(y1*h):round(y2*h), round(x1*w):round(x2*w)]
+            if not frame_bgr.size:
+                raise ValueError("Pose region is smaller than a pixel")
         timestamp_ms = round(timestamp_seconds * 1000)
         if timestamp_ms <= self._last_timestamp_ms:
             timestamp_ms = self._last_timestamp_ms + 1

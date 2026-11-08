@@ -142,6 +142,7 @@ class FallStateMachine:
                 self._clear_candidate(track)
 
         elif track.state == DetectorState.CONFIRMING:
+            track.rapid_drop_seen = track.rapid_drop_seen or rapid_drop
             if upright:
                 track.state = DetectorState.MONITORING
                 self._clear_candidate(track)

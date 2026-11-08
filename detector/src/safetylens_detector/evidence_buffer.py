@@ -95,6 +95,15 @@ class EvidenceWindowBuffer(Generic[FrameT]):
         self._active[event_id] = capture
         return capture
 
+    def finish_pending(self) -> tuple[str, ...]:
+        """Preserve available frames at EOF/disconnection; caller must label truncation."""
+        ids = tuple(self._active)
+        for capture in self._active.values():
+            capture.completed = True
+            self._completed.append(capture)
+        self._active.clear()
+        return ids
+
     def pop_completed(self) -> EvidenceCapture[FrameT] | None:
         return self._completed.popleft() if self._completed else None
 

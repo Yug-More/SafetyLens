@@ -78,6 +78,7 @@ def evaluate_manifest(
             model_path,
             sample_fps=sample_fps,
             config=cfg,
+            pose_region=row.get("pose_region"),
         )
         events = list(result.events)
         if profile == "conservative":

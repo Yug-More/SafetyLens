@@ -48,6 +48,7 @@ def analyze_video(
     missing_pose_grace_seconds: float = 0.50,
     source_id: str | None = None,
     config: DetectorConfig | None = None,
+    pose_region: tuple[float, float, float, float] | None = None,
 ) -> VideoAnalysis:
     if sample_fps <= 0:
         raise ValueError("sample_fps must be positive.")
@@ -83,7 +84,7 @@ def analyze_video(
     started = perf_counter()
 
     try:
-        with MediaPipePoseProvider(model_path) as provider:
+        with MediaPipePoseProvider(model_path, **({"region": pose_region} if pose_region else {})) as provider:
             while True:
                 ok, frame = capture.read()
                 if not ok or frame is None:

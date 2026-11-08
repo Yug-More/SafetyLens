@@ -17,7 +17,7 @@ from .enhanced import EnhancedDetectorEngine
 from .evidence_buffer import EvidenceWindowBuffer
 from .mediapipe_provider import MediaPipePoseProvider
 from .live import _write_evidence_clip
-from .ppe import OnnxPpeDetector, PpeTemporalMonitor, associate_ppe
+from .ppe import OnnxPpeDetector, PpeTemporalMonitor, associate_ppe, draw_ppe_overlay
 
 
 def run_camera(
@@ -63,6 +63,8 @@ def run_camera(
                     pass  # Outbox preserves evidence; transport failures do not block inference.
                 stop.wait(2)
 
+    buffer = None
+    events = {}
     sender = threading.Thread(target=transport, daemon=True)
     sender.start()
     try:
@@ -107,13 +109,35 @@ def run_camera(
                     maximum_frames=round(fps * 32),
                 )
                 events = {}
+                def enqueue_completed():
+                    while completed := buffer.pop_completed():
+                        path = _write_evidence_clip(
+                            cv2, completed, output_directory=root / "clips", fps=fps
+                        )
+                        offset = (
+                            sum(
+                                x.timestamp_seconds
+                                < completed.event_timestamp_seconds
+                                for x in completed.frames
+                            )
+                            / fps
+                        )
+                        outbox.enqueue(
+                            events.pop(completed.event_id),
+                            path,
+                            camera_id=camera_id,
+                            location=config["location"],
+                            clip_event_offset_seconds=offset,
+                        )
+                        path.unlink()  # Durable outbox owns its copy; no unbounded duplicate storage.
+
                 notified = set()
                 missing_since = None
                 frame_number = 0
                 connection_started = time.monotonic()
                 next_sample = connection_started
                 last_config_check = time.monotonic()
-                with MediaPipePoseProvider(pose_model) as pose:
+                with MediaPipePoseProvider(pose_model, region=policy.get("pose_region")) as pose:
                     while not stop.is_set():
                         if (
                             max_seconds is not None
@@ -136,6 +160,15 @@ def run_camera(
                         else:
                             ok, frame = capture.read()
                             if not ok or frame is None:
+                                for event_id in buffer.finish_pending():
+                                    events[event_id].setdefault("limitations", []).append(
+                                        "post_event_window_truncated_at_source_end"
+                                    )
+                                enqueue_completed()
+                                if kind == "replay":
+                                    with lock:
+                                        state["status"] = "offline"
+                                    return  # A finite replay is consumed once; do not emit new UUIDs forever.
                                 raise RuntimeError("Frame unavailable")
                         now = time.monotonic()
                         if (
@@ -167,7 +200,10 @@ def run_camera(
                         if kind != "replay" and now < next_sample:
                             stop.wait(min(0.01, next_sample - now))
                             continue
-                        next_sample = connection_started + timestamp + 1 / fps
+                        if kind == "replay":
+                            next_sample += 1 / fps
+                        else:
+                            next_sample = connection_started + timestamp + 1 / fps
                         buffer.add(timestamp, frame.copy())
                         current = []
                         if kind != "simulator" and "fall" in policy.get(
@@ -192,15 +228,18 @@ def run_camera(
                                 )
                             if result and result.event:
                                 current.append(result.event.to_dict())
+                        preview = frame
                         if ppe and kind != "simulator":
+                            boxes = ppe.detect(frame)
                             people = monitor.process(
                                 timestamp,
                                 associate_ppe(
-                                    ppe.detect(frame),
+                                    boxes,
                                     policy.get("required_ppe", []),
                                     threshold=policy.get("confidence_threshold", 0.5),
                                 ),
                             )
+                            preview = draw_ppe_overlay(frame, boxes, people)
                             for person in people:
                                 if (
                                     person["review_required"]
@@ -245,28 +284,9 @@ def run_camera(
                                 event_timestamp_seconds=timestamp,
                                 post_event_seconds=policy.get("post_event_seconds", 3),
                             )
-                        while completed := buffer.pop_completed():
-                            path = _write_evidence_clip(
-                                cv2, completed, output_directory=root / "clips", fps=fps
-                            )
-                            offset = (
-                                sum(
-                                    x.timestamp_seconds
-                                    < completed.event_timestamp_seconds
-                                    for x in completed.frames
-                                )
-                                / fps
-                            )
-                            outbox.enqueue(
-                                events.pop(completed.event_id),
-                                path,
-                                camera_id=camera_id,
-                                location=config["location"],
-                                clip_event_offset_seconds=offset,
-                            )
-                            path.unlink()  # Durable outbox owns its copy; no unbounded duplicate storage.
+                        enqueue_completed()
                         ok, jpeg = cv2.imencode(
-                            ".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, 70]
+                            ".jpg", preview, [cv2.IMWRITE_JPEG_QUALITY, 70]
                         )
                         with lock:
                             state["status"] = "online"
@@ -311,6 +331,19 @@ def run_camera(
                 if capture:
                     capture.release()
     finally:
+        if buffer is not None:
+            try:
+                for event_id in buffer.finish_pending():
+                    events[event_id].setdefault("limitations", []).append("post_event_window_truncated_at_worker_shutdown")
+                enqueue_completed()
+            except (BufferError, OSError, ValueError):
+                pass  # Original clip remains on disk if durable capacity is exhausted.
+        # Short replays may finish before the periodic transport tick. Flush once
+        # synchronously; failures remain durable for delivery CLI/restart recovery.
+        try:
+            outbox.flush_once(backend, token)
+        except (httpx.HTTPError, ValueError, BufferError):
+            pass
         stop.set()
         sender.join(timeout=6)
 

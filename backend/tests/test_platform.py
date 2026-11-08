@@ -312,3 +312,11 @@ def test_retention_preserves_open_evidence_and_audit(client, db_session, tmp_pat
     db_session.commit()
     assert result["removed_files"] > 0 and video.status == "expired"
     assert len(db_session.scalars(select(AuditEvent)).all()) == before
+
+
+def test_pose_region_policy_validation():
+    from app.api.routes.platform import DetectionPolicy
+    assert DetectionPolicy(pose_region=[.5, 0, 1, 1]).pose_region == (.5, 0, 1, 1)
+    for value in ([1, 0, .5, 1], [0, 0, float('nan'), 1], [0, 0, 2, 1]):
+        with pytest.raises(ValueError):
+            DetectionPolicy(pose_region=value)
