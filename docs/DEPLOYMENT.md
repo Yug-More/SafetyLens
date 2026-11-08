@@ -36,3 +36,7 @@ Browser public API variables are compiled into frontend builds. Rebuild for a di
 ## Detector
 
 See CAMERA_PIPELINE.md and DETECTION_EVALUATION.md. Model weights/data are external. CPU inference was exercised on the Mac host; that runtime still required OS graphics context. Headless Linux camera/GPU support is not claimed as verified. The worker’s camera cap and bounded outbox control resources; production capacity must be benchmarked on actual cameras/hardware.
+
+## Continuation verification supersedes earlier environment limitation
+
+Docker Desktop was subsequently started. The backend image and actual PostgreSQL 16 migrations/authenticated CRUD/restart persistence passed. The Linux npm lockfile failure was reproduced and repaired; its clean-install dry-run passed. Full frontend-container runtime and the Compose PostgreSQL 17 profile remain unverified because only approximately 0.2 GiB of host disk remained. Read DEPLOYMENT_VERIFICATION.md for exact observations, commands and the distinction between implemented container configuration and tested runtime.

@@ -1,5 +1,7 @@
 # Release verification
 
+Historical enhancement report at `9c9315c`. See [FINAL_RELEASE_REPORT.md](FINAL_RELEASE_REPORT.md) for the subsequent product reliability work, new detection evaluation and actual Docker/PostgreSQL16 verification.
+
 Date: November 7, 2026. Base commit: `178f0f8a77f2f6c664822fe6ef09f62ff6342f15`. Branch: `feature/safetylens-platform-enhancement`.
 
 This file records the actual verification performed; final result summary is updated after release checks complete.

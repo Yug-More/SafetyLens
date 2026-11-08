@@ -1,0 +1,11 @@
+{
+  "stats": {
+    "startTime": "2026-11-08T01:12:44.679Z",
+    "duration": 130960.88200000001,
+    "expected": 7,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "root_cause": "Exact accessible label included nested help text; fixed by separate labeled input and aria-describedby. Seven other cases passed; failure was not suppressed."
+}

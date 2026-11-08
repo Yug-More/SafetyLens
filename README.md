@@ -4,7 +4,66 @@
 
 SafetyLens connects local camera observations, preserved incident evidence, optional multimodal investigation, company procedures, explicit human approval, and traceable simulated response. It is an experimental applied-AI platform, not a certified safety or medical system.
 
+**🏆 Historical team achievement: SafetyLens secured 1st place among 384 participants at The Executable World Hackathon, earning a $25,000 prize (team-reported).** See [the contributor announcement](https://www.linkedin.com/posts/sean-aminov_hackathon-firstplace-artificialintelligence-activity-7507868872797151232-7QRY) and [evidence qualifications](docs/README_RESTORATION.md).
+
 The original hackathon implementation and contributor history are preserved. Team members reported first place at The Executable World Hackathon; competition recognition does not validate detector performance. See [historical project documentation](docs/HISTORICAL_README.md) and [historical baseline](docs/HISTORICAL_BASELINE.md).
+
+## The Problem
+
+Most workplaces already have security cameras, but these cameras primarily record footage for review after an incident.
+
+When an emergency occurs:
+
+- Someone must notice the correct camera at the correct time.
+- Relevant footage must be located and preserved manually.
+- Employees must search for the appropriate safety procedure.
+- Supervisors must coordinate the response across disconnected tools.
+- Incident reports must be prepared afterward.
+
+These delays can increase operational risk, response time, and administrative cost.
+
+## Our Solution
+
+SafetyLens connects camera evidence, multimodal reasoning, company procedures, human approval, and incident reporting into one continuous workflow:
+
+**camera event → AI investigation → operator alert → human review → policy-grounded action → auditable report**
+
+The system automates investigation and response preparation while preserving human authority over incident confirmation and consequential actions.
+
+---
+
+
+## Live Sensing Capabilities
+
+The original staged demonstration continuously senses body posture and movement from a live camera feed. Its temporal detector distinguishes normal activity from a sustained person-down event, giving the operator a simple green or red status while preserving the evidence around an incident.
+
+| Normal activity | Staged fall alert |
+| --- | --- |
+| ![SafetyLens tracking a standing person with a green normal status](docs/assets/demo/normal-standing.png) | ![SafetyLens showing a red fall-detected alert with the person on the floor](docs/assets/demo/fall-detected.png) |
+| Full-body pose tracking follows the person while the detector reports **NORMAL**. | A sustained fall changes the tracked state to **FALL DETECTED** and calls for human review. |
+
+---
+
+
+## Historical hackathon demonstration
+
+The primary dashboard scenario is a possible person-down event assigned to the seeded Camera 03 — Warehouse Aisle. The live screenshots above show a staged demonstration in a meeting room.
+
+1. A recorded Camera 03 event is submitted to SafetyLens.
+2. The video is automatically prepared and analyzed.
+3. SafetyLens identifies a possible person-down event.
+4. The safety operator receives an immediate alert.
+5. The Incident Command Center opens the correct video and evidence.
+6. The relevant person-down procedure is prepared.
+7. The operator confirms or rejects the incident.
+8. Selected actions require explicit approval.
+9. Approved actions execute in simulation.
+10. SafetyLens records the audit trail and generates a PDF report.
+
+The repository also includes a PPE review workflow with camera-specific requirements, configured demo observations, and provider-assisted analysis. It is separate from the local fall detector and is not a continuously running PPE detection model. Fire, smoke, and restricted-zone detection remain future work.
+
+---
+
 
 ## Enhanced platform
 
@@ -22,9 +81,9 @@ The original hackathon implementation and contributor history are preserved. Tea
 
 ## Actual detection evidence
 
-A prespecified external check on **12 UR Fall camera-0 clips** found **2/6 falls detected** in both profiles. Legacy produced **1/6 negative-video alerts**; conservative produced **0/6**. This is a small video-presence check with unknown subject identities and no onset labels, not industrial validation. Low recall is an unresolved limitation. No thresholds were tuned on these test clips.
+The original **12-clip** external check detected 2/6 falls; those results remain preserved. Diagnosing its misses exposed a composite depth/RGB input error and a temporal-state bug. After freezing explicit RGB calibration and the state fix, **20 additional clips** gave TP8/FN2/FP2/TN8 (precision .8, recall .8, F1 .8), compared with TP5/FN5/FP2/TN8 (F1 .5882) for the preserved pre-change configuration on the same clips. No thresholds were lowered or tuned on the new set. These are small video-presence measurements with unknown subject separation and no independently annotated onsets.
 
-Raw predictions, parameters, model/data hashes, processing timings and confidence intervals are in [DETECTION_EVALUATION.md](docs/DETECTION_EVALUATION.md). No accuracy, response-time reduction, uptime or adoption number is invented. Scripted demo confidence and historical dashboard values are not empirical metrics.
+The candidate still falsely alerts on two intentional couch-reclining clips and misses two short forward falls. It is **not reliable enough for unattended workplace safety**. A real 24-image labeled PPE evaluation found poor performance (macro AP50:95 .003017); the reference model is excluded from deployment, and its license conflict remains unresolved. [Final detection validation](docs/DETECTION_VALIDATION.md) preserves raw predictions, hashes, uncertainty and negative findings. No operational adoption, certified safety accuracy or end-to-end latency is invented.
 
 ## Architecture
 
@@ -40,7 +99,7 @@ Use Python 3.12 and Node 22+. Keep existing private environment files unchanged.
 
 ```sh
 python3.12 -m venv backend/.venv
-uv pip sync --python backend/.venv/bin/python backend/requirements.lock.txt
+backend/.venv/bin/python -m pip install -r backend/requirements.lock.txt
 cd backend
 # Create .env from .env.example only on first setup.
 .venv/bin/python -m alembic -c alembic.ini upgrade head
@@ -49,7 +108,7 @@ cd backend
 .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-In another terminal: `cd frontend && npm ci && npm run dev`. Open [localhost:3000](http://localhost:3000). There is no default password. API/frontend origins and hostnames must match the configured allowed origins for cookie authentication.
+In another terminal: `cd frontend && npm ci && npm run dev`. Open [localhost:3000](http://localhost:3000). On first setup copy `frontend/.env.example` to `.env.local` if no private configuration exists. The browser-facing API defaults to `http://localhost:8000` even when uvicorn binds `127.0.0.1`; do not mix browser hostnames because strict cookies require the same site. There is no default password. API/frontend origins and hostnames must match the configured allowed origins for cookie authentication.
 
 ## Cameras and live detection
 
@@ -78,7 +137,7 @@ Browser tests generate isolated credentials/databases, exercise actual playback,
 
 ## Deployment and safeguards
 
-`docker compose up --build` is the local HTTP profile; bootstrap an administrator interactively. See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for production flags and the optional PostgreSQL path. Docker/PostgreSQL runtime was not verified here because the daemon was unavailable.
+`docker compose up --build` is the local HTTP profile; bootstrap an administrator interactively. See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for production flags and the optional PostgreSQL path. The backend image and PostgreSQL 16 migration/authentication/restart persistence were verified. Full frontend-image runtime and the Compose PostgreSQL 17 profile remain unverified because of storage limits; see [deployment verification](docs/DEPLOYMENT_VERIFICATION.md).
 
 Never place secrets in NEXT_PUBLIC variables or Git. Evidence/report access is authenticated; private camera sources are encrypted. Retention runs are explicit and scoped. No facial recognition, identity inference or employee productivity scoring. All consequential action execution remains simulated; no emergency services, messaging platform or physical equipment is contacted.
 
@@ -88,8 +147,28 @@ Low measured recall; no disjoint PPE benchmark; unresolved reference-model licen
 
 ## Team and historical work
 
-- Yug More — backend, primary application workflows and integration (historical team plan).
-- Sean Aminov — original pose/video detector, temporal algorithm and detector evidence work.
-- Abhinav GS — original demo support, guide and manual QA.
+- **Yug More** — [GitHub](https://github.com/Yug-More) — backend, primary application workflows and integration (historical team plan).
+- **Sean Aminov** — [GitHub](https://github.com/SeanAminov) — original pose/video detector, temporal algorithm and detector evidence work.
+- **Abhinav GS** — [GitHub](https://github.com/Abhinavgs1) — original demo support, guide and manual QA.
 
 Enhancement commits preserve existing authorship and do not reattribute earlier contributions. Original screenshots remain under `docs/assets/demo/`; original screens remain under `/demo`, `/demo/incidents`, `/demo/settings`.
+
+## Enhanced application screenshots
+
+Actual local browser-test captures, with seeded demonstration records clearly separated from real detector validation.
+
+![Enhanced operations overview](docs/assets/enhanced/overview-desktop.png)
+
+![Enhanced incident response workflow](docs/assets/enhanced/response-workflow-desktop.png)
+
+## Original local live-preview demonstration
+
+The original separate pose-preview process remains available, preserving the hackathon demonstration:
+
+```sh
+PYTHONPATH=detector/src detector/.venv/bin/python -m safetylens_detector.live --source 0 --model /path/pose_landmarker_lite.task --mirror
+```
+
+The original demo used a Camo phone at camera index 1; indices and permissions vary. Keep the person and floor visible; press Q to stop. Local preview alone does not imply backend delivery. The enhanced worker connects delivery automatically. Historical PPE/demo statements above describe the hackathon configuration; current ONNX PPE remains a separately evaluated experimental adapter.
+
+For the actual recorded-video-to-report test, set `SAFETYLENS_REAL_CLIP` and `SAFETYLENS_POSE_MODEL` as described in [end-to-end verification](docs/END_TO_END_VERIFICATION.md). Without them the default browser fixture is explicitly synthetic. See [final release report](docs/FINAL_RELEASE_REPORT.md) for acceptance gates and unresolved blockers.

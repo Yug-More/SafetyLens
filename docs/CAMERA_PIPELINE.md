@@ -32,3 +32,9 @@ Device heartbeats and bounded JPEG snapshot uploads are authenticated and camera
 ## Retention
 
 Per-camera evidence periods are enforced by explicit administrator retention runs. Only media older than the policy and linked to resolved/dismissed/closed incidents is eligible. Open and unlinked media, metadata, reports and audit records are preserved. Preview expiration first in Settings. Evidence expiration is permanent and audited. This is not a legal retention policy.
+
+## Calibrated regions and replay recovery
+
+The policy now accepts `pose_region` as normalized `[x1,y1,x2,y2]`, editable in the camera form. Blank means full frame. Apply a region only to a known calibrated source; UR Fall composite depth/RGB clips use `[0.5,0,1,1]` to isolate RGB. Pose coordinates are relative to that region, while full raw evidence is preserved. No automatic selection of a favorable body region occurs.
+
+Finite replays now finish once at EOF, instead of restarting and producing new incident UUIDs. Pending windows finalize with explicit truncation limitations; a final delivery attempt handles short replays that finish before the transport tick. Fixed replay sampling now matches the offline evaluator's schedule. PPE preview overlays render actual detected boxes/association status; the reference model is excluded from deployment after poor labeled results and unresolved licensing. Continuous real-camera interruption/fleet testing remains outstanding.

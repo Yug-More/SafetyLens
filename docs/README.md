@@ -1,5 +1,7 @@
 # SafetyLens documentation
 
+Current continuation results: [final release report](FINAL_RELEASE_REPORT.md), [product audit](FINAL_PRODUCT_AUDIT.md), [README restoration](README_RESTORATION.md), [detection validation](DETECTION_VALIDATION.md), [actual end-to-end verification](END_TO_END_VERIFICATION.md), and [deployment verification](DEPLOYMENT_VERIFICATION.md).
+
 Start with the [project README](../README.md), [release verification](RELEASE_VERIFICATION.md), and [architecture](ARCHITECTURE.md).
 
 Current implementation guides: [camera pipeline](CAMERA_PIPELINE.md), [API](API.md), [security](SECURITY.md), [deployment](DEPLOYMENT.md), [testing](TESTING.md), [detection evaluation](DETECTION_EVALUATION.md), [model registry](MODEL_REGISTRY.md), and [changelog](CHANGELOG.md).

@@ -1,0 +1,32 @@
+{
+  "input_shape": [
+    1,
+    3,
+    640,
+    640
+  ],
+  "output_shape": [
+    1,
+    18,
+    8400
+  ],
+  "inference_and_decode_seconds": 0.9089453750057146,
+  "supported_boxes_at_0_5": 0,
+  "sample_sha256": "beffc2ee31d0b7b4c39a03f4bc0acb91978ceda1937023ff481e7095b925bffa",
+  "onnx_metadata": {
+    "description": "Ultralytics best model trained on ppe_dataset/data.yaml",
+    "names": "{0: 'Fall-Detected', 1: 'Gloves', 2: 'Goggles', 3: 'Hardhat', 4: 'Ladder', 5: 'Mask', 6: 'NO-Gloves', 7: 'NO-Goggles', 8: 'NO-Hardhat', 9: 'NO-Mask', 10: 'NO-Safety Vest', 11: 'Person', 12: 'Safety Cone', 13: 'Safety Vest'}",
+    "end2end": "False",
+    "task": "detect",
+    "license": "AGPL-3.0 License (https://ultralytics.com/license)",
+    "date": "2026-02-18T11:10:42.388292",
+    "batch": "1",
+    "version": "8.4.14",
+    "docs": "https://docs.ultralytics.com",
+    "author": "Ultralytics",
+    "stride": "32",
+    "imgsz": "[640, 640]",
+    "args": "{'batch': 1, 'fraction': 1.0, 'half': True, 'int8': False, 'dynamic': False, 'simplify': True, 'nms': False}",
+    "channels": "3"
+  }
+}

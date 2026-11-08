@@ -1,0 +1,325 @@
+{
+  "dataset": "UR Fall 07-16 camera0, frozen RGB-region candidate; no threshold tuning; subject unknown",
+  "samples": [
+    {
+      "id": "fall-07",
+      "path": "fall-07.mp4",
+      "sha256": "7dff29fad343856c2cc20c0bd1ab6b7ef749d75b916d75fc68cf0861793b39cd",
+      "label": "fall",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-07-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "fall-08",
+      "path": "fall-08.mp4",
+      "sha256": "365d74ac9651b7dc7d61571614d4195d1517047ec0133330b5328ed0fe13055a",
+      "label": "fall",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-08-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "fall-09",
+      "path": "fall-09.mp4",
+      "sha256": "28061e57e2daf23dd3cfc1a79d43800035035285b89170b7304a652d910f63e4",
+      "label": "fall",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-09-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "fall-10",
+      "path": "fall-10.mp4",
+      "sha256": "2e077041e7f929ce120fc4c4f2c1e7421b9826c52d5d776c7341c67cf125095b",
+      "label": "fall",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-10-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "fall-11",
+      "path": "fall-11.mp4",
+      "sha256": "d1274781ac2fb6f57d40b0337ab77573c882d06f86f5604073eb1568794382b4",
+      "label": "fall",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-11-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "fall-12",
+      "path": "fall-12.mp4",
+      "sha256": "e3f463e492ff3d3119c318c4b24796c98e673a66d311c7eaa827be9c80b93e78",
+      "label": "fall",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-12-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "fall-13",
+      "path": "fall-13.mp4",
+      "sha256": "172dee7c199de98348430713c5e8ad2c8be04ba38f7e6391c3c22047f968a024",
+      "label": "fall",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-13-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "fall-14",
+      "path": "fall-14.mp4",
+      "sha256": "3c38f85993855f27d0549c369f89fde0449be50152cb9cdc06e6ab11f66fe10b",
+      "label": "fall",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-14-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "fall-15",
+      "path": "fall-15.mp4",
+      "sha256": "85dd08909fb62efeb736ac159c595398521d8c70b7537663884dbd3b2dc583d9",
+      "label": "fall",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-15-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "fall-16",
+      "path": "fall-16.mp4",
+      "sha256": "0ef51830d8573303eb2e5d2ea897f7bcf619843e570fc84aba0cd3d3c8c9a0b2",
+      "label": "fall",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/fall-16-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "adl-07",
+      "path": "adl-07.mp4",
+      "sha256": "0b346e78321c0cdfd281a19f3f4fd9cb6d61ed27f4caa1a955ac182c5b66a954",
+      "label": "normal",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-07-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "adl-08",
+      "path": "adl-08.mp4",
+      "sha256": "85ae4a3c4539b1bcbb9542ae530f1c1b1ebc0c02124fa417d95f7944789dfa75",
+      "label": "normal",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-08-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "adl-09",
+      "path": "adl-09.mp4",
+      "sha256": "6a54b645ff4207cbcb22043f3ab84c22e14261e237418f2cb9ea23b1c8f39672",
+      "label": "normal",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-09-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "adl-10",
+      "path": "adl-10.mp4",
+      "sha256": "e8720d9d36f21c2e3222109b92d564ad3f1153927a9cf69dbd0eba0fcd003a23",
+      "label": "normal",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-10-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "adl-11",
+      "path": "adl-11.mp4",
+      "sha256": "c798947d701b303ded1ed2b799a1423056564a71fe208639e517adc56ddfad7e",
+      "label": "normal",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-11-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "adl-12",
+      "path": "adl-12.mp4",
+      "sha256": "77506f291304616dd5a1a7940ad43acbc5e1debccf675638eea3cea5d9481b42",
+      "label": "normal",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-12-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "adl-13",
+      "path": "adl-13.mp4",
+      "sha256": "80a371d2cdbf5dcf277b7aa45539da6c04b778192aba45f0873a428b4d16727a",
+      "label": "normal",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-13-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "adl-14",
+      "path": "adl-14.mp4",
+      "sha256": "d3d2f3e54b52da1d43b0445eb2f914cc1ea6922330dacb6f55ef65da3065b44e",
+      "label": "normal",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-14-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "adl-15",
+      "path": "adl-15.mp4",
+      "sha256": "202d009146a01f8cd367e89dab06866082f59f12934a72898bbe450b65d61768",
+      "label": "normal",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-15-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "adl-16",
+      "path": "adl-16.mp4",
+      "sha256": "9eb9d093c0fe04344591b2c2caf0d7d6204189d58a4a160b76d7eed7bf3b0f55",
+      "label": "normal",
+      "split": "test",
+      "group": "urfall-unknown-subjects",
+      "source": "https://fenix.ur.edu.pl/~mkepski/ds/data/adl-16-cam0.mp4",
+      "license": "CC-BY-NC-SA-4.0",
+      "pose_region": [
+        0.5,
+        0,
+        1,
+        1
+      ]
+    }
+  ]
+}
