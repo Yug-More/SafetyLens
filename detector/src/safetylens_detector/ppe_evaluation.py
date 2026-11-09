@@ -61,6 +61,8 @@ def score_class(samples, label, threshold):
             records.append((prediction["score"], match))
     true = sum(bool(x[1]) for x in records)
     return {
+        "true_positive_boxes": true,
+        "f1": 2 * true / (len(records) + total) if len(records) + total else None,
         "ground_truth_boxes": total,
         "predicted_boxes": len(records),
         "precision": true / len(records) if records else None,
@@ -100,12 +102,15 @@ def evaluate(manifest_path, model_manifest, output):
             rows.append(image)
     if not rows:
         raise ValueError("No held-out images supplied")
-    model_spec=json.loads(Path(model_manifest).read_text())
-    detector_class=OnnxPpeDetector
-    if model_spec.get("architecture")=="gear_guard_net":
+    model_spec = json.loads(Path(model_manifest).read_text())
+    detector_class = OnnxPpeDetector
+    if model_spec.get("architecture") == "gear_guard_net":
         from .gear_guard import GearGuardDetector
-        detector_class=GearGuardDetector
-    detector = detector_class(model_manifest, threshold=manifest.get("prediction_threshold", 0.05))
+
+        detector_class = GearGuardDetector
+    detector = detector_class(
+        model_manifest, threshold=manifest.get("prediction_threshold", 0.05)
+    )
     samples = []
     started = perf_counter()
     for row in rows:
@@ -115,17 +120,28 @@ def evaluate(manifest_path, model_manifest, output):
         frame = cv2.imread(str(path))
         if frame is None:
             raise ValueError("Unreadable test image")
-        inference_started=perf_counter()
+        inference_started = perf_counter()
         predictions = [x.__dict__ for x in detector.detect(frame)]
-        inference_seconds=perf_counter()-inference_started
+        inference_seconds = perf_counter() - inference_started
         samples.append(
-            {"id": row["id"], "ground_truth": row["boxes"], "predictions": predictions, "inference_decode_seconds":inference_seconds}
+            {
+                "id": row["id"],
+                "ground_truth": row["boxes"],
+                "predictions": predictions,
+                "inference_decode_seconds": inference_seconds,
+            }
         )
     metrics = {}
-    for label in CLASSES:
+    classes = manifest.get("evaluation_classes", CLASSES)
+    supported = set(detector.classes.values())
+    for label in classes:
+        if label not in supported:
+            metrics[label] = {"status": "unsupported", "iou_50": None, "ap_50_95": None}
+            continue
         thresholds = [0.5 + index * 0.05 for index in range(10)]
         values = [score_class(samples, label, x) for x in thresholds]
         metrics[label] = {
+            "status": "evaluated",
             "iou_50": values[0],
             "ap_50_95": sum(x["ap"] for x in values) / 10
             if values[0]["ap"] is not None
@@ -148,6 +164,7 @@ def evaluate(manifest_path, model_manifest, output):
         "limitations": [
             "AP uses 101-point interpolation and greedy per-image class matching; no COCO crowd/ignore annotations",
             "mAP excludes classes without ground-truth boxes; inspect support counts",
+            "Appearance labels (ordinary eyewear/footwear, medical mask) do not establish protective rating",
             "Association/compliance accuracy require additional per-person relation and assessability labels; not inferred from object AP",
         ],
     }

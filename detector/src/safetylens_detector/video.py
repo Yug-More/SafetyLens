@@ -50,6 +50,7 @@ def analyze_video(
     config: DetectorConfig | None = None,
     pose_region: tuple[float, float, float, float] | None = None,
     maximum_pose_people: int = 1,
+    temporal_model=None,
 ) -> VideoAnalysis:
     if sample_fps <= 0:
         raise ValueError("sample_fps must be positive.")
@@ -75,8 +76,14 @@ def analyze_video(
     frame_count = int(capture.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
     duration = frame_count / source_fps if frame_count > 0 else 0.0
     source = source_id or path.stem
-    engine = DetectorEngine(config)
+    if temporal_model is not None:
+        from .temporal import TemporalDetectorEngine
+
+        engine = TemporalDetectorEngine(temporal_model)
+    else:
+        engine = DetectorEngine(config)
     from .tracking import PoseTracker
+
     tracker = PoseTracker() if maximum_pose_people > 1 else None
     transitions: list[StateTransition] = []
     events: list[DetectionEvent] = []
@@ -87,7 +94,11 @@ def analyze_video(
     started = perf_counter()
 
     try:
-        with MediaPipePoseProvider(model_path, **({"region": pose_region} if pose_region else {}), **({"num_poses": maximum_pose_people} if tracker else {})) as provider:
+        with MediaPipePoseProvider(
+            model_path,
+            **({"region": pose_region} if pose_region else {}),
+            **({"num_poses": maximum_pose_people} if tracker else {}),
+        ) as provider:
             while True:
                 ok, frame = capture.read()
                 if not ok or frame is None:
@@ -100,11 +111,16 @@ def analyze_video(
                 analyzed += 1
 
                 if tracker:
-                    observations = provider.detect_many(frame,timestamp_seconds=timestamp,source_id=source)
-                    linked, expired, _ = tracker.update(timestamp,observations)
+                    observations = provider.detect_many(
+                        frame, timestamp_seconds=timestamp, source_id=source
+                    )
+                    linked, expired, _ = tracker.update(timestamp, observations)
                     for track_id in expired:
-                        engine._previous.pop(track_id,None)
-                        engine.machine._tracks.pop(track_id,None)
+                        if temporal_model is not None:
+                            engine.forget_track(track_id)
+                        else:
+                            engine._previous.pop(track_id, None)
+                            engine.machine._tracks.pop(track_id, None)
                     detected += len(linked)
                     missing += not bool(linked)
                     results = [engine.process(o) for o in linked]
@@ -116,7 +132,9 @@ def analyze_video(
                     )
                     if observation is None:
                         missing += 1
-                        missing_since = timestamp if missing_since is None else missing_since
+                        missing_since = (
+                            timestamp if missing_since is None else missing_since
+                        )
                         if (
                             not track_marked_missing
                             and timestamp - missing_since >= missing_pose_grace_seconds
