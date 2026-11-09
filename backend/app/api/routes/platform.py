@@ -30,6 +30,12 @@ from app.models.platform import (
 )
 from app.models.ppe_policy import CameraPpePolicy
 from app.models.video import VideoAsset
+from app.services.ppe_capabilities import (
+    PpeCategory,
+    PpeContextRule,
+    capability_catalog,
+    resolve_requirements,
+)
 from app.services.audit import append_audit_event
 from app.services.auth import authorize, as_utc, session_user
 
@@ -54,12 +60,12 @@ class DetectionPolicy(BaseModel):
             if not (0 <= x1 < x2 <= 1 and 0 <= y1 < y2 <= 1):
                 raise ValueError("pose_region must be normalized nonempty xyxy")
         return value
+
     pre_event_seconds: float = Field(default=3, ge=0.5, le=30)
     post_event_seconds: float = Field(default=3, ge=0.5, le=30)
     retention_days: int = Field(default=30, ge=1, le=3650)
-    required_ppe: list[Literal["hard_hat", "high_visibility_vest"]] = Field(
-        default_factory=list, max_length=2
-    )
+    required_ppe: list[PpeCategory] = Field(default_factory=list, max_length=8)
+    ppe_context_rules: list[PpeContextRule] = Field(default_factory=list, max_length=16)
 
 
 class CameraInput(BaseModel):
@@ -151,7 +157,11 @@ def camera_inventory(db: Session = Depends(get_db)):
 
 def save_camera(db, payload, camera_id=None):
     if "ppe" in payload.policy.detectors:
-        raise AppError("PPE_DEPLOYMENT_DISABLED", "Local PPE monitoring is excluded: no validated, license-cleared model. Offline evaluation remains available.", 409)
+        raise AppError(
+            "PPE_DEPLOYMENT_DISABLED",
+            "Local PPE monitoring is excluded: no validated, license-cleared model. Offline evaluation remains available.",
+            409,
+        )
     duplicate = db.scalar(select(Camera).where(Camera.name == payload.name))
     if duplicate and duplicate.id != camera_id:
         raise AppError("DUPLICATE_CAMERA", "Camera name is already in use.", 409)
@@ -209,6 +219,7 @@ def save_camera(db, payload, camera_id=None):
     if not ppe:
         ppe = CameraPpePolicy(camera_id=camera.id, zone_label=payload.zone)
         db.add(ppe)
+    ppe.zone_label = payload.zone
     ppe.required_ppe_json, ppe.is_active = (
         json.dumps(payload.policy.required_ppe),
         bool(payload.policy.required_ppe),
@@ -546,11 +557,16 @@ def update_operations(
         op = IncidentOperation(incident_id=incident_id, version=1)
         db.add(op)
         from sqlalchemy.exc import IntegrityError
+
         try:
             db.flush()
         except IntegrityError as exc:
             db.rollback()
-            raise AppError("STALE_VERSION", "Another operator initialized this incident. Reload before saving.", 409) from exc
+            raise AppError(
+                "STALE_VERSION",
+                "Another operator initialized this incident. Reload before saving.",
+                409,
+            ) from exc
     # Compare-and-swap at SQL level prevents stale concurrent writes.
     from sqlalchemy import update
 
@@ -753,3 +769,39 @@ def evidence_retention(
         )
         db.commit()
     return {"data": result}
+
+
+@router.get("/api/ppe-capabilities")
+def ppe_capabilities():
+    return {"data": capability_catalog()}
+
+
+class PpeContextInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    activity: str | None = Field(default=None, max_length=100)
+    worker_role: str | None = Field(default=None, max_length=100)
+    minute_of_day: int | None = Field(default=None, ge=0, le=1439)
+
+
+@router.post("/api/cameras/{camera_id}/ppe-context-preview")
+def preview_ppe_context(
+    camera_id: str, context: PpeContextInput, db: Session = Depends(get_db)
+):
+    _, cfg = configuration(db, camera_id)
+    if cfg:
+        policy = DetectionPolicy.model_validate(json.loads(cfg.policy_json))
+    else:
+        historical = db.scalar(
+            select(CameraPpePolicy).where(
+                CameraPpePolicy.camera_id == camera_id,
+                CameraPpePolicy.is_active.is_(True),
+            )
+        )
+        policy = DetectionPolicy(
+            required_ppe=historical.required_ppe if historical else []
+        )
+    return {
+        "data": resolve_requirements(
+            policy.required_ppe, policy.ppe_context_rules, **context.model_dump()
+        )
+    }

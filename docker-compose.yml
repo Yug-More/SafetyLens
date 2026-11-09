@@ -9,6 +9,7 @@ services:
       APP_NAME: SafetyLens API
       ENVIRONMENT: development
       AUTH_ENABLED: "true"
+      MAX_REQUEST_SIZE_MB: ${MAX_REQUEST_SIZE_MB:-110}
       COOKIE_SECURE: "false"
       CAMERA_ENCRYPTION_KEY: ${CAMERA_ENCRYPTION_KEY:-}
       DETECTOR_API_TOKEN: ${DETECTOR_API_TOKEN:-}

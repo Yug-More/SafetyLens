@@ -61,6 +61,12 @@ class OpenAIProvider(AIProvider):
                 retryable=False,
             ) from exc
 
+        unsupported = sorted(
+            set(required_ppe or []) - {"hard_hat", "high_visibility_vest"}
+        )
+        required_ppe = [
+            x for x in (required_ppe or []) if x in {"hard_hat", "high_visibility_vest"}
+        ]
         client = OpenAI(api_key=self._api_key, timeout=self._timeout)
         user_text = build_user_prompt(
             frames=frames,
@@ -96,22 +102,52 @@ class OpenAIProvider(AIProvider):
                 raw = response.choices[0].message.content or ""
                 payload = json.loads(raw)
                 result = IncidentAnalysisResult.model_validate(payload)
+                if unsupported:
+                    result = result.model_copy(
+                        update={
+                            "limitations": [
+                                *result.limitations,
+                                "Unassessable configured PPE: "
+                                + ", ".join(unsupported),
+                            ]
+                        }
+                    )
                 self._validate_frame_references(result, frames)
                 from app.core.incident_types import (
                     ALLOWED_ANALYSIS_TYPES,
                     normalize_incident_type,
                 )
 
-                normalized = normalize_incident_type(result.incident_type) or result.incident_type
+                normalized = (
+                    normalize_incident_type(result.incident_type)
+                    or result.incident_type
+                )
                 if normalized not in ALLOWED_ANALYSIS_TYPES:
-                    raise AIProviderError("Provider returned unsupported incident type", retryable=False)
+                    raise AIProviderError(
+                        "Provider returned unsupported incident type", retryable=False
+                    )
                 supported = {"hard_hat", "high_visibility_vest"}
-                if not (set(result.observed_ppe) | set(result.possibly_missing_ppe) | set(result.required_ppe)) <= supported:
-                    raise AIProviderError("Provider returned unsupported PPE class", retryable=False)
+                if (
+                    not (
+                        set(result.observed_ppe)
+                        | set(result.possibly_missing_ppe)
+                        | set(result.required_ppe)
+                    )
+                    <= supported
+                ):
+                    raise AIProviderError(
+                        "Provider returned unsupported PPE class", retryable=False
+                    )
                 if set(result.observed_ppe) & set(result.possibly_missing_ppe):
-                    raise AIProviderError("Provider returned contradictory PPE observations", retryable=False)
+                    raise AIProviderError(
+                        "Provider returned contradictory PPE observations",
+                        retryable=False,
+                    )
                 if set(result.possibly_missing_ppe) - set(required_ppe or []):
-                    raise AIProviderError("Provider inferred missing PPE outside camera policy", retryable=False)
+                    raise AIProviderError(
+                        "Provider inferred missing PPE outside camera policy",
+                        retryable=False,
+                    )
                 # Never claim PPE noncompliance without a configured camera policy.
                 if normalized == "ppe_noncompliance" and not required_ppe:
                     normalized = "insufficient_evidence"
@@ -146,15 +182,15 @@ class OpenAIProvider(AIProvider):
             except Exception as exc:  # noqa: BLE001 - normalize provider failures
                 last_error = exc
                 logger.warning(
-                    "OpenAI analysis attempt %s failed: %s",
+                    "OpenAI analysis attempt %s failed (%s)",
                     attempt + 1,
-                    exc,
+                    type(exc).__name__,
                 )
 
         raise AIProviderError(
-            f"OpenAI analysis failed after retries: {last_error}",
+            f"OpenAI analysis failed after retries ({type(last_error).__name__})",
             retryable=True,
-        ) from last_error
+        ) from None
 
     def _encode_frame(self, absolute_path: str) -> str:
         path = Path(absolute_path)
@@ -181,7 +217,9 @@ class OpenAIProvider(AIProvider):
                         (int(width * scale), int(height * scale)),
                         interpolation=cv2.INTER_AREA,
                     )
-                    ok, encoded = cv2.imencode(".jpg", resized, [int(cv2.IMWRITE_JPEG_QUALITY), 85])
+                    ok, encoded = cv2.imencode(
+                        ".jpg", resized, [int(cv2.IMWRITE_JPEG_QUALITY), 85]
+                    )
                     if ok:
                         raw = encoded.tobytes()
         except Exception:  # noqa: BLE001 - fall back to original bytes

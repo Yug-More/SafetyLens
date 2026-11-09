@@ -11,26 +11,38 @@ from app.core.config import get_settings
 from app.core.errors import register_exception_handlers
 from app.database.session import init_db
 from app.services.storage import ensure_storage_directories
+from app.middleware.body_budget import BodyBudgetMiddleware
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     cfg = get_settings()
-    if cfg.environment == "production" and (not cfg.auth_enabled or not cfg.cookie_secure):
-        raise RuntimeError("Production requires AUTH_ENABLED=true and COOKIE_SECURE=true behind HTTPS")
+    if cfg.environment == "production" and (
+        not cfg.auth_enabled or not cfg.cookie_secure
+    ):
+        raise RuntimeError(
+            "Production requires AUTH_ENABLED=true and COOKIE_SECURE=true behind HTTPS"
+        )
     init_db()
     ensure_storage_directories()
     from app.services.recovery import snapshot_interrupted_events, recover_events
+
     event_ids = snapshot_interrupted_events()
-    recovery = asyncio.create_task(asyncio.to_thread(recover_events,event_ids)) if event_ids else None
+    recovery = (
+        asyncio.create_task(asyncio.to_thread(recover_events, event_ids))
+        if event_ids
+        else None
+    )
     try:
         yield
     finally:
         if recovery:
             try:
-                await asyncio.wait_for(asyncio.shield(recovery),timeout=5)
+                await asyncio.wait_for(asyncio.shield(recovery), timeout=5)
             except asyncio.TimeoutError:
-                logging.getLogger(__name__).warning("Recovery still active on shutdown; unfinished work remains persisted")
+                logging.getLogger(__name__).warning(
+                    "Recovery still active on shutdown; unfinished work remains persisted"
+                )
 
 
 def create_app() -> FastAPI:
@@ -45,12 +57,16 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
     app.add_middleware(
+        BodyBudgetMiddleware, maximum_bytes=settings.max_request_size_mb * 1024 * 1024
+    )
+    app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
         allow_credentials=True,
         allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         allow_headers=["*"],
     )
+
     @app.middleware("http")
     async def response_safeguards(request, call_next):
         response = await call_next(request)
