@@ -8,6 +8,16 @@ import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 const empty = () => [] as ManagedCamera[];
+const ppeRequirements = [
+  ["hat", "hard_hat", "Require hard hat"],
+  ["vest", "high_visibility_vest", "Require safety vest"],
+  ["goggles", "safety_goggles", "Require protective eyewear"],
+  ["boots", "protective_footwear", "Require protective footwear"],
+  ["gloves", "protective_gloves", "Require protective gloves"],
+  ["shield", "face_shield", "Require face shield"],
+  ["hearing", "hearing_protection", "Require hearing protection"],
+  ["respirator", "respiratory_protection", "Require respiratory protection"],
+] as const;
 
 function CameraPreview({ camera }: { camera: ManagedCamera }) {
   const [url, setUrl] = useState("");
@@ -17,8 +27,10 @@ function CameraPreview({ camera }: { camera: ManagedCamera }) {
     let cancelled = false;
     let current = "";
     let controller: AbortController;
+    let timer: ReturnType<typeof setTimeout>;
     const refresh = async () => {
       controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
       try {
         const response = await fetch(getApiBaseUrl() + camera.snapshot_url, {
           credentials: "include",
@@ -35,13 +47,16 @@ function CameraPreview({ camera }: { camera: ManagedCamera }) {
         setFailed(false);
       } catch {
         if (!cancelled) setFailed(true);
+      } finally {
+        clearTimeout(timeout);
+        if (!cancelled) timer = setTimeout(() => void refresh(), 3000);
       }
     };
     void refresh();
-    const timer = setInterval(() => void refresh(), 3000);
+
     return () => {
       cancelled = true;
-      clearInterval(timer);
+      clearTimeout(timer);
       controller?.abort();
       if (current) URL.revokeObjectURL(current);
     };
@@ -128,10 +143,8 @@ export function CameraManagement({ monitor = false }: { monitor?: boolean }) {
             "camera_health",
             ...(form.get("ppe") === "on" ? ["ppe"] : []),
           ],
-          required_ppe: [
-            ...(form.get("hat") === "on" ? ["hard_hat"] : []),
-            ...(form.get("vest") === "on" ? ["high_visibility_vest"] : []),
-          ],
+          required_ppe: ppeRequirements.filter(([name]) => form.get(name) === "on").map(([, category]) => category),
+          ppe_context_rules: JSON.parse(String(form.get("ppe_context_rules") || "[]")),
           sample_fps: Number(form.get("fps")),
           maximum_pose_people: Number(form.get("people")),
           pose_region: String(form.get("pose_region") ?? "").trim()
@@ -450,18 +463,7 @@ export function CameraManagement({ monitor = false }: { monitor?: boolean }) {
                   "PPE deployment excluded — model not validated",
                   editing?.policy.detectors?.includes("ppe") ?? false,
                 ],
-                [
-                  "hat",
-                  "Require hard hat",
-                  editing?.policy.required_ppe?.includes("hard_hat") ?? false,
-                ],
-                [
-                  "vest",
-                  "Require safety vest",
-                  editing?.policy.required_ppe?.includes(
-                    "high_visibility_vest",
-                  ) ?? false,
-                ],
+                ...ppeRequirements.map(([name, category, label]) => [name, label, editing?.policy.required_ppe?.includes(category) ?? false]),
               ].map(([name, label, checked]) => (
                 <label className="block" key={String(name)}>
                   <input
@@ -475,6 +477,12 @@ export function CameraManagement({ monitor = false }: { monitor?: boolean }) {
                 </label>
               ))}
             </div>
+            <label className="col-span-full text-sm">
+              Conditional PPE rules (JSON)
+              <textarea name="ppe_context_rules" rows={4} className="mt-2 w-full rounded-md border border-border bg-background p-3 font-mono text-xs"
+                defaultValue={JSON.stringify(editing?.policy.ppe_context_rules ?? [], null, 2)} />
+              <span className="mt-1 block text-xs text-muted-foreground">Optional rules use label, required_ppe, activity, worker_role and minute_range [0–1439]. Context is supplied by operators, never inferred identity. Missing context stays unknown. Configuring requirements does not enable visual detection.</span>
+            </label>
             <div className="col-span-full flex gap-3">
               <Button type="submit" disabled={saving}>
                 {saving ? "Saving…" : "Save camera"}

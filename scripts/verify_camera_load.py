@@ -209,6 +209,12 @@ with httpx.Client(base_url="http://localhost:8000", timeout=15) as client:
     first = labels.index("online")
     lost = labels.index("offline", first + 1)
     recovered = labels.index("online", lost + 1)
+    network_summaries = [
+        json.loads(line)
+        for line in (a.output / "network-camera.stdout").read_text().splitlines()
+        if line.startswith("{")
+        and json.loads(line).get("kind") == "camera_worker_summary"
+    ]
     result = {
         "recorded_replay_cameras": 4,
         "four_camera_summaries": summaries,
@@ -218,12 +224,14 @@ with httpx.Client(base_url="http://localhost:8000", timeout=15) as client:
         / elapsed,
         "acknowledged_real_model_events": len(delivered),
         "network_camera_health_transitions": states,
+        "network_worker_summaries": network_summaries,
+        "drop_count_scope": "Frames replaced in the latest-frame slot in the final connection, not source/network loss or configured sampling skips",
         "disconnect_then_reconnect_verified": recovered > lost,
         "limitations": [
             "Same recorded clip replayed four times; not four independent scenes",
             "Offline processing, not sustained live-camera capacity",
             "MJPEG server interruption is controlled local simulation, not physical RTSP hardware",
-            "GPU utilization and dropped frames unmeasured",
+            "GPU utilization and source/network lost frames unmeasured; replay drop counts are null",
         ],
     }
     (a.output / "verification.json").write_text(json.dumps(result, indent=2))
