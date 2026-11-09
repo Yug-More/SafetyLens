@@ -1,0 +1,8 @@
+{
+  "cameras": 12,
+  "safety_procedures": 4,
+  "procedure_chunks": 16,
+  "migration_revision": "0001_platform",
+  "database": "new dedicated verification database",
+  "existing_database_untouched": true
+}

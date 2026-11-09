@@ -1,0 +1,93 @@
+{
+  "source": "/tmp/safetylens-research/urfall/fall-27-cam0.mp4",
+  "duration_seconds": 3.067,
+  "source_fps": 30.0,
+  "sample_fps": 12.0,
+  "decoded_frames": 92,
+  "analyzed_frames": 37,
+  "poses_detected": 30,
+  "missing_poses": 7,
+  "processing_seconds": 1.08,
+  "events": [
+    {
+      "schema_version": "1.0",
+      "event_id": "e0418447-2b3b-42b3-ba48-55163ffe3a69",
+      "event_type": "possible_person_down",
+      "source_id": "fall-27-cam0",
+      "track_id": "person-1",
+      "occurred_at_seconds": 2.2666666666666666,
+      "source_timestamp_seconds": 2.2666666666666666,
+      "state": "incident",
+      "trigger_signals": [
+        "learned_temporal_candidate"
+      ],
+      "pose_quality": 0.999832347035408,
+      "metrics": {
+        "timestamp_seconds": 2.2666666666666666,
+        "pose_quality": 0.999832347035408,
+        "shoulder_center_y": 0.6216775178909302,
+        "torso_angle_degrees_from_vertical": 23.984290202441745,
+        "bbox_width_height_ratio": 0.83643364723101,
+        "downward_hip_velocity_body_lengths_per_second": 4.950736707143182,
+        "mean_landmark_motion_body_lengths_per_second": 9.333404052950968
+      },
+      "limitations": [
+        "experimental_learned_pose_classifier",
+        "score_is_not_calibrated_fall_probability",
+        "requires_human_verification"
+      ]
+    }
+  ],
+  "transitions": [
+    {
+      "timestamp_seconds": 2.1,
+      "previous_state": "monitoring",
+      "state": "confirming",
+      "reasons": [
+        "temporal_score=0.9554"
+      ]
+    },
+    {
+      "timestamp_seconds": 2.167,
+      "previous_state": "monitoring",
+      "state": "confirming",
+      "reasons": [
+        "temporal_score=0.9848"
+      ]
+    },
+    {
+      "timestamp_seconds": 2.267,
+      "previous_state": "monitoring",
+      "state": "incident",
+      "reasons": [
+        "temporal_score=0.9959"
+      ]
+    },
+    {
+      "timestamp_seconds": 2.333,
+      "previous_state": "monitoring",
+      "state": "cooldown",
+      "reasons": [
+        "temporal_score=0.9983"
+      ]
+    },
+    {
+      "timestamp_seconds": 2.433,
+      "previous_state": "monitoring",
+      "state": "cooldown",
+      "reasons": [
+        "temporal_score=1.0000"
+      ]
+    },
+    {
+      "timestamp_seconds": 3.0,
+      "previous_state": "monitoring",
+      "state": "low_visibility",
+      "reasons": [
+        "track_missing"
+      ]
+    }
+  ],
+  "checkpoint_sha256": "436948b4ec1fb8e371303a2c346630fa9869a00894cc9067e572bb5c34fd8bd8",
+  "research_only": true
+}

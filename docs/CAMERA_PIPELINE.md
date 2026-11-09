@@ -42,3 +42,9 @@ Finite replays now finish once at EOF, instead of restarting and producing new i
 ## Final hardening status
 
 Local PPE is now explicitly rejected by policy updates and worker startup; offline adapters remain available for research. Optional `maximum_pose_people` (1–4, default 1) activates bounded geometric tracking with separate histories and expiry; crowded-scene accuracy is unvalidated. Detector clips carry SHA-256, duplicate UUID metadata must agree, and startup resumes persisted unfinished local-CV jobs in the single backend process. See FINAL_RELEASE_REPORT.md for tested scope and limitations.
+
+## November 8 transport and research extension
+
+Network/RTSP uses the one-slot `LatestFrameCapture` reader and FFMPEG five-second open/read options; stale slot replacements are counted, separately from intentionally skipped samples and unknown source/network loss. Recorded inputs remain exhaustively decoded. Actual local MJPEG failure recovered; physical RTSP remains untested. Snapshot polling is sequential with abort timeouts.
+
+The opt-in learned model requires `--temporal-checkpoint` plus `--temporal-sha256` and a matching pose hash. It is not promoted because of excessive fresh-test false alerts. Default rules are unchanged. Eight camera/zone PPE requirements and bounded contextual rules can be configured and previewed; all local PPE deployment gates remain closed. See REPRODUCIBILITY.md and FINAL_VALIDATION_REPORT.md.

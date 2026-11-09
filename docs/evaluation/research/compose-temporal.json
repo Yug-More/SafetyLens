@@ -1,0 +1,34 @@
+{
+  "stack": "documented Compose; PostgreSQL17; frontend standalone; backend Python3.12",
+  "model_event_id": "30243953-51ac-44fd-a3b7-d65bd1650279",
+  "model_source_seconds": 2.2666666666666666,
+  "worker_offline_wall_seconds": 1.9441850000002887,
+  "clip_sha256_verified": "36ba425bac550b7810dbd5c5a4b1d5d9b872406dde1ce52e2e77d2aeced2412e",
+  "operator_notification": true,
+  "concurrent_operator_statuses": [
+    200,
+    409
+  ],
+  "browser": {
+    "login": true,
+    "actualEvidencePlayback": true,
+    "approval": true,
+    "simulatedExecution": true,
+    "pdfBytes": 6827
+  },
+  "audit_events": 17,
+  "offline_outbox_restart_and_duplicate_reuse": true,
+  "postgres_restart_session_and_evidence_mapping": true,
+  "backup_restore_detector_records": 12,
+  "backup_sha256": "dba66091648dc46d2257d1a7d93cb378d5bc509b7d4388f38a9491c600cdf688",
+  "warm_camera_inventory_30_requests_ms": {
+    "minimum": 4.876582999713719,
+    "mean": 6.837931967068774,
+    "maximum": 19.939333004003856
+  },
+  "limitations": [
+    "Offline replay wall time is not physical fall-to-alert latency",
+    "Local HTTP profile; HTTPS and physical camera fleet not tested",
+    "Snapshot/page render are not PPE validation"
+  ]
+}

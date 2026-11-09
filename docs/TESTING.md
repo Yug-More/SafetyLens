@@ -42,3 +42,7 @@ See FINAL_RELEASE_REPORT.md and END_TO_END_VERIFICATION.md for the newer 81-back
 ## Final hardening evidence
 
 Current verified scope, commands and limitations are recorded in [FINAL_RELEASE_REPORT.md](FINAL_RELEASE_REPORT.md), [DEPLOYMENT_VERIFICATION.md](DEPLOYMENT_VERIFICATION.md), [SECURITY_REVIEW.md](SECURITY_REVIEW.md) and [PERFORMANCE_REPORT.md](PERFORMANCE_REPORT.md). These supersede earlier unverified frontend/PostgreSQL-17 status; they do not establish workplace readiness.
+
+## Current research verification
+
+November 8 baseline 84 backend/58 detector/8 actual-model browser cases was rerun before implementation. Final 92 backend/66 detector/9 actual-model browser cases passed; actual command/timing receipts are in `evaluation/research/test-summary.json`. Browser defaults remain synthetic unless real-model environment variables are set. New tests exercise causal/gap/hash/shape behavior, uncertainty and association, bounded frame transport, context-policy persistence/roles, ingress byte budgets and remote-error redaction; they do not establish detection accuracy or a coverage percentage. Current reproducible commands and scientific protocols: REPRODUCIBILITY.md, FALL_DETECTION_EVALUATION.md and PPE_EVALUATION.md.

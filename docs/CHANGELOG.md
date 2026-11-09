@@ -32,3 +32,7 @@ Restored original inline screenshots/historical demo/award and team content; cor
 ## 2026-11-07 — Final hardening
 
 Verified full PostgreSQL-17 Compose deployment and actual-model recovery; fixed referenced-SOP reseeding, interrupted-job recovery, same-event upload liveness and device scope; enforced PPE disable; evaluated Full/multi-pose alternatives and publisher-onset timing without retuning the frozen set. New camera-0 recall .40 remains inadequate. See FINAL_RELEASE_REPORT.md.
+
+## 2026-11-08 — Causal learning, semantic correction and explicit PPE gates
+
+Added a reproducible causal temporal linear/MLP comparison and opt-in checkpoint-backed worker; fresh test sensitivity improved with unacceptable false alarms, so defaults remain unchanged. Independently recovered the SH17 mirror semantic mapping against 1,172 original boxes, withdrew historical equipment metrics and evaluated official nine-class ONNX inference. Added eight-category contextual policy/UI gates, unknown-safe association, bounded live frames, route-aware ingress budgets and provider metadata/error defenses. Verified actual learned-event Docker/PostgreSQL workflow and preserved all human attribution/history. Full results: FINAL_VALIDATION_REPORT.md.

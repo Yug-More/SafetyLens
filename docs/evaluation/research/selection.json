@@ -1,0 +1,2579 @@
+{
+  "protocol": "Frozen causal-pose experiment, validation-only model and threshold selection",
+  "checkpoint_sha256": "436948b4ec1fb8e371303a2c346630fa9869a00894cc9067e572bb5c34fd8bd8",
+  "selected": {
+    "architecture": "linear",
+    "threshold": 0.9,
+    "metrics": {
+      "video_presence": {
+        "tp": 9,
+        "fn": 1,
+        "fp": 3,
+        "tn": 7,
+        "precision": 0.75,
+        "recall": 0.9,
+        "f1": 0.8181818181818182,
+        "specificity": 0.7,
+        "false_positive_rate": 0.3,
+        "false_negative_rate": 0.1,
+        "recall_nominal_wilson95": [
+          0.5958499732047615,
+          0.9821237869049271
+        ],
+        "precision_nominal_wilson95": [
+          0.46769466506643426,
+          0.9110583316059453
+        ]
+      },
+      "onset_matched": {
+        "matched": 9,
+        "missed": 1,
+        "unmatched_alerts": 3,
+        "mean_detected_delay_seconds": 0.6000000000000001,
+        "delays_seconds": [
+          0.4999999999999998,
+          0.2666666666666667,
+          0.6333333333333333,
+          1.0333333333333334,
+          0.5,
+          0.8999999999999999,
+          0.4000000000000001,
+          0.6333333333333335,
+          0.5333333333333333
+        ]
+      },
+      "negative_seconds": 67.66666666666669,
+      "false_events": 3,
+      "false_alarms_per_negative_hour": 159.60591133004922,
+      "samples": [
+        {
+          "id": "fall-17-cam0",
+          "label": "fall",
+          "event_times": [
+            2.433333333333333
+          ],
+          "onset": 1.9333333333333333,
+          "matched_delay": 0.4999999999999998,
+          "frames": 38,
+          "missing_or_low_quality": 5
+        },
+        {
+          "id": "fall-18-cam0",
+          "label": "fall",
+          "event_times": [
+            0.7666666666666667
+          ],
+          "onset": 0.5,
+          "matched_delay": 0.2666666666666667,
+          "frames": 26,
+          "missing_or_low_quality": 5
+        },
+        {
+          "id": "fall-19-cam0",
+          "label": "fall",
+          "event_times": [
+            1.4333333333333333
+          ],
+          "onset": 0.8,
+          "matched_delay": 0.6333333333333333,
+          "frames": 40,
+          "missing_or_low_quality": 11
+        },
+        {
+          "id": "fall-20-cam0",
+          "label": "fall",
+          "event_times": [
+            1.6
+          ],
+          "onset": 0.5666666666666667,
+          "matched_delay": 1.0333333333333334,
+          "frames": 44,
+          "missing_or_low_quality": 0
+        },
+        {
+          "id": "fall-21-cam0",
+          "label": "fall",
+          "event_times": [],
+          "onset": 0.6666666666666666,
+          "matched_delay": null,
+          "frames": 22,
+          "missing_or_low_quality": 5
+        },
+        {
+          "id": "fall-22-cam0",
+          "label": "fall",
+          "event_times": [
+            0.6
+          ],
+          "onset": 0.1,
+          "matched_delay": 0.5,
+          "frames": 23,
+          "missing_or_low_quality": 0
+        },
+        {
+          "id": "fall-23-cam0",
+          "label": "fall",
+          "event_times": [
+            1.7666666666666666
+          ],
+          "onset": 0.8666666666666667,
+          "matched_delay": 0.8999999999999999,
+          "frames": 30,
+          "missing_or_low_quality": 4
+        },
+        {
+          "id": "fall-24-cam0",
+          "label": "fall",
+          "event_times": [
+            0.7666666666666667
+          ],
+          "onset": 0.36666666666666664,
+          "matched_delay": 0.4000000000000001,
+          "frames": 24,
+          "missing_or_low_quality": 2
+        },
+        {
+          "id": "fall-25-cam0",
+          "label": "fall",
+          "event_times": [
+            2.1
+          ],
+          "onset": 1.4666666666666666,
+          "matched_delay": 0.6333333333333335,
+          "frames": 34,
+          "missing_or_low_quality": 6
+        },
+        {
+          "id": "fall-26-cam0",
+          "label": "fall",
+          "event_times": [
+            0.9333333333333333
+          ],
+          "onset": 0.4,
+          "matched_delay": 0.5333333333333333,
+          "frames": 25,
+          "missing_or_low_quality": 3
+        },
+        {
+          "id": "adl-17-cam0",
+          "label": "normal",
+          "event_times": [
+            5.6
+          ],
+          "onset": null,
+          "matched_delay": null,
+          "frames": 92,
+          "missing_or_low_quality": 28
+        },
+        {
+          "id": "adl-18-cam0",
+          "label": "normal",
+          "event_times": [],
+          "onset": null,
+          "matched_delay": null,
+          "frames": 106,
+          "missing_or_low_quality": 48
+        },
+        {
+          "id": "adl-19-cam0",
+          "label": "normal",
+          "event_times": [],
+          "onset": null,
+          "matched_delay": null,
+          "frames": 100,
+          "missing_or_low_quality": 55
+        },
+        {
+          "id": "adl-20-cam0",
+          "label": "normal",
+          "event_times": [],
+          "onset": null,
+          "matched_delay": null,
+          "frames": 108,
+          "missing_or_low_quality": 43
+        },
+        {
+          "id": "adl-21-cam0",
+          "label": "normal",
+          "event_times": [],
+          "onset": null,
+          "matched_delay": null,
+          "frames": 112,
+          "missing_or_low_quality": 53
+        },
+        {
+          "id": "adl-22-cam0",
+          "label": "normal",
+          "event_times": [],
+          "onset": null,
+          "matched_delay": null,
+          "frames": 96,
+          "missing_or_low_quality": 52
+        },
+        {
+          "id": "adl-23-cam0",
+          "label": "normal",
+          "event_times": [],
+          "onset": null,
+          "matched_delay": null,
+          "frames": 88,
+          "missing_or_low_quality": 48
+        },
+        {
+          "id": "adl-24-cam0",
+          "label": "normal",
+          "event_times": [
+            0.7666666666666667
+          ],
+          "onset": null,
+          "matched_delay": null,
+          "frames": 28,
+          "missing_or_low_quality": 0
+        },
+        {
+          "id": "adl-25-cam0",
+          "label": "normal",
+          "event_times": [],
+          "onset": null,
+          "matched_delay": null,
+          "frames": 44,
+          "missing_or_low_quality": 0
+        },
+        {
+          "id": "adl-26-cam0",
+          "label": "normal",
+          "event_times": [
+            1.2666666666666666
+          ],
+          "onset": null,
+          "matched_delay": null,
+          "frames": 38,
+          "missing_or_low_quality": 0
+        }
+      ]
+    }
+  },
+  "candidates": [
+    {
+      "architecture": "linear",
+      "threshold": 0.3,
+      "metrics": {
+        "video_presence": {
+          "tp": 10,
+          "fn": 0,
+          "fp": 9,
+          "tn": 1,
+          "precision": 0.5263157894736842,
+          "recall": 1.0,
+          "f1": 0.6896551724137931,
+          "specificity": 0.1,
+          "false_positive_rate": 0.9,
+          "false_negative_rate": 0.0,
+          "recall_nominal_wilson95": [
+            0.7224672001371107,
+            0.9999999999999999
+          ],
+          "precision_nominal_wilson95": [
+            0.3170780924511316,
+            0.7267019483882042
+          ]
+        },
+        "onset_matched": {
+          "matched": 9,
+          "missed": 1,
+          "unmatched_alerts": 10,
+          "mean_detected_delay_seconds": 0.2925925925925926,
+          "delays_seconds": [
+            0.16666666666666674,
+            0.0,
+            0.30000000000000004,
+            0.8666666666666667,
+            0.10000000000000009,
+            0.4,
+            0.5666666666666667,
+            0.13333333333333336,
+            0.09999999999999998
+          ]
+        },
+        "negative_seconds": 67.66666666666669,
+        "false_events": 9,
+        "false_alarms_per_negative_hour": 478.81773399014764,
+        "samples": [
+          {
+            "id": "fall-17-cam0",
+            "label": "fall",
+            "event_times": [
+              2.1
+            ],
+            "onset": 1.9333333333333333,
+            "matched_delay": 0.16666666666666674,
+            "frames": 38,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-18-cam0",
+            "label": "fall",
+            "event_times": [
+              0.5
+            ],
+            "onset": 0.5,
+            "matched_delay": 0.0,
+            "frames": 26,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-19-cam0",
+            "label": "fall",
+            "event_times": [
+              1.1
+            ],
+            "onset": 0.8,
+            "matched_delay": 0.30000000000000004,
+            "frames": 40,
+            "missing_or_low_quality": 11
+          },
+          {
+            "id": "fall-20-cam0",
+            "label": "fall",
+            "event_times": [
+              1.4333333333333333
+            ],
+            "onset": 0.5666666666666667,
+            "matched_delay": 0.8666666666666667,
+            "frames": 44,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "fall-21-cam0",
+            "label": "fall",
+            "event_times": [
+              0.7666666666666667
+            ],
+            "onset": 0.6666666666666666,
+            "matched_delay": 0.10000000000000009,
+            "frames": 22,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-22-cam0",
+            "label": "fall",
+            "event_times": [
+              0.5
+            ],
+            "onset": 0.1,
+            "matched_delay": 0.4,
+            "frames": 23,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "fall-23-cam0",
+            "label": "fall",
+            "event_times": [
+              1.4333333333333333
+            ],
+            "onset": 0.8666666666666667,
+            "matched_delay": 0.5666666666666667,
+            "frames": 30,
+            "missing_or_low_quality": 4
+          },
+          {
+            "id": "fall-24-cam0",
+            "label": "fall",
+            "event_times": [
+              0.5
+            ],
+            "onset": 0.36666666666666664,
+            "matched_delay": 0.13333333333333336,
+            "frames": 24,
+            "missing_or_low_quality": 2
+          },
+          {
+            "id": "fall-25-cam0",
+            "label": "fall",
+            "event_times": [
+              1.4333333333333333
+            ],
+            "onset": 1.4666666666666666,
+            "matched_delay": null,
+            "frames": 34,
+            "missing_or_low_quality": 6
+          },
+          {
+            "id": "fall-26-cam0",
+            "label": "fall",
+            "event_times": [
+              0.5
+            ],
+            "onset": 0.4,
+            "matched_delay": 0.09999999999999998,
+            "frames": 25,
+            "missing_or_low_quality": 3
+          },
+          {
+            "id": "adl-17-cam0",
+            "label": "normal",
+            "event_times": [
+              5.1
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 92,
+            "missing_or_low_quality": 28
+          },
+          {
+            "id": "adl-18-cam0",
+            "label": "normal",
+            "event_times": [
+              6.766666666666667
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 106,
+            "missing_or_low_quality": 48
+          },
+          {
+            "id": "adl-19-cam0",
+            "label": "normal",
+            "event_times": [
+              5.766666666666667
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 100,
+            "missing_or_low_quality": 55
+          },
+          {
+            "id": "adl-20-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 108,
+            "missing_or_low_quality": 43
+          },
+          {
+            "id": "adl-21-cam0",
+            "label": "normal",
+            "event_times": [
+              6.433333333333334
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 112,
+            "missing_or_low_quality": 53
+          },
+          {
+            "id": "adl-22-cam0",
+            "label": "normal",
+            "event_times": [
+              5.6
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 96,
+            "missing_or_low_quality": 52
+          },
+          {
+            "id": "adl-23-cam0",
+            "label": "normal",
+            "event_times": [
+              3.6
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 88,
+            "missing_or_low_quality": 48
+          },
+          {
+            "id": "adl-24-cam0",
+            "label": "normal",
+            "event_times": [
+              0.5
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 28,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "adl-25-cam0",
+            "label": "normal",
+            "event_times": [
+              1.6
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 44,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "adl-26-cam0",
+            "label": "normal",
+            "event_times": [
+              1.1
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 38,
+            "missing_or_low_quality": 0
+          }
+        ]
+      }
+    },
+    {
+      "architecture": "linear",
+      "threshold": 0.5,
+      "metrics": {
+        "video_presence": {
+          "tp": 10,
+          "fn": 0,
+          "fp": 7,
+          "tn": 3,
+          "precision": 0.5882352941176471,
+          "recall": 1.0,
+          "f1": 0.7407407407407407,
+          "specificity": 0.3,
+          "false_positive_rate": 0.7,
+          "false_negative_rate": 0.0,
+          "recall_nominal_wilson95": [
+            0.7224672001371107,
+            0.9999999999999999
+          ],
+          "precision_nominal_wilson95": [
+            0.3600544264299978,
+            0.7838894320978518
+          ]
+        },
+        "onset_matched": {
+          "matched": 10,
+          "missed": 0,
+          "unmatched_alerts": 7,
+          "mean_detected_delay_seconds": 0.3633333333333334,
+          "delays_seconds": [
+            0.33333333333333326,
+            0.09999999999999998,
+            0.46666666666666656,
+            0.8666666666666667,
+            0.10000000000000009,
+            0.4,
+            0.5666666666666667,
+            0.23333333333333334,
+            0.4666666666666668,
+            0.09999999999999998
+          ]
+        },
+        "negative_seconds": 67.66666666666669,
+        "false_events": 7,
+        "false_alarms_per_negative_hour": 372.4137931034482,
+        "samples": [
+          {
+            "id": "fall-17-cam0",
+            "label": "fall",
+            "event_times": [
+              2.2666666666666666
+            ],
+            "onset": 1.9333333333333333,
+            "matched_delay": 0.33333333333333326,
+            "frames": 38,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-18-cam0",
+            "label": "fall",
+            "event_times": [
+              0.6
+            ],
+            "onset": 0.5,
+            "matched_delay": 0.09999999999999998,
+            "frames": 26,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-19-cam0",
+            "label": "fall",
+            "event_times": [
+              1.2666666666666666
+            ],
+            "onset": 0.8,
+            "matched_delay": 0.46666666666666656,
+            "frames": 40,
+            "missing_or_low_quality": 11
+          },
+          {
+            "id": "fall-20-cam0",
+            "label": "fall",
+            "event_times": [
+              1.4333333333333333
+            ],
+            "onset": 0.5666666666666667,
+            "matched_delay": 0.8666666666666667,
+            "frames": 44,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "fall-21-cam0",
+            "label": "fall",
+            "event_times": [
+              0.7666666666666667
+            ],
+            "onset": 0.6666666666666666,
+            "matched_delay": 0.10000000000000009,
+            "frames": 22,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-22-cam0",
+            "label": "fall",
+            "event_times": [
+              0.5
+            ],
+            "onset": 0.1,
+            "matched_delay": 0.4,
+            "frames": 23,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "fall-23-cam0",
+            "label": "fall",
+            "event_times": [
+              1.4333333333333333
+            ],
+            "onset": 0.8666666666666667,
+            "matched_delay": 0.5666666666666667,
+            "frames": 30,
+            "missing_or_low_quality": 4
+          },
+          {
+            "id": "fall-24-cam0",
+            "label": "fall",
+            "event_times": [
+              0.6
+            ],
+            "onset": 0.36666666666666664,
+            "matched_delay": 0.23333333333333334,
+            "frames": 24,
+            "missing_or_low_quality": 2
+          },
+          {
+            "id": "fall-25-cam0",
+            "label": "fall",
+            "event_times": [
+              1.9333333333333333
+            ],
+            "onset": 1.4666666666666666,
+            "matched_delay": 0.4666666666666668,
+            "frames": 34,
+            "missing_or_low_quality": 6
+          },
+          {
+            "id": "fall-26-cam0",
+            "label": "fall",
+            "event_times": [
+              0.5
+            ],
+            "onset": 0.4,
+            "matched_delay": 0.09999999999999998,
+            "frames": 25,
+            "missing_or_low_quality": 3
+          },
+          {
+            "id": "adl-17-cam0",
+            "label": "normal",
+            "event_times": [
+              5.266666666666667
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 92,
+            "missing_or_low_quality": 28
+          },
+          {
+            "id": "adl-18-cam0",
+            "label": "normal",
+            "event_times": [
+              6.933333333333334
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 106,
+            "missing_or_low_quality": 48
+          },
+          {
+            "id": "adl-19-cam0",
+            "label": "normal",
+            "event_times": [
+              5.766666666666667
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 100,
+            "missing_or_low_quality": 55
+          },
+          {
+            "id": "adl-20-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 108,
+            "missing_or_low_quality": 43
+          },
+          {
+            "id": "adl-21-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 112,
+            "missing_or_low_quality": 53
+          },
+          {
+            "id": "adl-22-cam0",
+            "label": "normal",
+            "event_times": [
+              5.6
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 96,
+            "missing_or_low_quality": 52
+          },
+          {
+            "id": "adl-23-cam0",
+            "label": "normal",
+            "event_times": [
+              3.7666666666666666
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 88,
+            "missing_or_low_quality": 48
+          },
+          {
+            "id": "adl-24-cam0",
+            "label": "normal",
+            "event_times": [
+              0.6
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 28,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "adl-25-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 44,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "adl-26-cam0",
+            "label": "normal",
+            "event_times": [
+              1.1
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 38,
+            "missing_or_low_quality": 0
+          }
+        ]
+      }
+    },
+    {
+      "architecture": "linear",
+      "threshold": 0.7,
+      "metrics": {
+        "video_presence": {
+          "tp": 10,
+          "fn": 0,
+          "fp": 5,
+          "tn": 5,
+          "precision": 0.6666666666666666,
+          "recall": 1.0,
+          "f1": 0.8,
+          "specificity": 0.5,
+          "false_positive_rate": 0.5,
+          "false_negative_rate": 0.0,
+          "recall_nominal_wilson95": [
+            0.7224672001371107,
+            0.9999999999999999
+          ],
+          "precision_nominal_wilson95": [
+            0.41713547738519774,
+            0.8482367556028526
+          ]
+        },
+        "onset_matched": {
+          "matched": 10,
+          "missed": 0,
+          "unmatched_alerts": 5,
+          "mean_detected_delay_seconds": 0.4333333333333334,
+          "delays_seconds": [
+            0.33333333333333326,
+            0.2666666666666667,
+            0.6333333333333333,
+            0.8666666666666667,
+            0.10000000000000009,
+            0.5,
+            0.5666666666666667,
+            0.23333333333333334,
+            0.4666666666666668,
+            0.3666666666666667
+          ]
+        },
+        "negative_seconds": 67.66666666666669,
+        "false_events": 5,
+        "false_alarms_per_negative_hour": 266.0098522167487,
+        "samples": [
+          {
+            "id": "fall-17-cam0",
+            "label": "fall",
+            "event_times": [
+              2.2666666666666666
+            ],
+            "onset": 1.9333333333333333,
+            "matched_delay": 0.33333333333333326,
+            "frames": 38,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-18-cam0",
+            "label": "fall",
+            "event_times": [
+              0.7666666666666667
+            ],
+            "onset": 0.5,
+            "matched_delay": 0.2666666666666667,
+            "frames": 26,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-19-cam0",
+            "label": "fall",
+            "event_times": [
+              1.4333333333333333
+            ],
+            "onset": 0.8,
+            "matched_delay": 0.6333333333333333,
+            "frames": 40,
+            "missing_or_low_quality": 11
+          },
+          {
+            "id": "fall-20-cam0",
+            "label": "fall",
+            "event_times": [
+              1.4333333333333333
+            ],
+            "onset": 0.5666666666666667,
+            "matched_delay": 0.8666666666666667,
+            "frames": 44,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "fall-21-cam0",
+            "label": "fall",
+            "event_times": [
+              0.7666666666666667
+            ],
+            "onset": 0.6666666666666666,
+            "matched_delay": 0.10000000000000009,
+            "frames": 22,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-22-cam0",
+            "label": "fall",
+            "event_times": [
+              0.6
+            ],
+            "onset": 0.1,
+            "matched_delay": 0.5,
+            "frames": 23,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "fall-23-cam0",
+            "label": "fall",
+            "event_times": [
+              1.4333333333333333
+            ],
+            "onset": 0.8666666666666667,
+            "matched_delay": 0.5666666666666667,
+            "frames": 30,
+            "missing_or_low_quality": 4
+          },
+          {
+            "id": "fall-24-cam0",
+            "label": "fall",
+            "event_times": [
+              0.6
+            ],
+            "onset": 0.36666666666666664,
+            "matched_delay": 0.23333333333333334,
+            "frames": 24,
+            "missing_or_low_quality": 2
+          },
+          {
+            "id": "fall-25-cam0",
+            "label": "fall",
+            "event_times": [
+              1.9333333333333333
+            ],
+            "onset": 1.4666666666666666,
+            "matched_delay": 0.4666666666666668,
+            "frames": 34,
+            "missing_or_low_quality": 6
+          },
+          {
+            "id": "fall-26-cam0",
+            "label": "fall",
+            "event_times": [
+              0.7666666666666667
+            ],
+            "onset": 0.4,
+            "matched_delay": 0.3666666666666667,
+            "frames": 25,
+            "missing_or_low_quality": 3
+          },
+          {
+            "id": "adl-17-cam0",
+            "label": "normal",
+            "event_times": [
+              5.433333333333334
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 92,
+            "missing_or_low_quality": 28
+          },
+          {
+            "id": "adl-18-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 106,
+            "missing_or_low_quality": 48
+          },
+          {
+            "id": "adl-19-cam0",
+            "label": "normal",
+            "event_times": [
+              6.1
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 100,
+            "missing_or_low_quality": 55
+          },
+          {
+            "id": "adl-20-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 108,
+            "missing_or_low_quality": 43
+          },
+          {
+            "id": "adl-21-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 112,
+            "missing_or_low_quality": 53
+          },
+          {
+            "id": "adl-22-cam0",
+            "label": "normal",
+            "event_times": [
+              5.6
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 96,
+            "missing_or_low_quality": 52
+          },
+          {
+            "id": "adl-23-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 88,
+            "missing_or_low_quality": 48
+          },
+          {
+            "id": "adl-24-cam0",
+            "label": "normal",
+            "event_times": [
+              0.6
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 28,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "adl-25-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 44,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "adl-26-cam0",
+            "label": "normal",
+            "event_times": [
+              1.2666666666666666
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 38,
+            "missing_or_low_quality": 0
+          }
+        ]
+      }
+    },
+    {
+      "architecture": "linear",
+      "threshold": 0.9,
+      "metrics": {
+        "video_presence": {
+          "tp": 9,
+          "fn": 1,
+          "fp": 3,
+          "tn": 7,
+          "precision": 0.75,
+          "recall": 0.9,
+          "f1": 0.8181818181818182,
+          "specificity": 0.7,
+          "false_positive_rate": 0.3,
+          "false_negative_rate": 0.1,
+          "recall_nominal_wilson95": [
+            0.5958499732047615,
+            0.9821237869049271
+          ],
+          "precision_nominal_wilson95": [
+            0.46769466506643426,
+            0.9110583316059453
+          ]
+        },
+        "onset_matched": {
+          "matched": 9,
+          "missed": 1,
+          "unmatched_alerts": 3,
+          "mean_detected_delay_seconds": 0.6000000000000001,
+          "delays_seconds": [
+            0.4999999999999998,
+            0.2666666666666667,
+            0.6333333333333333,
+            1.0333333333333334,
+            0.5,
+            0.8999999999999999,
+            0.4000000000000001,
+            0.6333333333333335,
+            0.5333333333333333
+          ]
+        },
+        "negative_seconds": 67.66666666666669,
+        "false_events": 3,
+        "false_alarms_per_negative_hour": 159.60591133004922,
+        "samples": [
+          {
+            "id": "fall-17-cam0",
+            "label": "fall",
+            "event_times": [
+              2.433333333333333
+            ],
+            "onset": 1.9333333333333333,
+            "matched_delay": 0.4999999999999998,
+            "frames": 38,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-18-cam0",
+            "label": "fall",
+            "event_times": [
+              0.7666666666666667
+            ],
+            "onset": 0.5,
+            "matched_delay": 0.2666666666666667,
+            "frames": 26,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-19-cam0",
+            "label": "fall",
+            "event_times": [
+              1.4333333333333333
+            ],
+            "onset": 0.8,
+            "matched_delay": 0.6333333333333333,
+            "frames": 40,
+            "missing_or_low_quality": 11
+          },
+          {
+            "id": "fall-20-cam0",
+            "label": "fall",
+            "event_times": [
+              1.6
+            ],
+            "onset": 0.5666666666666667,
+            "matched_delay": 1.0333333333333334,
+            "frames": 44,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "fall-21-cam0",
+            "label": "fall",
+            "event_times": [],
+            "onset": 0.6666666666666666,
+            "matched_delay": null,
+            "frames": 22,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-22-cam0",
+            "label": "fall",
+            "event_times": [
+              0.6
+            ],
+            "onset": 0.1,
+            "matched_delay": 0.5,
+            "frames": 23,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "fall-23-cam0",
+            "label": "fall",
+            "event_times": [
+              1.7666666666666666
+            ],
+            "onset": 0.8666666666666667,
+            "matched_delay": 0.8999999999999999,
+            "frames": 30,
+            "missing_or_low_quality": 4
+          },
+          {
+            "id": "fall-24-cam0",
+            "label": "fall",
+            "event_times": [
+              0.7666666666666667
+            ],
+            "onset": 0.36666666666666664,
+            "matched_delay": 0.4000000000000001,
+            "frames": 24,
+            "missing_or_low_quality": 2
+          },
+          {
+            "id": "fall-25-cam0",
+            "label": "fall",
+            "event_times": [
+              2.1
+            ],
+            "onset": 1.4666666666666666,
+            "matched_delay": 0.6333333333333335,
+            "frames": 34,
+            "missing_or_low_quality": 6
+          },
+          {
+            "id": "fall-26-cam0",
+            "label": "fall",
+            "event_times": [
+              0.9333333333333333
+            ],
+            "onset": 0.4,
+            "matched_delay": 0.5333333333333333,
+            "frames": 25,
+            "missing_or_low_quality": 3
+          },
+          {
+            "id": "adl-17-cam0",
+            "label": "normal",
+            "event_times": [
+              5.6
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 92,
+            "missing_or_low_quality": 28
+          },
+          {
+            "id": "adl-18-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 106,
+            "missing_or_low_quality": 48
+          },
+          {
+            "id": "adl-19-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 100,
+            "missing_or_low_quality": 55
+          },
+          {
+            "id": "adl-20-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 108,
+            "missing_or_low_quality": 43
+          },
+          {
+            "id": "adl-21-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 112,
+            "missing_or_low_quality": 53
+          },
+          {
+            "id": "adl-22-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 96,
+            "missing_or_low_quality": 52
+          },
+          {
+            "id": "adl-23-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 88,
+            "missing_or_low_quality": 48
+          },
+          {
+            "id": "adl-24-cam0",
+            "label": "normal",
+            "event_times": [
+              0.7666666666666667
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 28,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "adl-25-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 44,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "adl-26-cam0",
+            "label": "normal",
+            "event_times": [
+              1.2666666666666666
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 38,
+            "missing_or_low_quality": 0
+          }
+        ]
+      }
+    },
+    {
+      "architecture": "mlp32",
+      "threshold": 0.3,
+      "metrics": {
+        "video_presence": {
+          "tp": 10,
+          "fn": 0,
+          "fp": 7,
+          "tn": 3,
+          "precision": 0.5882352941176471,
+          "recall": 1.0,
+          "f1": 0.7407407407407407,
+          "specificity": 0.3,
+          "false_positive_rate": 0.7,
+          "false_negative_rate": 0.0,
+          "recall_nominal_wilson95": [
+            0.7224672001371107,
+            0.9999999999999999
+          ],
+          "precision_nominal_wilson95": [
+            0.3600544264299978,
+            0.7838894320978518
+          ]
+        },
+        "onset_matched": {
+          "matched": 9,
+          "missed": 1,
+          "unmatched_alerts": 9,
+          "mean_detected_delay_seconds": 0.3518518518518519,
+          "delays_seconds": [
+            0.6666666666666667,
+            0.2666666666666667,
+            0.30000000000000004,
+            0.5333333333333334,
+            0.10000000000000009,
+            0.4,
+            0.5666666666666667,
+            0.23333333333333334,
+            0.09999999999999998
+          ]
+        },
+        "negative_seconds": 67.66666666666669,
+        "false_events": 7,
+        "false_alarms_per_negative_hour": 372.4137931034482,
+        "samples": [
+          {
+            "id": "fall-17-cam0",
+            "label": "fall",
+            "event_times": [
+              1.2666666666666666,
+              2.6
+            ],
+            "onset": 1.9333333333333333,
+            "matched_delay": 0.6666666666666667,
+            "frames": 38,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-18-cam0",
+            "label": "fall",
+            "event_times": [
+              0.7666666666666667
+            ],
+            "onset": 0.5,
+            "matched_delay": 0.2666666666666667,
+            "frames": 26,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-19-cam0",
+            "label": "fall",
+            "event_times": [
+              1.1
+            ],
+            "onset": 0.8,
+            "matched_delay": 0.30000000000000004,
+            "frames": 40,
+            "missing_or_low_quality": 11
+          },
+          {
+            "id": "fall-20-cam0",
+            "label": "fall",
+            "event_times": [
+              1.1
+            ],
+            "onset": 0.5666666666666667,
+            "matched_delay": 0.5333333333333334,
+            "frames": 44,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "fall-21-cam0",
+            "label": "fall",
+            "event_times": [
+              0.7666666666666667
+            ],
+            "onset": 0.6666666666666666,
+            "matched_delay": 0.10000000000000009,
+            "frames": 22,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-22-cam0",
+            "label": "fall",
+            "event_times": [
+              0.5
+            ],
+            "onset": 0.1,
+            "matched_delay": 0.4,
+            "frames": 23,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "fall-23-cam0",
+            "label": "fall",
+            "event_times": [
+              1.4333333333333333
+            ],
+            "onset": 0.8666666666666667,
+            "matched_delay": 0.5666666666666667,
+            "frames": 30,
+            "missing_or_low_quality": 4
+          },
+          {
+            "id": "fall-24-cam0",
+            "label": "fall",
+            "event_times": [
+              0.6
+            ],
+            "onset": 0.36666666666666664,
+            "matched_delay": 0.23333333333333334,
+            "frames": 24,
+            "missing_or_low_quality": 2
+          },
+          {
+            "id": "fall-25-cam0",
+            "label": "fall",
+            "event_times": [
+              1.4333333333333333
+            ],
+            "onset": 1.4666666666666666,
+            "matched_delay": null,
+            "frames": 34,
+            "missing_or_low_quality": 6
+          },
+          {
+            "id": "fall-26-cam0",
+            "label": "fall",
+            "event_times": [
+              0.5
+            ],
+            "onset": 0.4,
+            "matched_delay": 0.09999999999999998,
+            "frames": 25,
+            "missing_or_low_quality": 3
+          },
+          {
+            "id": "adl-17-cam0",
+            "label": "normal",
+            "event_times": [
+              5.433333333333334
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 92,
+            "missing_or_low_quality": 28
+          },
+          {
+            "id": "adl-18-cam0",
+            "label": "normal",
+            "event_times": [
+              6.766666666666667
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 106,
+            "missing_or_low_quality": 48
+          },
+          {
+            "id": "adl-19-cam0",
+            "label": "normal",
+            "event_times": [
+              5.766666666666667
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 100,
+            "missing_or_low_quality": 55
+          },
+          {
+            "id": "adl-20-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 108,
+            "missing_or_low_quality": 43
+          },
+          {
+            "id": "adl-21-cam0",
+            "label": "normal",
+            "event_times": [
+              6.433333333333334
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 112,
+            "missing_or_low_quality": 53
+          },
+          {
+            "id": "adl-22-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 96,
+            "missing_or_low_quality": 52
+          },
+          {
+            "id": "adl-23-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 88,
+            "missing_or_low_quality": 48
+          },
+          {
+            "id": "adl-24-cam0",
+            "label": "normal",
+            "event_times": [
+              0.6
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 28,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "adl-25-cam0",
+            "label": "normal",
+            "event_times": [
+              1.4333333333333333
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 44,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "adl-26-cam0",
+            "label": "normal",
+            "event_times": [
+              1.1
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 38,
+            "missing_or_low_quality": 0
+          }
+        ]
+      }
+    },
+    {
+      "architecture": "mlp32",
+      "threshold": 0.5,
+      "metrics": {
+        "video_presence": {
+          "tp": 10,
+          "fn": 0,
+          "fp": 6,
+          "tn": 4,
+          "precision": 0.625,
+          "recall": 1.0,
+          "f1": 0.7692307692307693,
+          "specificity": 0.4,
+          "false_positive_rate": 0.6,
+          "false_negative_rate": 0.0,
+          "recall_nominal_wilson95": [
+            0.7224672001371107,
+            0.9999999999999999
+          ],
+          "precision_nominal_wilson95": [
+            0.38641040545502714,
+            0.8151876744113636
+          ]
+        },
+        "onset_matched": {
+          "matched": 9,
+          "missed": 1,
+          "unmatched_alerts": 7,
+          "mean_detected_delay_seconds": 0.3740740740740741,
+          "delays_seconds": [
+            0.33333333333333326,
+            0.2666666666666667,
+            0.30000000000000004,
+            0.8666666666666667,
+            0.10000000000000009,
+            0.5,
+            0.5666666666666667,
+            0.23333333333333334,
+            0.19999999999999996
+          ]
+        },
+        "negative_seconds": 67.66666666666669,
+        "false_events": 6,
+        "false_alarms_per_negative_hour": 319.21182266009845,
+        "samples": [
+          {
+            "id": "fall-17-cam0",
+            "label": "fall",
+            "event_times": [
+              2.2666666666666666
+            ],
+            "onset": 1.9333333333333333,
+            "matched_delay": 0.33333333333333326,
+            "frames": 38,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-18-cam0",
+            "label": "fall",
+            "event_times": [
+              0.7666666666666667
+            ],
+            "onset": 0.5,
+            "matched_delay": 0.2666666666666667,
+            "frames": 26,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-19-cam0",
+            "label": "fall",
+            "event_times": [
+              1.1
+            ],
+            "onset": 0.8,
+            "matched_delay": 0.30000000000000004,
+            "frames": 40,
+            "missing_or_low_quality": 11
+          },
+          {
+            "id": "fall-20-cam0",
+            "label": "fall",
+            "event_times": [
+              1.4333333333333333
+            ],
+            "onset": 0.5666666666666667,
+            "matched_delay": 0.8666666666666667,
+            "frames": 44,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "fall-21-cam0",
+            "label": "fall",
+            "event_times": [
+              0.7666666666666667
+            ],
+            "onset": 0.6666666666666666,
+            "matched_delay": 0.10000000000000009,
+            "frames": 22,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-22-cam0",
+            "label": "fall",
+            "event_times": [
+              0.6
+            ],
+            "onset": 0.1,
+            "matched_delay": 0.5,
+            "frames": 23,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "fall-23-cam0",
+            "label": "fall",
+            "event_times": [
+              1.4333333333333333
+            ],
+            "onset": 0.8666666666666667,
+            "matched_delay": 0.5666666666666667,
+            "frames": 30,
+            "missing_or_low_quality": 4
+          },
+          {
+            "id": "fall-24-cam0",
+            "label": "fall",
+            "event_times": [
+              0.6
+            ],
+            "onset": 0.36666666666666664,
+            "matched_delay": 0.23333333333333334,
+            "frames": 24,
+            "missing_or_low_quality": 2
+          },
+          {
+            "id": "fall-25-cam0",
+            "label": "fall",
+            "event_times": [
+              1.4333333333333333
+            ],
+            "onset": 1.4666666666666666,
+            "matched_delay": null,
+            "frames": 34,
+            "missing_or_low_quality": 6
+          },
+          {
+            "id": "fall-26-cam0",
+            "label": "fall",
+            "event_times": [
+              0.6
+            ],
+            "onset": 0.4,
+            "matched_delay": 0.19999999999999996,
+            "frames": 25,
+            "missing_or_low_quality": 3
+          },
+          {
+            "id": "adl-17-cam0",
+            "label": "normal",
+            "event_times": [
+              5.6
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 92,
+            "missing_or_low_quality": 28
+          },
+          {
+            "id": "adl-18-cam0",
+            "label": "normal",
+            "event_times": [
+              6.933333333333334
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 106,
+            "missing_or_low_quality": 48
+          },
+          {
+            "id": "adl-19-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 100,
+            "missing_or_low_quality": 55
+          },
+          {
+            "id": "adl-20-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 108,
+            "missing_or_low_quality": 43
+          },
+          {
+            "id": "adl-21-cam0",
+            "label": "normal",
+            "event_times": [
+              6.433333333333334
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 112,
+            "missing_or_low_quality": 53
+          },
+          {
+            "id": "adl-22-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 96,
+            "missing_or_low_quality": 52
+          },
+          {
+            "id": "adl-23-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 88,
+            "missing_or_low_quality": 48
+          },
+          {
+            "id": "adl-24-cam0",
+            "label": "normal",
+            "event_times": [
+              0.6
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 28,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "adl-25-cam0",
+            "label": "normal",
+            "event_times": [
+              1.4333333333333333
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 44,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "adl-26-cam0",
+            "label": "normal",
+            "event_times": [
+              1.1
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 38,
+            "missing_or_low_quality": 0
+          }
+        ]
+      }
+    },
+    {
+      "architecture": "mlp32",
+      "threshold": 0.7,
+      "metrics": {
+        "video_presence": {
+          "tp": 9,
+          "fn": 1,
+          "fp": 5,
+          "tn": 5,
+          "precision": 0.6428571428571429,
+          "recall": 0.9,
+          "f1": 0.75,
+          "specificity": 0.5,
+          "false_positive_rate": 0.5,
+          "false_negative_rate": 0.1,
+          "recall_nominal_wilson95": [
+            0.5958499732047615,
+            0.9821237869049271
+          ],
+          "precision_nominal_wilson95": [
+            0.38764423103907397,
+            0.8365526824644587
+          ]
+        },
+        "onset_matched": {
+          "matched": 8,
+          "missed": 2,
+          "unmatched_alerts": 6,
+          "mean_detected_delay_seconds": 0.5125,
+          "delays_seconds": [
+            0.33333333333333326,
+            0.2666666666666667,
+            0.46666666666666656,
+            0.8666666666666667,
+            0.5,
+            0.8999999999999999,
+            0.4000000000000001,
+            0.3666666666666667
+          ]
+        },
+        "negative_seconds": 67.66666666666669,
+        "false_events": 5,
+        "false_alarms_per_negative_hour": 266.0098522167487,
+        "samples": [
+          {
+            "id": "fall-17-cam0",
+            "label": "fall",
+            "event_times": [
+              2.2666666666666666
+            ],
+            "onset": 1.9333333333333333,
+            "matched_delay": 0.33333333333333326,
+            "frames": 38,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-18-cam0",
+            "label": "fall",
+            "event_times": [
+              0.7666666666666667
+            ],
+            "onset": 0.5,
+            "matched_delay": 0.2666666666666667,
+            "frames": 26,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-19-cam0",
+            "label": "fall",
+            "event_times": [
+              1.2666666666666666
+            ],
+            "onset": 0.8,
+            "matched_delay": 0.46666666666666656,
+            "frames": 40,
+            "missing_or_low_quality": 11
+          },
+          {
+            "id": "fall-20-cam0",
+            "label": "fall",
+            "event_times": [
+              1.4333333333333333
+            ],
+            "onset": 0.5666666666666667,
+            "matched_delay": 0.8666666666666667,
+            "frames": 44,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "fall-21-cam0",
+            "label": "fall",
+            "event_times": [],
+            "onset": 0.6666666666666666,
+            "matched_delay": null,
+            "frames": 22,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-22-cam0",
+            "label": "fall",
+            "event_times": [
+              0.6
+            ],
+            "onset": 0.1,
+            "matched_delay": 0.5,
+            "frames": 23,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "fall-23-cam0",
+            "label": "fall",
+            "event_times": [
+              1.7666666666666666
+            ],
+            "onset": 0.8666666666666667,
+            "matched_delay": 0.8999999999999999,
+            "frames": 30,
+            "missing_or_low_quality": 4
+          },
+          {
+            "id": "fall-24-cam0",
+            "label": "fall",
+            "event_times": [
+              0.7666666666666667
+            ],
+            "onset": 0.36666666666666664,
+            "matched_delay": 0.4000000000000001,
+            "frames": 24,
+            "missing_or_low_quality": 2
+          },
+          {
+            "id": "fall-25-cam0",
+            "label": "fall",
+            "event_times": [
+              1.4333333333333333
+            ],
+            "onset": 1.4666666666666666,
+            "matched_delay": null,
+            "frames": 34,
+            "missing_or_low_quality": 6
+          },
+          {
+            "id": "fall-26-cam0",
+            "label": "fall",
+            "event_times": [
+              0.7666666666666667
+            ],
+            "onset": 0.4,
+            "matched_delay": 0.3666666666666667,
+            "frames": 25,
+            "missing_or_low_quality": 3
+          },
+          {
+            "id": "adl-17-cam0",
+            "label": "normal",
+            "event_times": [
+              5.6
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 92,
+            "missing_or_low_quality": 28
+          },
+          {
+            "id": "adl-18-cam0",
+            "label": "normal",
+            "event_times": [
+              6.933333333333334
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 106,
+            "missing_or_low_quality": 48
+          },
+          {
+            "id": "adl-19-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 100,
+            "missing_or_low_quality": 55
+          },
+          {
+            "id": "adl-20-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 108,
+            "missing_or_low_quality": 43
+          },
+          {
+            "id": "adl-21-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 112,
+            "missing_or_low_quality": 53
+          },
+          {
+            "id": "adl-22-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 96,
+            "missing_or_low_quality": 52
+          },
+          {
+            "id": "adl-23-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 88,
+            "missing_or_low_quality": 48
+          },
+          {
+            "id": "adl-24-cam0",
+            "label": "normal",
+            "event_times": [
+              0.6
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 28,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "adl-25-cam0",
+            "label": "normal",
+            "event_times": [
+              1.6
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 44,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "adl-26-cam0",
+            "label": "normal",
+            "event_times": [
+              1.1
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 38,
+            "missing_or_low_quality": 0
+          }
+        ]
+      }
+    },
+    {
+      "architecture": "mlp32",
+      "threshold": 0.9,
+      "metrics": {
+        "video_presence": {
+          "tp": 9,
+          "fn": 1,
+          "fp": 3,
+          "tn": 7,
+          "precision": 0.75,
+          "recall": 0.9,
+          "f1": 0.8181818181818182,
+          "specificity": 0.7,
+          "false_positive_rate": 0.3,
+          "false_negative_rate": 0.1,
+          "recall_nominal_wilson95": [
+            0.5958499732047615,
+            0.9821237869049271
+          ],
+          "precision_nominal_wilson95": [
+            0.46769466506643426,
+            0.9110583316059453
+          ]
+        },
+        "onset_matched": {
+          "matched": 9,
+          "missed": 1,
+          "unmatched_alerts": 3,
+          "mean_detected_delay_seconds": 0.5444444444444445,
+          "delays_seconds": [
+            0.33333333333333326,
+            0.2666666666666667,
+            0.6333333333333333,
+            1.0333333333333334,
+            0.5,
+            0.8999999999999999,
+            0.4000000000000001,
+            0.4666666666666668,
+            0.3666666666666667
+          ]
+        },
+        "negative_seconds": 67.66666666666669,
+        "false_events": 3,
+        "false_alarms_per_negative_hour": 159.60591133004922,
+        "samples": [
+          {
+            "id": "fall-17-cam0",
+            "label": "fall",
+            "event_times": [
+              2.2666666666666666
+            ],
+            "onset": 1.9333333333333333,
+            "matched_delay": 0.33333333333333326,
+            "frames": 38,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-18-cam0",
+            "label": "fall",
+            "event_times": [
+              0.7666666666666667
+            ],
+            "onset": 0.5,
+            "matched_delay": 0.2666666666666667,
+            "frames": 26,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-19-cam0",
+            "label": "fall",
+            "event_times": [
+              1.4333333333333333
+            ],
+            "onset": 0.8,
+            "matched_delay": 0.6333333333333333,
+            "frames": 40,
+            "missing_or_low_quality": 11
+          },
+          {
+            "id": "fall-20-cam0",
+            "label": "fall",
+            "event_times": [
+              1.6
+            ],
+            "onset": 0.5666666666666667,
+            "matched_delay": 1.0333333333333334,
+            "frames": 44,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "fall-21-cam0",
+            "label": "fall",
+            "event_times": [],
+            "onset": 0.6666666666666666,
+            "matched_delay": null,
+            "frames": 22,
+            "missing_or_low_quality": 5
+          },
+          {
+            "id": "fall-22-cam0",
+            "label": "fall",
+            "event_times": [
+              0.6
+            ],
+            "onset": 0.1,
+            "matched_delay": 0.5,
+            "frames": 23,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "fall-23-cam0",
+            "label": "fall",
+            "event_times": [
+              1.7666666666666666
+            ],
+            "onset": 0.8666666666666667,
+            "matched_delay": 0.8999999999999999,
+            "frames": 30,
+            "missing_or_low_quality": 4
+          },
+          {
+            "id": "fall-24-cam0",
+            "label": "fall",
+            "event_times": [
+              0.7666666666666667
+            ],
+            "onset": 0.36666666666666664,
+            "matched_delay": 0.4000000000000001,
+            "frames": 24,
+            "missing_or_low_quality": 2
+          },
+          {
+            "id": "fall-25-cam0",
+            "label": "fall",
+            "event_times": [
+              1.9333333333333333
+            ],
+            "onset": 1.4666666666666666,
+            "matched_delay": 0.4666666666666668,
+            "frames": 34,
+            "missing_or_low_quality": 6
+          },
+          {
+            "id": "fall-26-cam0",
+            "label": "fall",
+            "event_times": [
+              0.7666666666666667
+            ],
+            "onset": 0.4,
+            "matched_delay": 0.3666666666666667,
+            "frames": 25,
+            "missing_or_low_quality": 3
+          },
+          {
+            "id": "adl-17-cam0",
+            "label": "normal",
+            "event_times": [
+              5.6
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 92,
+            "missing_or_low_quality": 28
+          },
+          {
+            "id": "adl-18-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 106,
+            "missing_or_low_quality": 48
+          },
+          {
+            "id": "adl-19-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 100,
+            "missing_or_low_quality": 55
+          },
+          {
+            "id": "adl-20-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 108,
+            "missing_or_low_quality": 43
+          },
+          {
+            "id": "adl-21-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 112,
+            "missing_or_low_quality": 53
+          },
+          {
+            "id": "adl-22-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 96,
+            "missing_or_low_quality": 52
+          },
+          {
+            "id": "adl-23-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 88,
+            "missing_or_low_quality": 48
+          },
+          {
+            "id": "adl-24-cam0",
+            "label": "normal",
+            "event_times": [
+              0.6
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 28,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "adl-25-cam0",
+            "label": "normal",
+            "event_times": [],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 44,
+            "missing_or_low_quality": 0
+          },
+          {
+            "id": "adl-26-cam0",
+            "label": "normal",
+            "event_times": [
+              1.2666666666666666
+            ],
+            "onset": null,
+            "matched_delay": null,
+            "frames": 38,
+            "missing_or_low_quality": 0
+          }
+        ]
+      }
+    }
+  ],
+  "curves": {
+    "linear": [
+      {
+        "epoch": 10,
+        "weighted_train_bce": 0.3498397166805756
+      },
+      {
+        "epoch": 20,
+        "weighted_train_bce": 0.32154182223545114
+      },
+      {
+        "epoch": 30,
+        "weighted_train_bce": 0.2951941673032523
+      },
+      {
+        "epoch": 40,
+        "weighted_train_bce": 0.28244383335233914
+      },
+      {
+        "epoch": 50,
+        "weighted_train_bce": 0.2709193814043325
+      },
+      {
+        "epoch": 60,
+        "weighted_train_bce": 0.2621386429101674
+      },
+      {
+        "epoch": 70,
+        "weighted_train_bce": 0.25496157295868793
+      },
+      {
+        "epoch": 80,
+        "weighted_train_bce": 0.24901966150407567
+      },
+      {
+        "epoch": 90,
+        "weighted_train_bce": 0.24379734871894224
+      },
+      {
+        "epoch": 100,
+        "weighted_train_bce": 0.23924771532551123
+      },
+      {
+        "epoch": 110,
+        "weighted_train_bce": 0.23521069418504975
+      },
+      {
+        "epoch": 120,
+        "weighted_train_bce": 0.2315956942573
+      },
+      {
+        "epoch": 130,
+        "weighted_train_bce": 0.2283351340485691
+      },
+      {
+        "epoch": 140,
+        "weighted_train_bce": 0.22537308310458248
+      },
+      {
+        "epoch": 150,
+        "weighted_train_bce": 0.222664151891959
+      },
+      {
+        "epoch": 160,
+        "weighted_train_bce": 0.22017271376286834
+      },
+      {
+        "epoch": 170,
+        "weighted_train_bce": 0.21786937188492644
+      },
+      {
+        "epoch": 180,
+        "weighted_train_bce": 0.21572968652763141
+      },
+      {
+        "epoch": 190,
+        "weighted_train_bce": 0.21373369903274622
+      },
+      {
+        "epoch": 200,
+        "weighted_train_bce": 0.21186478731904526
+      },
+      {
+        "epoch": 210,
+        "weighted_train_bce": 0.21010894676194997
+      },
+      {
+        "epoch": 220,
+        "weighted_train_bce": 0.20845444233325422
+      },
+      {
+        "epoch": 230,
+        "weighted_train_bce": 0.20689134146532523
+      },
+      {
+        "epoch": 240,
+        "weighted_train_bce": 0.20541116222834446
+      },
+      {
+        "epoch": 250,
+        "weighted_train_bce": 0.20400663383672724
+      },
+      {
+        "epoch": 260,
+        "weighted_train_bce": 0.20267147471056626
+      },
+      {
+        "epoch": 270,
+        "weighted_train_bce": 0.20140022109866967
+      },
+      {
+        "epoch": 280,
+        "weighted_train_bce": 0.20018808819120215
+      },
+      {
+        "epoch": 290,
+        "weighted_train_bce": 0.19903085300610432
+      },
+      {
+        "epoch": 300,
+        "weighted_train_bce": 0.1979247636117316
+      }
+    ],
+    "mlp32": [
+      {
+        "epoch": 10,
+        "weighted_train_bce": 0.35646625618486716
+      },
+      {
+        "epoch": 20,
+        "weighted_train_bce": 0.29123563668226127
+      },
+      {
+        "epoch": 30,
+        "weighted_train_bce": 0.24727865695471068
+      },
+      {
+        "epoch": 40,
+        "weighted_train_bce": 0.21488693560640137
+      },
+      {
+        "epoch": 50,
+        "weighted_train_bce": 0.18909507908189277
+      },
+      {
+        "epoch": 60,
+        "weighted_train_bce": 0.16747906190456438
+      },
+      {
+        "epoch": 70,
+        "weighted_train_bce": 0.15059641163247914
+      },
+      {
+        "epoch": 80,
+        "weighted_train_bce": 0.13705843675316012
+      },
+      {
+        "epoch": 90,
+        "weighted_train_bce": 0.12570095825107325
+      },
+      {
+        "epoch": 100,
+        "weighted_train_bce": 0.11603960086836382
+      },
+      {
+        "epoch": 110,
+        "weighted_train_bce": 0.1076259260231293
+      },
+      {
+        "epoch": 120,
+        "weighted_train_bce": 0.10003246521655161
+      },
+      {
+        "epoch": 130,
+        "weighted_train_bce": 0.09304541899064463
+      },
+      {
+        "epoch": 140,
+        "weighted_train_bce": 0.0868630747437627
+      },
+      {
+        "epoch": 150,
+        "weighted_train_bce": 0.08162848436226354
+      },
+      {
+        "epoch": 160,
+        "weighted_train_bce": 0.07717470236220869
+      },
+      {
+        "epoch": 170,
+        "weighted_train_bce": 0.07346759548862686
+      },
+      {
+        "epoch": 180,
+        "weighted_train_bce": 0.07035767616225588
+      },
+      {
+        "epoch": 190,
+        "weighted_train_bce": 0.06770887440996895
+      },
+      {
+        "epoch": 200,
+        "weighted_train_bce": 0.06540990267142856
+      },
+      {
+        "epoch": 210,
+        "weighted_train_bce": 0.06336173370927925
+      },
+      {
+        "epoch": 220,
+        "weighted_train_bce": 0.06154246946107093
+      },
+      {
+        "epoch": 230,
+        "weighted_train_bce": 0.059885576950473716
+      },
+      {
+        "epoch": 240,
+        "weighted_train_bce": 0.058349384281070574
+      },
+      {
+        "epoch": 250,
+        "weighted_train_bce": 0.05692256189996904
+      },
+      {
+        "epoch": 260,
+        "weighted_train_bce": 0.05561923756567903
+      },
+      {
+        "epoch": 270,
+        "weighted_train_bce": 0.054436395211648496
+      },
+      {
+        "epoch": 280,
+        "weighted_train_bce": 0.05335745855711079
+      },
+      {
+        "epoch": 290,
+        "weighted_train_bce": 0.052362600747867985
+      },
+      {
+        "epoch": 300,
+        "weighted_train_bce": 0.051434908285408934
+      }
+    ]
+  },
+  "training_rows": 1873,
+  "training_recordings": 32,
+  "validation_recordings": 20,
+  "parameters": 63,
+  "test_accessed": false
+}

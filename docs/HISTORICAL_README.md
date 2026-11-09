@@ -1,3 +1,5 @@
+> Archived README prose and attribution are preserved; relative links are adapted to this document’s location. The original version remains in Git history.
+
 # SafetyLens
 
 🏆 **SafetyLens secured 1st place among 384 participants at The Executable World Hackathon, earning a $25,000 prize.**
@@ -331,14 +333,14 @@ Copy the example environment files only during initial setup; preserve any exist
 
 ### Live camera detector
 
-The camera preview is a separate local process. Follow the [detector setup](detector/README.md#analyze-a-prerecorded-video) to install its video dependencies and download the pose model, then run from the repository root:
+The camera preview is a separate local process. Follow the [detector setup](../detector/README.md#analyze-a-prerecorded-video) to install its video dependencies and download the pose model, then run from the repository root:
 
 ```powershell
 $env:PYTHONPATH = "detector/src"
 python -m safetylens_detector.live --source 0 --model detector/models/pose_landmarker_lite.task --mirror
 ```
 
-Use the Python environment containing the detector dependencies. Camera indices vary by device; the Camo phone setup used in our demo is `--source 1`. Keep one full person and the floor visible. Press `Q` to stop. Local clips, event JSON, and decision logs are saved under the ignored `detector/events/` directory. See the [detector guide](detector/README.md) for recovery behavior and overhead-camera mode.
+Use the Python environment containing the detector dependencies. Camera indices vary by device; the Camo phone setup used in our demo is `--source 1`. Keep one full person and the floor visible. Press `Q` to stop. Local clips, event JSON, and decision logs are saved under the ignored `detector/events/` directory. See the [detector guide](../detector/README.md) for recovery behavior and overhead-camera mode.
 
 ### Docker
 
@@ -447,8 +449,8 @@ SafetyLens is a hackathon prototype and is not a replacement for trained safety 
 
 ## Documentation
 
-- [Backend setup and detector ingestion](backend/README.md)
-- [Frontend setup](frontend/README.md)
-- [Detector setup and behavior](detector/README.md)
-- [Demo script](docs/DEMO_SCRIPT.md) and [manual QA](docs/demo/MANUAL_QA.md)
-- [Documentation index and retained planning material](docs/README.md)
+- [Backend setup and detector ingestion](../backend/README.md)
+- [Frontend setup](../frontend/README.md)
+- [Detector setup and behavior](../detector/README.md)
+- [Demo script](DEMO_SCRIPT.md) and [manual QA](demo/MANUAL_QA.md)
+- [Documentation index and retained planning material](README.md)

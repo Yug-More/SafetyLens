@@ -1,0 +1,6 @@
+{
+  "new_automated_ppe_ingestion_status": 409,
+  "error_code": "PPE_DEPLOYMENT_DISABLED",
+  "verified_on_final_backend_image": true,
+  "probe": "Security-only intentionally unqualified PPE event with actual public clip; not detection evaluation"
+}

@@ -1,0 +1,33 @@
+{
+  "checkpoint_sha256": "5449f62bd7cf30c01c7fd138db2729a38abcb4d5120449773fba475d54f30b62",
+  "onnx_sha256": "75c6b138880fb518cc9f8b04ca856a91a5ee84b94f118d4315dc09ee8070baac",
+  "shape": [
+    1,
+    21,
+    8400
+  ],
+  "class_names": {
+    "0": "person",
+    "1": "ear",
+    "2": "ear-mufs",
+    "3": "face",
+    "4": "face-guard",
+    "5": "face-mask",
+    "6": "foot",
+    "7": "tool",
+    "8": "glasses",
+    "9": "gloves",
+    "10": "helmet",
+    "11": "hands",
+    "12": "head",
+    "13": "medical-suit",
+    "14": "shoes",
+    "15": "safety-suit",
+    "16": "safety-vest"
+  },
+  "max_score_absolute_error": 3.5762786865234375e-06,
+  "max_coordinate_absolute_error_pixels": 0.00311279296875,
+  "parity_passed": true,
+  "protocol": "Same fixed RGB/255/114-centered-letterbox tensor; CPU float export; one diagnostic image only",
+  "torch_version": "2.6.0"
+}
