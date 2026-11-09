@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { PpeContextPreview } from "@/components/PpeContextPreview";
+import { PpeCapabilities } from "@/components/PpeCapabilities";
 import { Suspense } from "react";
 import { IncidentHistory } from "@/components/IncidentHistory";
 export default function PpePage() {
@@ -12,6 +14,8 @@ export default function PpePage() {
         </Link>
         .
       </p>
+      <PpeCapabilities />
+      <PpeContextPreview />
       <Suspense fallback={<p>Loading PPE reviews…</p>}>
         <IncidentHistory ppeOnly />
       </Suspense>

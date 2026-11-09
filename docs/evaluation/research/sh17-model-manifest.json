@@ -1,0 +1,20 @@
+{
+  "weights": "yolo8n.onnx",
+  "sha256": "75c6b138880fb518cc9f8b04ca856a91a5ee84b94f118d4315dc09ee8070baac",
+  "source": "https://github.com/ahmadmughees/SH17dataset/releases/download/v1/yolo8n.pt",
+  "license": "Ultralytics AGPL-3.0 export/code; SH17 CC-BY-NC-SA-4.0 research data; not cleared for deployment",
+  "classes": {
+    "0": "person",
+    "2": "earmuffs",
+    "4": "face_shield",
+    "5": "medical_mask",
+    "8": "ordinary_eyewear",
+    "9": "gloves",
+    "10": "hard_hat",
+    "14": "ordinary_footwear",
+    "16": "high_visibility_vest"
+  },
+  "input_size": 640,
+  "number_of_classes": 17,
+  "checkpoint_sha256": "5449f62bd7cf30c01c7fd138db2729a38abcb4d5120449773fba475d54f30b62"
+}

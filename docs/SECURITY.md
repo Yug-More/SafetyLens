@@ -27,3 +27,17 @@ The continued model-backed browser test exercises actual scoped device delivery,
 ## Final hardening evidence
 
 Current verified scope, commands and limitations are recorded in [FINAL_RELEASE_REPORT.md](FINAL_RELEASE_REPORT.md), [DEPLOYMENT_VERIFICATION.md](DEPLOYMENT_VERIFICATION.md), [SECURITY_REVIEW.md](SECURITY_REVIEW.md) and [PERFORMANCE_REPORT.md](PERFORMANCE_REPORT.md). These supersede earlier unverified frontend/PostgreSQL-17 status; they do not establish workplace readiness.
+
+## November 8 research-phase controls
+
+The pure ASGI `BodyBudgetMiddleware` counts actual received bytes before multipart spooling, with early Content-Length rejection and a 110MiB default for recognized media-upload routes only. Spoofing a multipart content type on metadata routes does not obtain the media allowance. Other metadata is limited to256KiB; detector snapshots to at most2MiB. `MAX_REQUEST_SIZE_MB` is configurable in settings/Compose. This does not provide rate limiting, upload antivirus, decode sandboxing, connection limits or a production HTTPS proxy.
+
+Provider metadata now appears as JSON descriptive data under explicit untrusted-content instructions; frame paths/URLs are not interpolated as remote-fetch instructions. Existing provider output checks and server approval remain. Untrusted remote exception content is neither logged nor exposed through chained public errors; a regression checks both logs and formatted traceback. These tests do not measure prompt-injection resistance of a live paid model. Retrieved SOPs remain untrusted text; deterministic planning has no external execution authority, and human approval is independently enforced.
+
+PPE context preview/configuration is administrator-only, with role and CSRF checks; viewers may inspect class gates. Unknown context and missing visibility remain unknown. Appearance observations cannot bypass per-class deployment gates or certify protective equipment. No worker identity is inferred from operational-role fields. All categories remain disabled for deployment.
+
+Research checkpoint inference uses hash-pinned bounded JSON with numeric/shape validation. The optional export tool loads an official, explicitly hashed PyTorch research checkpoint; arbitrary pickle files are unsupported. No trained weights, source media, private credentials, QA dumps or employee footage are committed. Camera source timeouts and a one-slot latest-frame buffer reduce stale-frame growth; native backend guarantees and physical RTSP operation remain unverified.
+
+The installation still shares authorized evidence across its users by role. It does not implement organization tenancy or per-user ownership isolation, SSO/MFA, an immutable audit ledger or distributed exactly-once actions. A proxy/service admission policy and representative security testing remain requirements before nonlocal operational deployment. No external consequential action was added.
+
+New automated `ppe_noncompliance` detector ingestion is rejected while all visual gates are closed, even if a device bypasses the normal worker/configuration controls. Existing UUID acknowledgements remain retryable. Configured demos, human review and offline diagnostics are separate paths, not qualified live PPE deployment.

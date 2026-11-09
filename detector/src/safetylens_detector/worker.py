@@ -21,7 +21,15 @@ from .ppe import OnnxPpeDetector, PpeTemporalMonitor, associate_ppe, draw_ppe_ov
 
 
 def run_camera(
-    camera_id, backend, token, pose_model, ppe_manifest, root, stop, max_seconds=None
+    camera_id,
+    backend,
+    token,
+    pose_model,
+    ppe_manifest,
+    root,
+    stop,
+    max_seconds=None,
+    temporal_model=None,
 ):
     import cv2
     import httpx
@@ -84,7 +92,9 @@ def run_camera(
                     continue
                 policy = config["policy"]
                 if "ppe" in policy.get("detectors", []):
-                    raise RuntimeError("PPE deployment excluded; use offline evaluation until model validation and licensing are resolved")
+                    raise RuntimeError(
+                        "PPE deployment excluded; use offline evaluation until model validation and licensing are resolved"
+                    )
                 fps = policy.get("sample_fps", 8)
                 source = config["source"]
                 kind = config["source_kind"]
@@ -92,10 +102,20 @@ def run_camera(
                     source = None
                 elif kind == "webcam":
                     source = int(source)
-                capture = cv2.VideoCapture(source) if source is not None else None
+                if kind in {"network", "rtsp"}:
+                    from .stream import open_network_capture
+
+                    capture = open_network_capture(cv2, source)
+                else:
+                    capture = cv2.VideoCapture(source) if source is not None else None
                 if capture is not None and not capture.isOpened():
                     raise RuntimeError("Camera unavailable")
-                engine = EnhancedDetectorEngine()
+                if temporal_model is not None:
+                    from .temporal import TemporalDetectorEngine
+
+                    engine = TemporalDetectorEngine(temporal_model)
+                else:
+                    engine = EnhancedDetectorEngine()
                 ppe = (
                     OnnxPpeDetector(
                         ppe_manifest, threshold=policy.get("confidence_threshold", 0.5)
@@ -109,6 +129,7 @@ def run_camera(
                     maximum_frames=round(fps * 32),
                 )
                 events = {}
+
                 def enqueue_completed():
                     while completed := buffer.pop_completed():
                         path = _write_evidence_clip(
@@ -116,8 +137,7 @@ def run_camera(
                         )
                         offset = (
                             sum(
-                                x.timestamp_seconds
-                                < completed.event_timestamp_seconds
+                                x.timestamp_seconds < completed.event_timestamp_seconds
                                 for x in completed.frames
                             )
                             / fps
@@ -134,12 +154,19 @@ def run_camera(
                 notified = set()
                 missing_since = None
                 from .tracking import PoseTracker
-                tracker = PoseTracker() if policy.get("maximum_pose_people",1)>1 else None
+
+                tracker = (
+                    PoseTracker() if policy.get("maximum_pose_people", 1) > 1 else None
+                )
                 frame_number = 0
                 connection_started = time.monotonic()
                 next_sample = connection_started
                 last_config_check = time.monotonic()
-                with MediaPipePoseProvider(pose_model, region=policy.get("pose_region"), num_poses=policy.get("maximum_pose_people",1)) as pose:
+                with MediaPipePoseProvider(
+                    pose_model,
+                    region=policy.get("pose_region"),
+                    num_poses=policy.get("maximum_pose_people", 1),
+                ) as pose:
                     while not stop.is_set():
                         if (
                             max_seconds is not None
@@ -163,7 +190,9 @@ def run_camera(
                             ok, frame = capture.read()
                             if not ok or frame is None:
                                 for event_id in buffer.finish_pending():
-                                    events[event_id].setdefault("limitations", []).append(
+                                    events[event_id].setdefault(
+                                        "limitations", []
+                                    ).append(
                                         "post_event_window_truncated_at_source_end"
                                     )
                                 enqueue_completed()
@@ -206,20 +235,31 @@ def run_camera(
                             next_sample += 1 / fps
                         else:
                             next_sample = connection_started + timestamp + 1 / fps
+                        if kind in {"network", "rtsp"}:
+                            with lock:
+                                state["dropped_frames"] = capture.dropped_frames
                         buffer.add(timestamp, frame.copy())
                         current = []
                         if kind != "simulator" and "fall" in policy.get(
                             "detectors", []
                         ):
                             if tracker:
-                                observations = pose.detect_many(frame,timestamp_seconds=timestamp,source_id=camera_id)
-                                linked, expired, _ = tracker.update(timestamp,observations)
+                                observations = pose.detect_many(
+                                    frame,
+                                    timestamp_seconds=timestamp,
+                                    source_id=camera_id,
+                                )
+                                linked, expired, _ = tracker.update(
+                                    timestamp, observations
+                                )
                                 for track_id in expired:
                                     engine.forget_track(track_id)
                                 results = [engine.process(o) for o in linked]
                             else:
                                 observation = pose.detect(
-                                    frame, timestamp_seconds=timestamp, source_id=camera_id
+                                    frame,
+                                    timestamp_seconds=timestamp,
+                                    source_id=camera_id,
                                 )
                                 if observation is not None:
                                     missing_since = None
@@ -238,7 +278,15 @@ def run_camera(
                                 results = [result] if result else []
                             for result in results:
                                 if result.event:
-                                    current.append(result.event.to_dict())
+                                    event = result.event.to_dict()
+                                    if temporal_model is not None:
+                                        event["metrics"]["model_sha256"] = (
+                                            temporal_model.checkpoint["artifact_sha256"]
+                                        )
+                                        event["metrics"]["feature_version"] = (
+                                            temporal_model.checkpoint["feature_version"]
+                                        )
+                                    current.append(event)
                         preview = frame
                         if ppe and kind != "simulator":
                             boxes = ppe.detect(frame)
@@ -345,7 +393,9 @@ def run_camera(
         if buffer is not None:
             try:
                 for event_id in buffer.finish_pending():
-                    events[event_id].setdefault("limitations", []).append("post_event_window_truncated_at_worker_shutdown")
+                    events[event_id].setdefault("limitations", []).append(
+                        "post_event_window_truncated_at_worker_shutdown"
+                    )
                 enqueue_completed()
             except (BufferError, OSError, ValueError):
                 pass  # Original clip remains on disk if durable capacity is exhausted.
@@ -357,12 +407,16 @@ def run_camera(
             pass
         stop.set()
         sender.join(timeout=6)
-        elapsed=time.monotonic()-started
+        elapsed = time.monotonic() - started
         with lock:
-            summary={k:v for k,v in state.items() if k != "preview"}
-        summary.update(kind="camera_worker_summary",camera_id=camera_id,wall_seconds=elapsed,
-                       average_sampled_fps=summary["frames_processed"]/max(elapsed,.001))
-        print(json.dumps(summary,allow_nan=False),flush=True)
+            summary = {k: v for k, v in state.items() if k != "preview"}
+        summary.update(
+            kind="camera_worker_summary",
+            camera_id=camera_id,
+            wall_seconds=elapsed,
+            average_sampled_fps=summary["frames_processed"] / max(elapsed, 0.001),
+        )
+        print(json.dumps(summary, allow_nan=False), flush=True)
 
 
 def main():
@@ -371,6 +425,12 @@ def main():
     p.add_argument("--camera-ids", required=True)
     p.add_argument("--pose-model", required=True, type=Path)
     p.add_argument("--ppe-manifest", type=Path)
+    p.add_argument(
+        "--temporal-checkpoint",
+        type=Path,
+        help="Opt-in experimental classifier; default rules remain unchanged",
+    )
+    p.add_argument("--temporal-sha256")
     p.add_argument("--state-dir", type=Path, default=Path("detector/events/worker"))
     p.add_argument("--max-seconds", type=float)
     a = p.parse_args()
@@ -387,6 +447,23 @@ def main():
         url.scheme == "http" and url.hostname in {"127.0.0.1", "localhost", "::1"}
     ):
         p.error("Remote backend requires HTTPS")
+    temporal_model = None
+    if a.temporal_checkpoint:
+        import hashlib
+        from .temporal import TemporalModel
+
+        if not a.temporal_sha256:
+            p.error("--temporal-checkpoint requires --temporal-sha256")
+        temporal_model = TemporalModel.load(
+            a.temporal_checkpoint, expected_sha256=a.temporal_sha256
+        )
+        if hashlib.sha256(
+            a.pose_model.read_bytes()
+        ).hexdigest() != temporal_model.checkpoint.get("pose_model_sha256"):
+            p.error("Pose model must match training checkpoint provenance")
+        temporal_model.checkpoint["artifact_sha256"] = a.temporal_sha256
+    elif a.temporal_sha256:
+        p.error("--temporal-sha256 requires --temporal-checkpoint")
     threads = []
     stops = []
     for camera_id in ids:
@@ -406,6 +483,7 @@ def main():
                 directory,
                 stop,
                 a.max_seconds,
+                temporal_model,
             ),
         )
         thread.start()

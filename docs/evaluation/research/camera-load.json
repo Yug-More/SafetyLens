@@ -1,0 +1,87 @@
+{
+  "recorded_replay_cameras": 4,
+  "four_camera_summaries": [
+    {
+      "status": "offline",
+      "frames_processed": 63,
+      "dropped_frames": null,
+      "processing_fps": 29.65143444042687,
+      "kind": "camera_worker_summary",
+      "camera_id": "d530a4d7-54ba-4261-beda-98f0240ff900",
+      "wall_seconds": 2.2529627499970957,
+      "average_sampled_fps": 27.963178707717745
+    },
+    {
+      "status": "offline",
+      "frames_processed": 63,
+      "dropped_frames": null,
+      "processing_fps": 29.576463854532456,
+      "kind": "camera_worker_summary",
+      "camera_id": "3b9536cd-316a-482b-b214-047dab9b17fc",
+      "wall_seconds": 2.273955250006111,
+      "average_sampled_fps": 27.705030694790803
+    },
+    {
+      "status": "offline",
+      "frames_processed": 63,
+      "dropped_frames": null,
+      "processing_fps": 29.573359687012115,
+      "kind": "camera_worker_summary",
+      "camera_id": "7a023bf5-be1f-42e0-8fde-e20d466e0bb5",
+      "wall_seconds": 2.3234507080051117,
+      "average_sampled_fps": 27.114842498247395
+    },
+    {
+      "status": "offline",
+      "frames_processed": 63,
+      "dropped_frames": null,
+      "processing_fps": 29.638130200828662,
+      "kind": "camera_worker_summary",
+      "camera_id": "45b0e038-ec9e-480c-9ca2-30b34d3c9794",
+      "wall_seconds": 2.327596415998414,
+      "average_sampled_fps": 27.06654794919693
+    }
+  ],
+  "total_sampled_frames": 252,
+  "wall_seconds_including_process_start": 2.9663227499986533,
+  "aggregate_offline_sampled_fps": 84.95366864583916,
+  "acknowledged_real_model_events": 4,
+  "network_camera_health_transitions": [
+    {
+      "seconds": 1.4166995242703706e-05,
+      "status": "offline"
+    },
+    {
+      "seconds": 2.4262139169950387,
+      "status": "online"
+    },
+    {
+      "seconds": 4.3752444999990985,
+      "status": "offline"
+    },
+    {
+      "seconds": 12.744280334001814,
+      "status": "online"
+    }
+  ],
+  "disconnect_then_reconnect_verified": true,
+  "limitations": [
+    "Same recorded clip replayed four times; not four independent scenes",
+    "Offline processing, not sustained live-camera capacity",
+    "MJPEG server interruption is controlled local simulation, not physical RTSP hardware",
+    "GPU utilization and source/network lost frames unmeasured; replay drop counts are null"
+  ],
+  "network_worker_summaries": [
+    {
+      "status": "online",
+      "frames_processed": 84,
+      "dropped_frames": 1,
+      "processing_fps": 4.20123334199807,
+      "kind": "camera_worker_summary",
+      "camera_id": "925fb293-e963-4ab9-85c3-1d2443fcdd96",
+      "wall_seconds": 20.062935333997302,
+      "average_sampled_fps": 4.18682503839103
+    }
+  ],
+  "drop_count_scope": "Frames replaced in the latest-frame slot in the final connection, not source/network loss or configured sampling skips"
+}

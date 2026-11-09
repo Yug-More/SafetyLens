@@ -31,11 +31,14 @@ def prepare_detector_analysis(db, video):
     down = ingestion.event_type == "prolonged_person_down"
     signals = json.loads(ingestion.trigger_signals_json or "[]")
     falling = "rapid_drop" in signals
+    learned = "learned_temporal_candidate" in signals
     observation = (
         "Required PPE not visible over repeated observations; verify occlusion and association."
         if ppe
         else "Person remains down; falling motion was not established."
         if down
+        else "Learned causal pose classifier flagged a candidate; falling motion and injury are unverified."
+        if learned
         else "Pose-derived rapid descent followed by sustained down posture; injury is unknown."
         if falling
         else "Detector submitted a possible person-down candidate; falling motion and injury are unverified."

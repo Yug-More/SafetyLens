@@ -47,6 +47,7 @@ export interface ManagedCamera {
     maximum_pose_people?: number;
     pose_region?: [number, number, number, number] | null;
     required_ppe?: string[];
+    ppe_context_rules?: { label: string; required_ppe: string[]; activity?: string | null; worker_role?: string | null; minute_range?: [number, number] | null }[];
     confidence_threshold?: number;
     pre_event_seconds?: number;
     post_event_seconds?: number;

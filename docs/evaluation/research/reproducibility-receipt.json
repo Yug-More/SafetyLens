@@ -1,0 +1,20 @@
+{
+  "base_commit": "af081c0f6e9f822b5a4d8178561e2b9b3e6c4a09",
+  "client_date": "2026-11-08",
+  "host": "Apple M2 Pro, 16 GiB, macOS 14.5, arm64",
+  "seed": 42,
+  "train_recordings": 32,
+  "validation_recordings": 20,
+  "test_recordings": 18,
+  "test_positives": 4,
+  "test_negatives": 14,
+  "same_host_retraining_byte_identical": true,
+  "checkpoint_sha256": "436948b4ec1fb8e371303a2c346630fa9869a00894cc9067e572bb5c34fd8bd8",
+  "public_footage_only": true,
+  "research_weights_and_raw_data_committed": false,
+  "versions_receipt_note": "See REPRODUCIBILITY.md for isolated detector/export runtime versions; backend Python3.12.12",
+  "backend_runtime_observed": {
+    "numpy": "2.2.4",
+    "onnxruntime": "1.24.2"
+  }
+}

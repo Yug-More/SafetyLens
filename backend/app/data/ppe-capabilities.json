@@ -1,0 +1,56 @@
+{
+  "evaluation_artifact": "docs/evaluation/research/ppe100-final.json",
+  "model_sha256": "75c6b138880fb518cc9f8b04ca856a91a5ee84b94f118d4315dc09ee8070baac",
+  "dataset_manifest_sha256": "add8139fee52a86a6e0a59b26f96f9936f8b76be8d58394396bbc31c8f4efe75",
+  "evaluation_scope": "100-image appearance diagnostic; pretraining overlap unknown, not protective-rating/compliance accuracy",
+  "categories": {
+    "hard_hat": {
+      "appearance_label": "hard_hat",
+      "appearance_ap50": 0.3586887534907337,
+      "appearance_precision": 0.5862068965517241,
+      "appearance_recall": 0.425
+    },
+    "high_visibility_vest": {
+      "appearance_label": "high_visibility_vest",
+      "appearance_ap50": 0.6120998382026306,
+      "appearance_precision": 0.34328358208955223,
+      "appearance_recall": 0.7666666666666667
+    },
+    "safety_goggles": {
+      "appearance_label": "ordinary_eyewear",
+      "appearance_ap50": 0.30268741159830265,
+      "appearance_precision": 0.19047619047619047,
+      "appearance_recall": 0.3333333333333333
+    },
+    "protective_footwear": {
+      "appearance_label": "ordinary_footwear",
+      "appearance_ap50": 0.4046113787201275,
+      "appearance_precision": 0.3246753246753247,
+      "appearance_recall": 0.5050505050505051
+    },
+    "protective_gloves": {
+      "appearance_label": "gloves",
+      "appearance_ap50": 0.31793626239030653,
+      "appearance_precision": 0.26804123711340205,
+      "appearance_recall": 0.4126984126984127
+    },
+    "face_shield": {
+      "appearance_label": "face_shield",
+      "appearance_ap50": 0.4422442244224422,
+      "appearance_precision": 0.18181818181818182,
+      "appearance_recall": 0.6666666666666666
+    },
+    "hearing_protection": {
+      "appearance_label": "earmuffs",
+      "appearance_ap50": 0.10396039603960396,
+      "appearance_precision": 0.5,
+      "appearance_recall": 0.2
+    },
+    "respiratory_protection": {
+      "appearance_label": "medical_mask",
+      "appearance_ap50": 0.3564356435643564,
+      "appearance_precision": 0.38461538461538464,
+      "appearance_recall": 0.35714285714285715
+    }
+  }
+}

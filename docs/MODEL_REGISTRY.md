@@ -1,3 +1,5 @@
+> **November 8 correction:** historical PPE equipment metrics in this document used a mis-mapped mirror category order and are withdrawn. Person and fall metrics are unaffected. See [PPE_EVALUATION.md](PPE_EVALUATION.md) for independently verified semantics and corrected results; [FINAL_VALIDATION_REPORT.md](FINAL_VALIDATION_REPORT.md) is the current status. Historical findings remain below for traceability.
+
 # External model manifests
 
 Keep weights outside Git. `OnnxPpeDetector` requires a JSON manifest containing `weights` (relative path), `sha256`, `source`, `license`, `classes` (integer-string → canonical label), `number_of_classes`, and `input_size`.

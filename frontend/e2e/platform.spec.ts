@@ -25,12 +25,16 @@ test("authenticated camera configuration and real record analytics", async ({
     .getByLabel("Camera name", { exact: true })
     .fill("Browser QA camera");
   await page.getByLabel("Location", { exact: true }).fill("Test area");
+  await page.getByLabel("Require protective eyewear", {exact:true}).check();
+  await page.getByLabel("Conditional PPE rules (JSON)", {exact:false}).fill(JSON.stringify([{label:"Maintenance",required_ppe:["hearing_protection"],worker_role:"maintenance"}]));
   await page.getByRole("button", { name: "Save camera", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Browser QA camera", exact: true }),
   ).toBeVisible();
   const card = page.locator("section").filter({ has: page.getByRole("heading", {name:"Browser QA camera", exact:true}) });
   await card.getByRole("button", {name:"Edit configuration"}).click();
+  await expect(page.getByLabel("Require protective eyewear", {exact:true})).toBeChecked();
+  await expect(page.getByLabel("Conditional PPE rules (JSON)", {exact:false})).toContainText("maintenance");
   await page.getByLabel("Camera name", {exact:true}).fill("Browser QA camera updated");
   await page.getByLabel("Pose region (normalized x1,y1,x2,y2)", {exact:true}).fill("0.5,0,1,1");
   await page.getByRole("button", {name:"Save camera",exact:true}).click();
@@ -290,4 +294,24 @@ test("operator routes load and analytics recovers from a network error", async (
   await page.unroute("**/api/analytics**");
   await page.reload();
   await expect(page.getByRole("heading", {name:"Safety analytics"})).toBeVisible();
+});
+
+
+test("PPE class gates recover from an unavailable API without fake status", async ({page}) => {
+  await login(page);
+  await page.route("**/api/ppe-capabilities", route => route.abort());
+  await page.goto("/ppe");
+  await expect(page.getByRole("alert").filter({hasText:"Model status unavailable"})).toBeVisible();
+  await page.unroute("**/api/ppe-capabilities");
+  await page.getByRole("button", {name:"Retry model status"}).click();
+  const section=page.getByRole("region", {name:"PPE capability gates"});
+  await expect(section.locator("article")).toHaveCount(8);
+  await expect(section.getByText("Deployment disabled", {exact:true})).toHaveCount(8);
+  await expect(section.getByRole("heading",{name:"Protective footwear",exact:true})).toBeVisible();
+  await page.getByRole("button", {name:"Preview requirements",exact:true}).click();
+  await expect(page.getByRole("region",{name:"Preview contextual requirements"}).getByRole("status")).toContainText("Required:");
+  await page.setViewportSize({width:390,height:844});
+  await expect(section.getByRole("heading",{name:"Respiratory protection",exact:true})).toBeVisible();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBeTruthy();
+  await page.screenshot({path:"test-results/ppe-gates-mobile.png",fullPage:true});
 });

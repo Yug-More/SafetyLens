@@ -26,15 +26,24 @@ class Settings(BaseSettings):
     )
     auth_enabled: bool = Field(default=True, alias="AUTH_ENABLED")
     cookie_secure: bool = Field(default=False, alias="COOKIE_SECURE")
-    session_lifetime_seconds: int = Field(default=28800, alias="SESSION_LIFETIME_SECONDS", ge=60, le=86400)
+    session_lifetime_seconds: int = Field(
+        default=28800, alias="SESSION_LIFETIME_SECONDS", ge=60, le=86400
+    )
     detector_api_token: str | None = Field(default=None, alias="DETECTOR_API_TOKEN")
     detector_camera_ids: str = Field(default="", alias="DETECTOR_CAMERA_IDS")
-    camera_encryption_key: str | None = Field(default=None, alias="CAMERA_ENCRYPTION_KEY")
-    evidence_retention_days: int = Field(default=30, alias="EVIDENCE_RETENTION_DAYS", ge=1, le=3650)
+    camera_encryption_key: str | None = Field(
+        default=None, alias="CAMERA_ENCRYPTION_KEY"
+    )
+    evidence_retention_days: int = Field(
+        default=30, alias="EVIDENCE_RETENTION_DAYS", ge=1, le=3650
+    )
 
     demo_mode: bool = Field(default=True, alias="DEMO_MODE")
     upload_directory: str = Field(default="./data/uploads", alias="UPLOAD_DIRECTORY")
     frame_directory: str = Field(default="./data/frames", alias="FRAME_DIRECTORY")
+    max_request_size_mb: int = Field(
+        default=110, alias="MAX_REQUEST_SIZE_MB", ge=1, le=1024
+    )
     max_video_size_mb: int = Field(default=100, alias="MAX_VIDEO_SIZE_MB", ge=1)
     max_video_duration_seconds: int = Field(
         default=120,
@@ -102,7 +111,7 @@ class Settings(BaseSettings):
     @field_validator("environment")
     @classmethod
     def normalize_environment(cls, value: str) -> str:
-        cleaned=value.strip().lower()
+        cleaned = value.strip().lower()
         if cleaned not in {"development", "test", "production"}:
             raise ValueError("ENVIRONMENT must be development, test or production")
         return cleaned
@@ -135,7 +144,11 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins(self) -> list[str]:
-        return [origin.strip() for origin in self.frontend_origins.split(",") if origin.strip()]
+        return [
+            origin.strip()
+            for origin in self.frontend_origins.split(",")
+            if origin.strip()
+        ]
 
     @property
     def max_video_size_bytes(self) -> int:

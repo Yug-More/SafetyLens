@@ -1,0 +1,35 @@
+{
+  "baseline": {
+    "backend_passed": 84,
+    "detector_passed": 58,
+    "actual_model_browser_passed": 8,
+    "frontend_lint_typecheck": "passed"
+  },
+  "final": {
+    "backend_passed": 92,
+    "backend_seconds": 11.85,
+    "backend_failed": 0,
+    "backend_skipped": 0,
+    "detector_passed": 66,
+    "detector_failed": 0,
+    "detector_skipped": 0,
+    "browser_stats": {
+      "startTime": "2026-11-09T04:56:05.731Z",
+      "duration": 67698.34999999999,
+      "expected": 9,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "browser_actual_model_fixture": true,
+    "frontend_lint_typecheck": "passed",
+    "frontend_container_standalone_build": "passed",
+    "postgres17_integration": "passed",
+    "fresh_postgres_migration": "passed"
+  },
+  "limitations": [
+    "Counts are regression coverage, not detection accuracy",
+    "No coverage percentage measured",
+    "No remote CI pass claimed before observing it"
+  ]
+}

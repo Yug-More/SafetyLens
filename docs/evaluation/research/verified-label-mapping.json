@@ -1,0 +1,813 @@
+{
+  "method": "Independent original publisher YOLO annotations matched to mirror COCO boxes, maximum per-coordinate error <=2 pixels; predictions not consulted",
+  "mirror_annotations_sha256": "5c1d258ce3ba218715c30ac7b7069b8ebc4f417bb9f700b6fb5977e1381cf382",
+  "mirror_category_to_publisher_class": {
+    "5": 12,
+    "4": 11,
+    "11": 3,
+    "2": 1,
+    "15": 7,
+    "1": 0,
+    "7": 14,
+    "17": 9,
+    "6": 13,
+    "9": 16,
+    "3": 10,
+    "14": 6,
+    "12": 4,
+    "13": 5,
+    "8": 15,
+    "16": 8,
+    "10": 2
+  },
+  "pair_counts": [
+    {
+      "mirror_category": 1,
+      "publisher_class": 0,
+      "boxes": 236
+    },
+    {
+      "mirror_category": 2,
+      "publisher_class": 1,
+      "boxes": 104
+    },
+    {
+      "mirror_category": 3,
+      "publisher_class": 10,
+      "boxes": 40
+    },
+    {
+      "mirror_category": 4,
+      "publisher_class": 11,
+      "boxes": 181
+    },
+    {
+      "mirror_category": 5,
+      "publisher_class": 12,
+      "boxes": 206
+    },
+    {
+      "mirror_category": 6,
+      "publisher_class": 13,
+      "boxes": 1
+    },
+    {
+      "mirror_category": 7,
+      "publisher_class": 14,
+      "boxes": 99
+    },
+    {
+      "mirror_category": 8,
+      "publisher_class": 15,
+      "boxes": 16
+    },
+    {
+      "mirror_category": 9,
+      "publisher_class": 16,
+      "boxes": 30
+    },
+    {
+      "mirror_category": 10,
+      "publisher_class": 2,
+      "boxes": 5
+    },
+    {
+      "mirror_category": 11,
+      "publisher_class": 3,
+      "boxes": 104
+    },
+    {
+      "mirror_category": 12,
+      "publisher_class": 4,
+      "boxes": 3
+    },
+    {
+      "mirror_category": 13,
+      "publisher_class": 5,
+      "boxes": 14
+    },
+    {
+      "mirror_category": 14,
+      "publisher_class": 6,
+      "boxes": 20
+    },
+    {
+      "mirror_category": 15,
+      "publisher_class": 7,
+      "boxes": 38
+    },
+    {
+      "mirror_category": 16,
+      "publisher_class": 8,
+      "boxes": 12
+    },
+    {
+      "mirror_category": 17,
+      "publisher_class": 9,
+      "boxes": 63
+    }
+  ],
+  "unmatched_boxes": 0,
+  "files": [
+    {
+      "image_id": 8,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-11902999.txt",
+      "original_label_sha256": "96c734c69b0b912dec2aa7afdc31d6717a6240fcb41775bb99fc776d0e8a4add",
+      "mirror_boxes": 17,
+      "matched_geometry": 17
+    },
+    {
+      "image_id": 10,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-1755698.txt",
+      "original_label_sha256": "fa367a7d6072781af6f994dbebdef8378d63e59c2041044dde09c7d12f6964b9",
+      "mirror_boxes": 16,
+      "matched_geometry": 16
+    },
+    {
+      "image_id": 51,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-2260934.txt",
+      "original_label_sha256": "1e80b58f4772995db096b690b120a75b509bb397a4a244e810962453c3e35ff3",
+      "mirror_boxes": 10,
+      "matched_geometry": 10
+    },
+    {
+      "image_id": 52,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-12911276.txt",
+      "original_label_sha256": "3ec119e6e5daf34ac07c9d26c80718576edd497a40efe87c266849771860f49b",
+      "mirror_boxes": 2,
+      "matched_geometry": 2
+    },
+    {
+      "image_id": 64,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-10375955.txt",
+      "original_label_sha256": "e885f746480684765113c1efe5ff214580b5f19d98b46b84aac9b04b62204ff2",
+      "mirror_boxes": 11,
+      "matched_geometry": 11
+    },
+    {
+      "image_id": 71,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-1928079.txt",
+      "original_label_sha256": "caea106df0d2797f3f24976ab26b27567e89cc8d66525fe41283d9e5cd942044",
+      "mirror_boxes": 3,
+      "matched_geometry": 3
+    },
+    {
+      "image_id": 91,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fconstruction-site-build-construction-work-159358.txt",
+      "original_label_sha256": "feaae85e449d3f3fce87cb485a8bfa6a85e46e56595823ac9452eb7c82f92540",
+      "mirror_boxes": 24,
+      "matched_geometry": 24
+    },
+    {
+      "image_id": 93,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-16070126.txt",
+      "original_label_sha256": "7781b8d7ebe9c6a31e9c3709c3163857cbc391e19d2d1dadff6e8fc813f1c2da",
+      "mirror_boxes": 20,
+      "matched_geometry": 20
+    },
+    {
+      "image_id": 96,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-17572739.txt",
+      "original_label_sha256": "0965082d30294016b2354cd64d4d961ab7a52d66040fded2f61011ab0eab5091",
+      "mirror_boxes": 5,
+      "matched_geometry": 5
+    },
+    {
+      "image_id": 106,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-1018568.txt",
+      "original_label_sha256": "3ef2f6d0c4a9b64235e131e60a45b349ee8d27c7686e8da9ff1fd8c203f48e09",
+      "mirror_boxes": 12,
+      "matched_geometry": 12
+    },
+    {
+      "image_id": 113,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-11644973.txt",
+      "original_label_sha256": "d36025fab808dda2ab67c93a28ff067d0cdb7c15cb6eef292060cd365ceb6b4f",
+      "mirror_boxes": 26,
+      "matched_geometry": 26
+    },
+    {
+      "image_id": 115,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-13801643.txt",
+      "original_label_sha256": "2d84eea4ce88ff1fa3a0b4c4bd6f82f023c6c24d5da4ed9ef79e4705d92e299b",
+      "mirror_boxes": 5,
+      "matched_geometry": 5
+    },
+    {
+      "image_id": 124,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-2149328.txt",
+      "original_label_sha256": "0d9eb1ace2e008cd35565d1342dce9c3cd989ce7edae0e507976be3e17f71789",
+      "mirror_boxes": 6,
+      "matched_geometry": 6
+    },
+    {
+      "image_id": 141,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-2383649.txt",
+      "original_label_sha256": "2d807b1189e22f148e9e7ede25ab4b0358ee2275ff1bfad12935de443d2e3330",
+      "mirror_boxes": 40,
+      "matched_geometry": 40
+    },
+    {
+      "image_id": 142,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-11590840.txt",
+      "original_label_sha256": "0d44d6d7bfbcecdab6df2b9c9b18d3d07c871780e6b80584fbd56a4ff84871cc",
+      "mirror_boxes": 7,
+      "matched_geometry": 7
+    },
+    {
+      "image_id": 148,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-15489247.txt",
+      "original_label_sha256": "8a8b476c9cc70c7e132cacb6a60933b06482125fe6e9e8dd9fba16dc399b1a2f",
+      "mirror_boxes": 7,
+      "matched_geometry": 7
+    },
+    {
+      "image_id": 154,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-16494883.txt",
+      "original_label_sha256": "143d10aea8cb0a69cccedbc2c3b618b1ece9ac5336b90b47b0bda8311446e5b2",
+      "mirror_boxes": 13,
+      "matched_geometry": 13
+    },
+    {
+      "image_id": 159,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-11877840.txt",
+      "original_label_sha256": "27a047534288aacaabd75556ffa520ba222f27cb66be27a2984fbf96e8fd6d28",
+      "mirror_boxes": 13,
+      "matched_geometry": 13
+    },
+    {
+      "image_id": 163,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-12911274.txt",
+      "original_label_sha256": "c489665515c0855d6a143f355d3d56e22bd42fa2062e0323000cbefce1b73cce",
+      "mirror_boxes": 4,
+      "matched_geometry": 4
+    },
+    {
+      "image_id": 174,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-14598653.txt",
+      "original_label_sha256": "07b717011fb7b46196efbdb03b673b6b21e855b9bf8dd411c300f8cfdf9fd4a3",
+      "mirror_boxes": 4,
+      "matched_geometry": 4
+    },
+    {
+      "image_id": 178,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-14367441.txt",
+      "original_label_sha256": "a8a255b73a67258f3267e3e1e5947311540852d2e8708c55ef6ebad3767fc24d",
+      "mirror_boxes": 7,
+      "matched_geometry": 7
+    },
+    {
+      "image_id": 183,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-12955934.txt",
+      "original_label_sha256": "236dacac85e1f5a0b7671e58639c0f714c28601d80a9e7879eee0b671dd8ac53",
+      "mirror_boxes": 6,
+      "matched_geometry": 6
+    },
+    {
+      "image_id": 185,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-2209529.txt",
+      "original_label_sha256": "69ae61f1774d6bb507202f793db1982523d64329454d71e001719f6fc3676ccf",
+      "mirror_boxes": 29,
+      "matched_geometry": 29
+    },
+    {
+      "image_id": 188,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-19319639.txt",
+      "original_label_sha256": "2d4e14a5c01ece4d13b891b8c085048080d24fe8c77616fc84f60d9a03dee3ce",
+      "mirror_boxes": 4,
+      "matched_geometry": 4
+    },
+    {
+      "image_id": 199,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-11739070.txt",
+      "original_label_sha256": "4afbd1b0a2c886105ab056a7626c028f51531958ce823a32135fae19a587f02d",
+      "mirror_boxes": 4,
+      "matched_geometry": 4
+    },
+    {
+      "image_id": 200,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-2352354.txt",
+      "original_label_sha256": "d660c8291413086462601e00361aeea4ea32f954a7471097cc9a6c956397d1a6",
+      "mirror_boxes": 5,
+      "matched_geometry": 5
+    },
+    {
+      "image_id": 203,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-18882074.txt",
+      "original_label_sha256": "92e12b6ddc68acdc774390fba07919f4a6fab7b72d99bceab411c1605e240079",
+      "mirror_boxes": 7,
+      "matched_geometry": 7
+    },
+    {
+      "image_id": 206,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-1093926.txt",
+      "original_label_sha256": "c718f78b00f626f340a7b6d776935b0afb5ae5eace6503d1284f2538649365d2",
+      "mirror_boxes": 7,
+      "matched_geometry": 7
+    },
+    {
+      "image_id": 219,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-12903123.txt",
+      "original_label_sha256": "5c68d6a6f0063e88d413cf5c6695cba9ab8c6f87d9539a1fa5da5505ca8c3814",
+      "mirror_boxes": 6,
+      "matched_geometry": 6
+    },
+    {
+      "image_id": 226,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-12903298.txt",
+      "original_label_sha256": "6201f5f09b601fef94ab6e90927b72df48234059e1b4166e301378c6a4c4a76a",
+      "mirror_boxes": 5,
+      "matched_geometry": 5
+    },
+    {
+      "image_id": 274,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-13517443.txt",
+      "original_label_sha256": "2540e5ff99b5e1939820ff64fcc99c5322374c88033a2d2c79c7c3ddef0b4c86",
+      "mirror_boxes": 11,
+      "matched_geometry": 11
+    },
+    {
+      "image_id": 286,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-14557577.txt",
+      "original_label_sha256": "529c090d8c846a551108bedfad8ca5c59b6f708763bfac25e533a230117b69fa",
+      "mirror_boxes": 19,
+      "matched_geometry": 19
+    },
+    {
+      "image_id": 287,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-13058187.txt",
+      "original_label_sha256": "b2dcc13ee123beb064a29e354cb876b0105fbf117879533ff80c2bc85725533f",
+      "mirror_boxes": 11,
+      "matched_geometry": 11
+    },
+    {
+      "image_id": 290,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-12307631.txt",
+      "original_label_sha256": "d4b8b1396b56e1ffc7446228e931eaf9fdb6657ab5a5d1a60f8328da1b365f1a",
+      "mirror_boxes": 2,
+      "matched_geometry": 2
+    },
+    {
+      "image_id": 311,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-14050319.txt",
+      "original_label_sha256": "dff4961d7eddc727bcdaef93a7ae109cb296ca53b28585804afc8a025fa36dc2",
+      "mirror_boxes": 4,
+      "matched_geometry": 4
+    },
+    {
+      "image_id": 315,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-13319075.txt",
+      "original_label_sha256": "77b75e990efce6f561b0972a015cb8d1b7f46d64c6112698a17943cac60fce51",
+      "mirror_boxes": 18,
+      "matched_geometry": 18
+    },
+    {
+      "image_id": 316,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-10341122.txt",
+      "original_label_sha256": "e18b2b3c1e2383cccfb702fe2d7d85a72e009ae16ad30834b05d07c6d532ab97",
+      "mirror_boxes": 3,
+      "matched_geometry": 3
+    },
+    {
+      "image_id": 325,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-15190641.txt",
+      "original_label_sha256": "b44726f390d77e06d2b8c470e697b21c1acc46159ea353a4b9fb57be6ad251aa",
+      "mirror_boxes": 17,
+      "matched_geometry": 17
+    },
+    {
+      "image_id": 333,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-11679689.txt",
+      "original_label_sha256": "8064bdb874e84cef13ecd1ac34e6652f6c301f10e2d4fba0d72ab4b990156698",
+      "mirror_boxes": 8,
+      "matched_geometry": 8
+    },
+    {
+      "image_id": 350,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-12911273.txt",
+      "original_label_sha256": "e9153cf3782ec593748f4ef173f6906e0433603e0408c533f088c64531639ea8",
+      "mirror_boxes": 3,
+      "matched_geometry": 3
+    },
+    {
+      "image_id": 365,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-1325761.txt",
+      "original_label_sha256": "5a433dbf90e1fa1ce24f874b1f9faebf9554ee7bc21994c651b4908a560c101d",
+      "mirror_boxes": 30,
+      "matched_geometry": 30
+    },
+    {
+      "image_id": 366,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-221047.txt",
+      "original_label_sha256": "bcfd6fbd2f4af512d60de47d0395a590d9f83bf5535cfe7535bed8ec70e48dd8",
+      "mirror_boxes": 4,
+      "matched_geometry": 4
+    },
+    {
+      "image_id": 369,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-12903012.txt",
+      "original_label_sha256": "a9be91b7ced8342c171560738431c56588f3a332abf839db1702f1cc7d973482",
+      "mirror_boxes": 5,
+      "matched_geometry": 5
+    },
+    {
+      "image_id": 372,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-2396134.txt",
+      "original_label_sha256": "5e2f0b526428428997aac8a378ba1f88843eb7b5991318aa661e4e974a516e53",
+      "mirror_boxes": 29,
+      "matched_geometry": 29
+    },
+    {
+      "image_id": 373,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-13802164.txt",
+      "original_label_sha256": "a2dd0ea82a680842734d1c4f469c2f2f25ad9a381d9fd69112fa7635fe1f85a0",
+      "mirror_boxes": 4,
+      "matched_geometry": 4
+    },
+    {
+      "image_id": 385,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-1474993.txt",
+      "original_label_sha256": "c70797e7bbdc92343774623defb97171838737a6c9846efc7773e05bf7d3a0b3",
+      "mirror_boxes": 8,
+      "matched_geometry": 8
+    },
+    {
+      "image_id": 391,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-13532463.txt",
+      "original_label_sha256": "55415181066355b086d1d7fadf8e3ecf8e0808c1b69421efbf7c2ae638cc2d80",
+      "mirror_boxes": 5,
+      "matched_geometry": 5
+    },
+    {
+      "image_id": 394,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-14252235.txt",
+      "original_label_sha256": "f6b58cdfaa341ca66c07a3b3b107c3eb8e5ea03931d02e9de5e0074be5e9ef84",
+      "mirror_boxes": 8,
+      "matched_geometry": 8
+    },
+    {
+      "image_id": 399,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-15141520.txt",
+      "original_label_sha256": "990f7499c334b0973cb9a6d1bbdacd7fe08fe8a2d3f6936199fff9b4d8a3ea62",
+      "mirror_boxes": 15,
+      "matched_geometry": 15
+    },
+    {
+      "image_id": 402,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-10040011.txt",
+      "original_label_sha256": "8e26853e16119a75a2016b1ca4e7ebe25f3bc728038f09376f15ed4d0c153671",
+      "mirror_boxes": 11,
+      "matched_geometry": 11
+    },
+    {
+      "image_id": 413,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-10932215.txt",
+      "original_label_sha256": "af39528a17895fac14f146ceb98b3e599a3f2ec0bb45d45b430449813a2bcc23",
+      "mirror_boxes": 6,
+      "matched_geometry": 6
+    },
+    {
+      "image_id": 421,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-13846136.txt",
+      "original_label_sha256": "9d7cf1729ce73259beef1c0bf24704fe7ab49328426d70659096f20b8b183976",
+      "mirror_boxes": 7,
+      "matched_geometry": 7
+    },
+    {
+      "image_id": 425,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-17768869.txt",
+      "original_label_sha256": "cdd11d9e6247cb06c91f34e61a3285ec3f6f5f11c4f195834a39dffe524ed3a4",
+      "mirror_boxes": 5,
+      "matched_geometry": 5
+    },
+    {
+      "image_id": 429,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-15141548.txt",
+      "original_label_sha256": "09714e02a2a7dc1b5e119b80928c56aa5cf3c23816bcc9e02048ba26d8cde23d",
+      "mirror_boxes": 15,
+      "matched_geometry": 15
+    },
+    {
+      "image_id": 437,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-12899131.txt",
+      "original_label_sha256": "709a1f1f3a90eab7d07ec8e8fb9bad03e0afa0d3a29fefb36919b27247615a20",
+      "mirror_boxes": 6,
+      "matched_geometry": 6
+    },
+    {
+      "image_id": 439,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-213166.txt",
+      "original_label_sha256": "b24cd5cb65ae9ae72f42573d97f5e4ae4c609274a9bb932696d29317955f91cc",
+      "mirror_boxes": 12,
+      "matched_geometry": 12
+    },
+    {
+      "image_id": 443,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-2159131.txt",
+      "original_label_sha256": "cf60b78e89cf997ab861ecdddd8e9523ae2068cc6a4d1511bd3c71bb58519bdf",
+      "mirror_boxes": 12,
+      "matched_geometry": 12
+    },
+    {
+      "image_id": 458,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-12902868.txt",
+      "original_label_sha256": "d33ff1fdeb7b35531d74dbff7cb2c6ee833279ce8bba18d0757a68730710109f",
+      "mirror_boxes": 7,
+      "matched_geometry": 7
+    },
+    {
+      "image_id": 465,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-13159719.txt",
+      "original_label_sha256": "93a96fe876332ffd6dca7280aa7227688704252c3dfd18065a5ac30eb7f71a7c",
+      "mirror_boxes": 6,
+      "matched_geometry": 6
+    },
+    {
+      "image_id": 477,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-10341108.txt",
+      "original_label_sha256": "77d0218767054dd1021a06c469619109ee57944bf9a68e41992e145afab86f1b",
+      "mirror_boxes": 5,
+      "matched_geometry": 5
+    },
+    {
+      "image_id": 491,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-12040693.txt",
+      "original_label_sha256": "eef08d5dd6d93690ca3b22a79580585c7ec9dcf355974870c23433a58a8a2d0a",
+      "mirror_boxes": 13,
+      "matched_geometry": 13
+    },
+    {
+      "image_id": 506,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-1659746.txt",
+      "original_label_sha256": "f07d445a860b0e9db9427652d3bd323960ce2a244d8213a0ac644907bce6f114",
+      "mirror_boxes": 4,
+      "matched_geometry": 4
+    },
+    {
+      "image_id": 511,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-11461858.txt",
+      "original_label_sha256": "cb16ebce6bc0e215b1341f69ddc9414ddd24069cf04be3cfb1dd3c0c6bf52d1e",
+      "mirror_boxes": 19,
+      "matched_geometry": 19
+    },
+    {
+      "image_id": 522,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-12911964.txt",
+      "original_label_sha256": "3eaba75aa2a1a29dc3ce0f55f609dbfd27a881ea19772f80defaff726e383353",
+      "mirror_boxes": 5,
+      "matched_geometry": 5
+    },
+    {
+      "image_id": 525,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-14189335.txt",
+      "original_label_sha256": "d9b0984cda62f1e6ad49031dd24327f5a1e5b00b37fa7bca2af1c816aabfe63e",
+      "mirror_boxes": 5,
+      "matched_geometry": 5
+    },
+    {
+      "image_id": 546,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-13061689.txt",
+      "original_label_sha256": "3ba09a1ca2d3fbc6fca0cf034247dbcc7707f841fc53cd9d93d5fa80c2acc571",
+      "mirror_boxes": 6,
+      "matched_geometry": 6
+    },
+    {
+      "image_id": 548,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-12636455.txt",
+      "original_label_sha256": "7fb334b864c76359c759c5f759f4146496534856c925013090b807f4564d4b70",
+      "mirror_boxes": 9,
+      "matched_geometry": 9
+    },
+    {
+      "image_id": 556,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-10682438.txt",
+      "original_label_sha256": "4f8a5a60575b6eac1db6a4e9de974367597725905e7df4a002ba6c08a8045f45",
+      "mirror_boxes": 5,
+      "matched_geometry": 5
+    },
+    {
+      "image_id": 563,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-13802162.txt",
+      "original_label_sha256": "f1af4d8770d31d10efcfbaf77df1109a391e05cdb1117803f554e5e8df7e6f82",
+      "mirror_boxes": 5,
+      "matched_geometry": 5
+    },
+    {
+      "image_id": 574,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-12911316.txt",
+      "original_label_sha256": "59d031be58f9c931975d711c27a321db5ed9a2c5955a522ba550afe5c8d13d70",
+      "mirror_boxes": 9,
+      "matched_geometry": 9
+    },
+    {
+      "image_id": 581,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-1659747.txt",
+      "original_label_sha256": "43f9b31481801fbe0e3ceaf327eac1360737aed55f67fb7a738c83336ba34808",
+      "mirror_boxes": 8,
+      "matched_geometry": 8
+    },
+    {
+      "image_id": 587,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-12911303.txt",
+      "original_label_sha256": "24f8895a63095f33948ec1bab47bf6ec859bbec3a7e163bc41f0febb2f7faaef",
+      "mirror_boxes": 5,
+      "matched_geometry": 5
+    },
+    {
+      "image_id": 589,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-19163210.txt",
+      "original_label_sha256": "0fc65a80da680894fec05141ebf1c201011bb45f02ce4bbd207d94c309e2aefe",
+      "mirror_boxes": 6,
+      "matched_geometry": 6
+    },
+    {
+      "image_id": 596,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-10367886.txt",
+      "original_label_sha256": "48c037fa95c10b9d430c124094cabe65a6671bcf0dfbd841fdb7c89b1124a789",
+      "mirror_boxes": 23,
+      "matched_geometry": 23
+    },
+    {
+      "image_id": 602,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-10375931.txt",
+      "original_label_sha256": "594e7ecad45009f71f54414743fad16228573510d19dac00f937d2034d125787",
+      "mirror_boxes": 16,
+      "matched_geometry": 16
+    },
+    {
+      "image_id": 608,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-15056622.txt",
+      "original_label_sha256": "5119716ede01fd1a2af6f0ca12830032945fa35fea5a3fb8935f291316940c93",
+      "mirror_boxes": 3,
+      "matched_geometry": 3
+    },
+    {
+      "image_id": 616,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-1325764.txt",
+      "original_label_sha256": "46100a5acf3c91ed53540c784908b027f46e8217fa918eacb8a06793edb36dbb",
+      "mirror_boxes": 25,
+      "matched_geometry": 25
+    },
+    {
+      "image_id": 617,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-13159718.txt",
+      "original_label_sha256": "3a4a02c689b7cc6360c296530dba845ac4ebb7f89dab5bf39d83ab801ab60939",
+      "mirror_boxes": 6,
+      "matched_geometry": 6
+    },
+    {
+      "image_id": 636,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-13914845.txt",
+      "original_label_sha256": "6b3adfad30e7e2417ff78b8ce90f5968f69d0873a5d60bec54432e8a40fe3689",
+      "mirror_boxes": 53,
+      "matched_geometry": 53
+    },
+    {
+      "image_id": 652,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-209719.txt",
+      "original_label_sha256": "2887befd5aa1c4f9af6a477bea4cfea7cd4df61c2a67d92b87285efcdd564534",
+      "mirror_boxes": 16,
+      "matched_geometry": 16
+    },
+    {
+      "image_id": 657,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-10871621.txt",
+      "original_label_sha256": "7cad662e45cb9393c5d3cc04920fb42d3f0621bee5d8c5ebc28ac4a0a4e07b2a",
+      "mirror_boxes": 55,
+      "matched_geometry": 55
+    },
+    {
+      "image_id": 659,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-10716309.txt",
+      "original_label_sha256": "b277c860fd258495e491317b2dfbeff721a8fd4853fd49fef66f6542182059c3",
+      "mirror_boxes": 8,
+      "matched_geometry": 8
+    },
+    {
+      "image_id": 666,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-2219024.txt",
+      "original_label_sha256": "f66dae8208a5a14561a6d6471f3e12a00ce508bcd82e5711917b9440430d9d2c",
+      "mirror_boxes": 7,
+      "matched_geometry": 7
+    },
+    {
+      "image_id": 667,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Ffloor-flooring-hand-man-1388944.txt",
+      "original_label_sha256": "9cbe0cfc5f1e79c3cd73a994de455c800b84aeeefcc785a0f059ccd1ace3ba75",
+      "mirror_boxes": 4,
+      "matched_geometry": 4
+    },
+    {
+      "image_id": 675,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-15583203.txt",
+      "original_label_sha256": "b03cf77eea4310e5ef9419e85647435bd3bf79496b6afa968e5a2746b9760357",
+      "mirror_boxes": 19,
+      "matched_geometry": 19
+    },
+    {
+      "image_id": 702,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-11885299.txt",
+      "original_label_sha256": "2657c82f66687f509657f3f57be7d869c45b05968112d0e512d2050081448604",
+      "mirror_boxes": 22,
+      "matched_geometry": 22
+    },
+    {
+      "image_id": 703,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-13734873.txt",
+      "original_label_sha256": "0a3d3605a79c3d6b94a92d15f3622afb495ab2627636c61b832f5989ca2767c9",
+      "mirror_boxes": 28,
+      "matched_geometry": 28
+    },
+    {
+      "image_id": 707,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-14038976.txt",
+      "original_label_sha256": "d1d8b0a61847d68d0eac775cf4dbe2f9eba31b0e74a9987fba3104366e8540de",
+      "mirror_boxes": 30,
+      "matched_geometry": 30
+    },
+    {
+      "image_id": 718,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-1181474.txt",
+      "original_label_sha256": "083c323990d082ecd0471e899758bba3d22eb62b19e61e672486cb14b7bd9cad",
+      "mirror_boxes": 7,
+      "matched_geometry": 7
+    },
+    {
+      "image_id": 719,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-13443776.txt",
+      "original_label_sha256": "68a14f94ffff61f6644cf078a6fd8504a21aa33010a8fdc0b30e028f86bcfd46",
+      "mirror_boxes": 8,
+      "matched_geometry": 8
+    },
+    {
+      "image_id": 724,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-1267346.txt",
+      "original_label_sha256": "a0dfceae15d4fd63ba4696c5bcfd07969579630905d9d5645203c407c1f385f7",
+      "mirror_boxes": 5,
+      "matched_geometry": 5
+    },
+    {
+      "image_id": 730,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-16485055.txt",
+      "original_label_sha256": "c2c936e9023b21bf07a7e16bcdb658df0b9b59c45c98b1a49a302f9a4941142b",
+      "mirror_boxes": 4,
+      "matched_geometry": 4
+    },
+    {
+      "image_id": 736,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-19225108.txt",
+      "original_label_sha256": "67e0e6b69455460d19a5870bfc15c2fae77f62adf9936c5af24aaf754d16825b",
+      "mirror_boxes": 11,
+      "matched_geometry": 11
+    },
+    {
+      "image_id": 741,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-13801625.txt",
+      "original_label_sha256": "ec2c8b5830ba4d68fbb4fdaf597ef5b931250f0f0f3121638d834a8ed78b8e37",
+      "mirror_boxes": 7,
+      "matched_geometry": 7
+    },
+    {
+      "image_id": 764,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-14359708.txt",
+      "original_label_sha256": "fe6756c9e515d2b6e07989c8a09ae7b0785a75afd8523c2497eef85551da4e7b",
+      "mirror_boxes": 24,
+      "matched_geometry": 24
+    },
+    {
+      "image_id": 767,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-13159721.txt",
+      "original_label_sha256": "a5f15a8c3e7e7311f355aaebd43eff83c03dadf5550e61023beebcb9c3bbcd4a",
+      "mirror_boxes": 7,
+      "matched_geometry": 7
+    },
+    {
+      "image_id": 783,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-11765530.txt",
+      "original_label_sha256": "e885b5a383a1e5675d585a133f373cbddff7704f2c5980f5a210eae373cc0e98",
+      "mirror_boxes": 20,
+      "matched_geometry": 20
+    },
+    {
+      "image_id": 784,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-15016509.txt",
+      "original_label_sha256": "53467557b6aad564368d85c165b8d286a0bfb96a120e94402976f5849ecceedf",
+      "mirror_boxes": 9,
+      "matched_geometry": 9
+    },
+    {
+      "image_id": 789,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-10375956.txt",
+      "original_label_sha256": "31372b330d0e4ee3b9307f5f27370e9541469d9d4a14185996ebfc24bfdaf13a",
+      "mirror_boxes": 11,
+      "matched_geometry": 11
+    },
+    {
+      "image_id": 791,
+      "original_label_source": "https://www.kaggle.com/api/v1/datasets/download/mugheesahmad/sh17-dataset-for-ppe-detection/labels%2Fpexels-photo-15016528.txt",
+      "original_label_sha256": "0366b85ebaab2c4e74fdc474837291256c2e1f928b6190bca6314c02bb1000c0",
+      "mirror_boxes": 24,
+      "matched_geometry": 24
+    }
+  ]
+}

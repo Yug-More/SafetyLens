@@ -4,6 +4,8 @@
 >
 > SafetyLens secured first place among 384 participants at The Executable World Hackathon, earning a $25,000 prize.
 
+*Historically reported by the team; the prize and participant denominator are not independently established by organizer evidence reviewed. See [award evidence](docs/README_RESTORATION.md).*
+
 **Computer vision evidence. Human-supervised response.**
 
 SafetyLens connects local camera observations, preserved incident evidence, optional multimodal investigation, company procedures, explicit human approval, and traceable simulated response. It is an experimental applied-AI platform, not a certified safety or medical system.
@@ -70,7 +72,9 @@ The repository also includes a PPE review workflow with camera-specific requirem
 ## Enhanced platform
 
 - Local MediaPipe pose estimation and temporal event logic, with a preserved legacy profile and conservative fall/person-down interpretation.
-- Offline ONNX PPE evaluation, exclusive association and temporal review infrastructure. **Local PPE deployment is disabled:** neither the reference nor the evaluated replacement passed the labeled evaluation.
+- Actual offline nine-class ONNX appearance inference, verified category provenance and person-specific association/abstention. Eight protective requirement categories remain **deployment-disabled**; appearance is not equipment certification.
+- Opt-in causal pose learning with train/validation/test separation, compact linear/neural comparisons and explicit rejection of default promotion after excessive fresh-test false alarms.
+- Contextual PPE requirements per camera/zone, supplied activity/role/time, and an administrator preview that preserves unknown context.
 - Automatic authenticated detector delivery through a bounded persistent SQLite outbox, retry/backoff and UUID acknowledgement/deduplication.
 - Camera registration/editing, facility/zone grouping labels, encrypted private sources, per-camera policies, heartbeat health and labeled latest-image previews.
 - Secure-by-default local users, scrypt passwords, revocable sessions, CSRF/Origin checks and administrator/manager/operator/viewer roles.
@@ -87,7 +91,19 @@ The original **12-clip** external check detected 2/6 falls; those results remain
 
 A subsequently frozen evaluation on recordings 17–26 gives a more cautious result: on camera 0, **TP4/FN6/FP1/TN9, precision .80, recall .40, F1 .5333**. The preserved original configuration scored F1 .3077 on the same clips. Camera 1 detected 4/10 falls; no camera-1 negative set was available. Paired camera views are not independent events. Publisher-onset matching gives a mean 1.258 s annotation-to-rule delay among the four detected camera-0 falls; six misses remain. This is offline timing, not notification latency. The earlier 20 clips are now development data, not a reusable holdout.
 
-The detector remains **unsuitable for unattended workplace safety**. Intentional reclining, short falls, occlusion and camera geometry remain failure modes. A 24-image PPE evaluation found reference macro AP50:95 .003017; a separately inspected Qualcomm helmet/vest export produced zero IoU-.5 matches on the same small set. Local PPE deployment is enforced disabled. See [detection validation](docs/DETECTION_VALIDATION.md), [PPE findings](docs/PPE_VALIDATION.md), [performance](docs/PERFORMANCE_REPORT.md) and the [final report](docs/FINAL_RELEASE_REPORT.md) for raw evidence, source hashes, uncertainty and limitations.
+The detector remains **unsuitable for unattended workplace safety**. Intentional reclining, short falls, occlusion and camera geometry remain failure modes. **Earlier PPE equipment metrics are withdrawn:** original publisher annotations exposed a numeric category remapping in the third-party mirror. Corrected results and an independent 1,172-box provenance check are in [PPE_EVALUATION.md](docs/PPE_EVALUATION.md). Local PPE deployment is enforced disabled. See [detection validation](docs/DETECTION_VALIDATION.md), [PPE findings](docs/PPE_VALIDATION.md), [performance](docs/PERFORMANCE_REPORT.md) and the [final report](docs/FINAL_RELEASE_REPORT.md) for raw evidence, source hashes, uncertainty and limitations.
+
+## Current research results
+
+A new causal temporal model was selected on development recordings, then frozen before 18 fresh camera-0 clips. It detected **4/4 falls but falsely alerted on 10/14 negatives** (precision .286, F1 .444). The existing rules detected 0/4 with eight negative alerts on the same clips. This sensitivity/false-alarm tradeoff prevents promotion; four positive recordings cannot establish reliable recall. Subject/session separation is unknown. [Fall protocol and raw results](docs/FALL_DETECTION_EVALUATION.md).
+
+The official SH17 ONNX export was evaluated on 100 fixed, semantically verified images: person recall .818/AP50 .785; helmet recall .425/AP50 .359; vest recall .767/AP50 .612. These are **appearance diagnostics with unknown training overlap**, not wearer compliance or protective-rating accuracy. All eight deployment gates remain closed. [Class-by-class evaluation](docs/PPE_EVALUATION.md).
+
+![Actual PPE capability and contextual-policy interface](docs/assets/enhanced/ppe-gates-desktop.png)
+
+Actual Docker-served interface: labeled appearance metrics, disabled protective-class gates and an administrator policy preview. No live PPE deployment is implied.
+
+Current verification: **92 backend, 66 detector and 9 actual-model browser cases passed**, plus frontend lint/typecheck/standalone Docker build, PostgreSQL 17 migration/restart and an actual learned-event review-to-PDF workflow. These tests establish tested engineering behavior, not detector reliability. [Final validation](docs/FINAL_VALIDATION_REPORT.md) · [Reproduce experiments](docs/REPRODUCIBILITY.md) · [Demo guide](docs/DEMO_GUIDE.md) · [Graduate application summary](docs/GRADUATE_APPLICATION_SUMMARY.md).
 
 ## Architecture
 
@@ -158,7 +174,7 @@ npm --prefix frontend run build
 npm --prefix frontend run test:e2e
 ```
 
-Browser tests generate isolated credentials/databases, exercise actual playback, and complete a synthetic event's transport/review/approval/PDF workflow without sending external messages. Synthetic integration fixtures are not detection-evaluation data. [TESTING.md](docs/TESTING.md) and [RELEASE_VERIFICATION.md](docs/RELEASE_VERIFICATION.md) record actual results and unfinished work.
+Browser tests generate isolated credentials/databases and exercise playback/review/approval/PDF without external messages. The default delivery fixture is synthetic; set `SAFETYLENS_REAL_CLIP` and `SAFETYLENS_POSE_MODEL` to run actual inference, as used in current verification. Synthetic integration fixtures are not detection-evaluation data. [TESTING.md](docs/TESTING.md) and [RELEASE_VERIFICATION.md](docs/RELEASE_VERIFICATION.md) record actual results and unfinished work.
 
 ## Deployment and safeguards
 

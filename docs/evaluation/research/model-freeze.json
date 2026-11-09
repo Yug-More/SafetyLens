@@ -1,0 +1,7 @@
+{
+  "checkpoint_sha256": "436948b4ec1fb8e371303a2c346630fa9869a00894cc9067e572bb5c34fd8bd8",
+  "protocol_sha256": "9dbe4f9a5190672953a7703457a71007390050b05608079b5d90b9db46514269",
+  "feature_source_sha256": "51fb86c8f0c840409496788a529956ed75c493b8add5eb7b57ba876685ee2746",
+  "test_inference_started": false,
+  "chosen_on_validation_only": true
+}

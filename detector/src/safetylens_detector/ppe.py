@@ -145,7 +145,10 @@ class PpeTemporalMonitor:
                     **person,
                     "track_id": key,
                     "review_required": stable,
-                    "status": "possible_noncompliance" if stable else person["status"],
+                    "status": person["status"],
+                    "review_reason": "Persistent insufficient visibility; absence is not confirmed"
+                    if stable
+                    else None,
                 }
             )
             updated[key] = {
@@ -156,6 +159,19 @@ class PpeTemporalMonitor:
             }
         self._previous = updated
         return result
+
+
+APPEARANCE_CLASSES = {
+    "person",
+    "hard_hat",
+    "high_visibility_vest",
+    "ordinary_eyewear",
+    "ordinary_footwear",
+    "gloves",
+    "face_shield",
+    "earmuffs",
+    "medical_mask",
+}
 
 
 class OnnxPpeDetector:
@@ -172,6 +188,8 @@ class OnnxPpeDetector:
         if hashlib.sha256(weights.read_bytes()).hexdigest() != self.manifest["sha256"]:
             raise ValueError("PPE model checksum mismatch")
         self.classes = self.manifest["classes"]
+        if not set(self.classes.values()) <= APPEARANCE_CLASSES:
+            raise ValueError("Unsupported semantic class mapping")
         self.size = int(self.manifest["input_size"])
         if not {"person", "hard_hat", "high_visibility_vest"} <= set(
             self.classes.values()
@@ -186,8 +204,14 @@ class OnnxPpeDetector:
             str(weights), sess_options=options, providers=["CPUExecutionProvider"]
         )
         inputs = self.session.get_inputs()
-        if len(inputs) != 1 or inputs[0].type != "tensor(float)" or inputs[0].shape != [1, 3, self.size, self.size]:
-            raise ValueError("Unsupported ONNX input; expected float32 fixed [1,3,size,size]")
+        if (
+            len(inputs) != 1
+            or inputs[0].type != "tensor(float)"
+            or inputs[0].shape != [1, 3, self.size, self.size]
+        ):
+            raise ValueError(
+                "Unsupported ONNX input; expected float32 fixed [1,3,size,size]"
+            )
         self.input = inputs[0].name
 
     def detect(self, frame):
@@ -225,10 +249,7 @@ class OnnxPpeDetector:
             idx = int(np.argmax(row[4:]))
             score = float(row[4 + idx])
             label = self.classes.get(str(idx))
-            if (
-                label not in {"person", "hard_hat", "high_visibility_vest"}
-                or score < self.threshold
-            ):
+            if label not in APPEARANCE_CLASSES or score < self.threshold:
                 continue
             cx, cy, w, h = map(float, row[:4])
             xyxy = (
@@ -251,14 +272,34 @@ class OnnxPpeDetector:
 def draw_ppe_overlay(frame, boxes, people):
     """Render actual detections; candidate absence stays explicitly unconfirmed."""
     import cv2
+
     output = frame.copy()
     for box in boxes:
         x1, y1, x2, y2 = map(round, box.xyxy)
         cv2.rectangle(output, (x1, y1), (x2, y2), (255, 180, 0), 2)
-        cv2.putText(output, f"{box.label} {box.score:.2f}", (x1, max(15, y1-5)),
-                    cv2.FONT_HERSHEY_SIMPLEX, .4, (255, 180, 0), 1)
+        cv2.putText(
+            output,
+            f"{box.label} {box.score:.2f}",
+            (x1, max(15, y1 - 5)),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.4,
+            (255, 180, 0),
+            1,
+        )
     for person in people:
-        x1, y1, _, _ = map(round, person['box'])
-        label = 'REVIEW: possible missing PPE' if person.get('review_required') else person['status']
-        cv2.putText(output, label, (x1, y1+18), cv2.FONT_HERSHEY_SIMPLEX, .4, (0, 200, 255), 1)
+        x1, y1, _, _ = map(round, person["box"])
+        label = (
+            "REVIEW: possible missing PPE"
+            if person.get("review_required")
+            else person["status"]
+        )
+        cv2.putText(
+            output,
+            label,
+            (x1, y1 + 18),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.4,
+            (0, 200, 255),
+            1,
+        )
     return output

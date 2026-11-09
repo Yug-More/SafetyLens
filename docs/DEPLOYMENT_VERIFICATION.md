@@ -58,3 +58,7 @@ backend/.venv/bin/python scripts/verify_camera_load.py --credentials /private/pa
 Use one API process for the tested local recovery model. No distributed leases/worker fleet guarantee, rolling-upgrade qualification or load balancer was tested. First-run seeding initializes examples; restarting preserves existing records rather than refreshing a demonstration. If an existing customized database lacks sample SOPs, it is not overwritten—upload reviewed procedures normally. Do not disable authentication or drop volumes to make setup appear successful.
 
 Test accounts/cameras and restored test volumes are isolated artifacts. Private backups/media remain local; model/data licensing and site privacy still apply. Container verification is an engineering milestone, not a production-security or industrial safety approval.
+
+## November 8 extension
+
+Final images were rebuilt and the existing isolated PostgreSQL17 profile restarted healthy. `scripts/verify_fresh_postgres.py` migrated/seeded a new separate database without replacing the existing DB. An actual opt-in learned event completed the standalone-browser workflow and controlled restart/duplicate/restore checks; the final PPE gate/context interface was also exercised against Docker. See `evaluation/research/compose-temporal.json`, `fresh-postgres.json` and FINAL_VALIDATION_REPORT.md. New research artifacts do not open PPE gates or establish workplace suitability.

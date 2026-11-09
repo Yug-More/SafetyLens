@@ -154,7 +154,9 @@ def get_ingestion(db: Session, event_id: str) -> DetectorEventIngestion:
         .where(DetectorEventIngestion.event_id == event_id)
     ).first()
     if row is None:
-        raise AppError("DETECTOR_EVENT_NOT_FOUND", "Detector event was not found.", status_code=404)
+        raise AppError(
+            "DETECTOR_EVENT_NOT_FOUND", "Detector event was not found.", status_code=404
+        )
     return row
 
 
@@ -240,10 +242,14 @@ async def _store_uploaded_clip(
 
 def _store_local_clip(source: Path, settings: Settings) -> tuple[str, str, int, str]:
     if source.stat().st_size > settings.max_video_size_bytes:
-        raise AppError("FILE_TOO_LARGE", "Detector clip exceeds upload size limit.", 413)
+        raise AppError(
+            "FILE_TOO_LARGE", "Detector clip exceeds upload size limit.", 413
+        )
     original_filename = storage.sanitize_original_filename(source.name)
     extension = storage.validate_extension(original_filename)
-    mime_type = "video/mp4" if extension == ".mp4" else storage.validate_mime_type("video/mp4")
+    mime_type = (
+        "video/mp4" if extension == ".mp4" else storage.validate_mime_type("video/mp4")
+    )
     if extension == ".mov":
         mime_type = "video/quicktime"
     elif extension == ".webm":
@@ -362,7 +368,11 @@ def advance_ingestion(
         db.commit()
         return _to_read(get_ingestion(db, event_id))
 
-    if row.video_asset_id and row.status == DetectorIngestionStatus.READY.value and auto_analyze:
+    if (
+        row.video_asset_id
+        and row.status == DetectorIngestionStatus.READY.value
+        and auto_analyze
+    ):
         video = db.get(VideoAsset, row.video_asset_id)
         if video is not None and video.status == VideoStatus.READY.value:
             existing = db.scalars(
@@ -370,7 +380,10 @@ def advance_ingestion(
                 .where(IncidentAnalysis.video_asset_id == video.id)
                 .order_by(IncidentAnalysis.created_at.desc())
             ).first()
-            if existing is not None and existing.status in {"completed", "needs_review"}:
+            if existing is not None and existing.status in {
+                "completed",
+                "needs_review",
+            }:
                 row.analysis_id = existing.id
                 row.status = DetectorIngestionStatus.COMPLETED.value
                 db.commit()
@@ -436,7 +449,9 @@ async def ingest_detector_event(
             lock = asyncio.Lock()
             _ingest_locks[payload.event.event_id] = lock
     async with lock:
-        return await _ingest_detector_event(db,payload,clip=clip,background_tasks=background_tasks,settings=settings)
+        return await _ingest_detector_event(
+            db, payload, clip=clip, background_tasks=background_tasks, settings=settings
+        )
 
 
 async def _ingest_detector_event(
@@ -453,15 +468,29 @@ async def _ingest_detector_event(
     event = payload.event
 
     existing = db.scalars(
-        select(DetectorEventIngestion).where(DetectorEventIngestion.event_id == event.event_id)
+        select(DetectorEventIngestion).where(
+            DetectorEventIngestion.event_id == event.event_id
+        )
     ).first()
     if existing is not None:
-        if (event.camera_id is not None and existing.camera_id != event.camera_id) or existing.source_id != event.source_id or existing.event_type != event.event_type:
-            raise AppError("EVENT_ID_CONFLICT", "Event ID already belongs to a different camera/source/type.", 409)
+        if (
+            (event.camera_id is not None and existing.camera_id != event.camera_id)
+            or existing.source_id != event.source_id
+            or existing.event_type != event.event_type
+        ):
+            raise AppError(
+                "EVENT_ID_CONFLICT",
+                "Event ID already belongs to a different camera/source/type.",
+                409,
+            )
         expected_hash = event.evidence.clip_sha256 if event.evidence else None
         stored_hash = _loads_dict(existing.evidence_json).get("clip_sha256")
         if expected_hash and stored_hash and expected_hash != stored_hash:
-            raise AppError("EVENT_ID_CONFLICT", "Event ID already acknowledges different evidence content.", 409)
+            raise AppError(
+                "EVENT_ID_CONFLICT",
+                "Event ID already acknowledges different evidence content.",
+                409,
+            )
         # Deduplicate: reuse mapping; never re-upload clip.
         return advance_ingestion(
             db,
@@ -471,6 +500,13 @@ async def _ingest_detector_event(
             if payload.auto_analyze is not None
             else cfg.detector_ingest_auto_analyze,
             settings=cfg,
+        )
+
+    if event.event_type == "ppe_noncompliance":
+        raise AppError(
+            "PPE_DEPLOYMENT_DISABLED",
+            "New automated PPE events are excluded while all visual deployment gates are closed. Offline evaluation and human/demo review remain separate.",
+            409,
         )
 
     camera_id = event.camera_id
@@ -535,12 +571,14 @@ async def _ingest_detector_event(
     try:
         row.status = DetectorIngestionStatus.UPLOADING.value
         if clip is not None and clip.filename:
-            stored_filename, mime_type, file_size = await _store_uploaded_clip(clip, cfg)
+            stored_filename, mime_type, file_size = await _store_uploaded_clip(
+                clip, cfg
+            )
             original_filename = storage.sanitize_original_filename(clip.filename)
         elif event.evidence and event.evidence.clip_relative_path:
             source = _resolve_allowed_clip_path(event.evidence.clip_relative_path, cfg)
-            stored_filename, mime_type, file_size, original_filename = _store_local_clip(
-                source, cfg
+            stored_filename, mime_type, file_size, original_filename = (
+                _store_local_clip(source, cfg)
             )
         else:
             raise AppError(
@@ -551,9 +589,16 @@ async def _ingest_detector_event(
 
         if event.evidence and event.evidence.clip_sha256:
             destination = storage.resolve_upload_path(stored_filename, cfg)
-            if hashlib.sha256(destination.read_bytes()).hexdigest() != event.evidence.clip_sha256:
+            if (
+                hashlib.sha256(destination.read_bytes()).hexdigest()
+                != event.evidence.clip_sha256
+            ):
                 storage.delete_file_quietly(destination)
-                raise AppError("EVIDENCE_HASH_MISMATCH", "Uploaded evidence does not match the detector checksum.", 422)
+                raise AppError(
+                    "EVIDENCE_HASH_MISMATCH",
+                    "Uploaded evidence does not match the detector checksum.",
+                    422,
+                )
 
         video, job = _create_video_from_stored(
             db,
@@ -607,7 +652,9 @@ def _post_process_ingestion(event_id: str, auto_analyze: bool) -> None:
 
         for _ in range(40):
             row = db.scalars(
-                select(DetectorEventIngestion).where(DetectorEventIngestion.event_id == event_id)
+                select(DetectorEventIngestion).where(
+                    DetectorEventIngestion.event_id == event_id
+                )
             ).first()
             if row is None:
                 return
@@ -670,7 +717,9 @@ def retry_detector_event(
 
     video = db.get(VideoAsset, row.video_asset_id)
     if video is None:
-        raise AppError("VIDEO_MISSING", "Mapped video asset is missing.", status_code=409)
+        raise AppError(
+            "VIDEO_MISSING", "Mapped video asset is missing.", status_code=409
+        )
 
     if video.status == VideoStatus.FAILED.value:
         job = ProcessingJob(
