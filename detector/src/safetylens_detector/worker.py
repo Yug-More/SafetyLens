@@ -271,7 +271,11 @@ def run_camera(
                                         else missing_since
                                     )
                                     result = (
-                                        engine.mark_missing("person-1")
+                                        engine.mark_missing(
+                                            "person-1", timestamp_seconds=timestamp
+                                        )
+                                        if temporal_model is not None
+                                        else engine.mark_missing("person-1")
                                         if timestamp - missing_since >= 0.5
                                         else None
                                     )

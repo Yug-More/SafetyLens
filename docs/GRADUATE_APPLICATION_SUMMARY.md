@@ -48,3 +48,13 @@ Relevant techniques include causal temporal feature extraction, regularized clas
 ## Readiness for graduate applications
 
 The project can substantiate applied computer vision, AI systems integration and reliability reasoning when presented with clear personal ownership and reproducible evidence. Its strongest research experiences are the rejected sensitivity improvement, independently verified label correction, and end-to-end recovery/oversight design. It does not establish publications, customer adoption, production readiness, certification or research novelty against the literature. Admissions claims should emphasize methods, engineering decisions and evidence rather than inflated accuracy.
+
+## Faculty interview questions and evidence-based answers
+
+**Why did you keep the simplest learned model?** The compact linear model outperformed the fixed32-unit neural alternative on validation. Fresh test specificity was poor, so neither an attractive recall value nor extra complexity justified default promotion. The operating point was not retuned to the published test.
+
+**How did you establish that PPE scores were wrong?** Original publisher annotations were independently matched to1,172 mirror rectangles; all matches were geometrically consistent and recovered the class mapping without consulting predictions. Historical equipment scores were withdrawn and re-scored from preserved predictions.
+
+**How do models obtain authority to act?** They do not authorize actions. Authenticated role checks, incident confirmation and selective human approval are enforced independently in backend workflows. Cited SOP text and optional multimodal interpretation remain decision support; external execution is simulated.
+
+**What makes the final results reproducible?** A shared runtime/evaluation temporal decision component, exact model/data hashes, versioned raw artifacts, fixed operating point, fresh-volume deployment verification and a machine-checkable metrics freeze. Replay of published test data is labeled replay, not a new holdout. See FINAL_PROJECT_METRICS.md.

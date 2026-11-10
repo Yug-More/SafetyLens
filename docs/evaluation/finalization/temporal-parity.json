@@ -1,0 +1,421 @@
+{
+  "decision_version": "temporal-decision-v2",
+  "scope": "Published test replay and runtime/evaluator consistency, NOT a new held-out experiment",
+  "checkpoint_sha256": "436948b4ec1fb8e371303a2c346630fa9869a00894cc9067e572bb5c34fd8bd8",
+  "unchanged_model_and_operating_point": true,
+  "samples_verified": 18,
+  "wall_seconds": 19.125665040992317,
+  "metrics": {
+    "video_presence": {
+      "tp": 4,
+      "fn": 0,
+      "fp": 10,
+      "tn": 4,
+      "precision": 0.2857142857142857,
+      "recall": 1.0,
+      "f1": 0.4444444444444444,
+      "specificity": 0.2857142857142857,
+      "false_positive_rate": 0.7142857142857143,
+      "false_negative_rate": 0.0,
+      "recall_nominal_wilson95": [
+        0.5101091635454027,
+        1
+      ],
+      "precision_nominal_wilson95": [
+        0.11721378644576919,
+        0.5464908432989318
+      ]
+    },
+    "onset_matched": {
+      "matched": 4,
+      "missed": 0,
+      "unmatched_alerts": 10,
+      "mean_detected_delay_seconds": 0.4916666666666666,
+      "delays_seconds": [
+        0.5999999999999999,
+        0.3999999999999999,
+        0.33333333333333326,
+        0.6333333333333333
+      ]
+    },
+    "negative_seconds": 115.53333333333333,
+    "false_events": 10,
+    "false_alarms_per_negative_hour": 311.59838430467397,
+    "samples": [
+      {
+        "id": "fall-27-cam0",
+        "label": "fall",
+        "event_times": [
+          2.2666666666666666
+        ],
+        "onset": 1.6666666666666667,
+        "matched_delay": 0.5999999999999999,
+        "frames": 37,
+        "missing_or_low_quality": 7
+      },
+      {
+        "id": "fall-28-cam0",
+        "label": "fall",
+        "event_times": [
+          1.2666666666666666
+        ],
+        "onset": 0.8666666666666667,
+        "matched_delay": 0.3999999999999999,
+        "frames": 27,
+        "missing_or_low_quality": 5
+      },
+      {
+        "id": "fall-29-cam0",
+        "label": "fall",
+        "event_times": [
+          1.9333333333333333
+        ],
+        "onset": 1.6,
+        "matched_delay": 0.33333333333333326,
+        "frames": 40,
+        "missing_or_low_quality": 10
+      },
+      {
+        "id": "fall-30-cam0",
+        "label": "fall",
+        "event_times": [
+          1.4333333333333333
+        ],
+        "onset": 0.8,
+        "matched_delay": 0.6333333333333333,
+        "frames": 28,
+        "missing_or_low_quality": 9
+      },
+      {
+        "id": "adl-27-cam0",
+        "label": "normal",
+        "event_times": [],
+        "onset": null,
+        "matched_delay": null,
+        "frames": 40,
+        "missing_or_low_quality": 0
+      },
+      {
+        "id": "adl-28-cam0",
+        "label": "normal",
+        "event_times": [],
+        "onset": null,
+        "matched_delay": null,
+        "frames": 34,
+        "missing_or_low_quality": 0
+      },
+      {
+        "id": "adl-29-cam0",
+        "label": "normal",
+        "event_times": [],
+        "onset": null,
+        "matched_delay": null,
+        "frames": 50,
+        "missing_or_low_quality": 0
+      },
+      {
+        "id": "adl-30-cam0",
+        "label": "normal",
+        "event_times": [
+          5.433333333333334
+        ],
+        "onset": null,
+        "matched_delay": null,
+        "frames": 160,
+        "missing_or_low_quality": 74
+      },
+      {
+        "id": "adl-31-cam0",
+        "label": "normal",
+        "event_times": [
+          4.266666666666667
+        ],
+        "onset": null,
+        "matched_delay": null,
+        "frames": 100,
+        "missing_or_low_quality": 1
+      },
+      {
+        "id": "adl-32-cam0",
+        "label": "normal",
+        "event_times": [
+          2.433333333333333
+        ],
+        "onset": null,
+        "matched_delay": null,
+        "frames": 80,
+        "missing_or_low_quality": 5
+      },
+      {
+        "id": "adl-33-cam0",
+        "label": "normal",
+        "event_times": [
+          2.933333333333333
+        ],
+        "onset": null,
+        "matched_delay": null,
+        "frames": 80,
+        "missing_or_low_quality": 12
+      },
+      {
+        "id": "adl-34-cam0",
+        "label": "normal",
+        "event_times": [
+          0.7666666666666667
+        ],
+        "onset": null,
+        "matched_delay": null,
+        "frames": 77,
+        "missing_or_low_quality": 6
+      },
+      {
+        "id": "adl-35-cam0",
+        "label": "normal",
+        "event_times": [
+          1.1
+        ],
+        "onset": null,
+        "matched_delay": null,
+        "frames": 112,
+        "missing_or_low_quality": 3
+      },
+      {
+        "id": "adl-36-cam0",
+        "label": "normal",
+        "event_times": [
+          8.266666666666667
+        ],
+        "onset": null,
+        "matched_delay": null,
+        "frames": 136,
+        "missing_or_low_quality": 24
+      },
+      {
+        "id": "adl-37-cam0",
+        "label": "normal",
+        "event_times": [],
+        "onset": null,
+        "matched_delay": null,
+        "frames": 140,
+        "missing_or_low_quality": 20
+      },
+      {
+        "id": "adl-38-cam0",
+        "label": "normal",
+        "event_times": [
+          4.6
+        ],
+        "onset": null,
+        "matched_delay": null,
+        "frames": 138,
+        "missing_or_low_quality": 69
+      },
+      {
+        "id": "adl-39-cam0",
+        "label": "normal",
+        "event_times": [
+          4.933333333333334
+        ],
+        "onset": null,
+        "matched_delay": null,
+        "frames": 108,
+        "missing_or_low_quality": 35
+      },
+      {
+        "id": "adl-40-cam0",
+        "label": "normal",
+        "event_times": [
+          6.433333333333334
+        ],
+        "onset": null,
+        "matched_delay": null,
+        "frames": 132,
+        "missing_or_low_quality": 48
+      }
+    ]
+  },
+  "runtime_samples": [
+    {
+      "id": "fall-27-cam0",
+      "runtime_event_times": [
+        2.2666666666666666
+      ],
+      "cached_event_times": [
+        2.2666666666666666
+      ],
+      "sampled_frames": 37,
+      "analysis_seconds": 1.095
+    },
+    {
+      "id": "fall-28-cam0",
+      "runtime_event_times": [
+        1.2666666666666666
+      ],
+      "cached_event_times": [
+        1.2666666666666666
+      ],
+      "sampled_frames": 27,
+      "analysis_seconds": 0.404
+    },
+    {
+      "id": "fall-29-cam0",
+      "runtime_event_times": [
+        1.9333333333333333
+      ],
+      "cached_event_times": [
+        1.9333333333333333
+      ],
+      "sampled_frames": 40,
+      "analysis_seconds": 0.497
+    },
+    {
+      "id": "fall-30-cam0",
+      "runtime_event_times": [
+        1.4333333333333333
+      ],
+      "cached_event_times": [
+        1.4333333333333333
+      ],
+      "sampled_frames": 28,
+      "analysis_seconds": 0.397
+    },
+    {
+      "id": "adl-27-cam0",
+      "runtime_event_times": [],
+      "cached_event_times": [],
+      "sampled_frames": 40,
+      "analysis_seconds": 0.506
+    },
+    {
+      "id": "adl-28-cam0",
+      "runtime_event_times": [],
+      "cached_event_times": [],
+      "sampled_frames": 34,
+      "analysis_seconds": 0.442
+    },
+    {
+      "id": "adl-29-cam0",
+      "runtime_event_times": [],
+      "cached_event_times": [],
+      "sampled_frames": 50,
+      "analysis_seconds": 0.599
+    },
+    {
+      "id": "adl-30-cam0",
+      "runtime_event_times": [
+        5.433333333333334
+      ],
+      "cached_event_times": [
+        5.433333333333334
+      ],
+      "sampled_frames": 160,
+      "analysis_seconds": 2.184
+    },
+    {
+      "id": "adl-31-cam0",
+      "runtime_event_times": [
+        4.266666666666667
+      ],
+      "cached_event_times": [
+        4.266666666666667
+      ],
+      "sampled_frames": 100,
+      "analysis_seconds": 1.15
+    },
+    {
+      "id": "adl-32-cam0",
+      "runtime_event_times": [
+        2.433333333333333
+      ],
+      "cached_event_times": [
+        2.433333333333333
+      ],
+      "sampled_frames": 80,
+      "analysis_seconds": 0.966
+    },
+    {
+      "id": "adl-33-cam0",
+      "runtime_event_times": [
+        2.933333333333333
+      ],
+      "cached_event_times": [
+        2.933333333333333
+      ],
+      "sampled_frames": 80,
+      "analysis_seconds": 1.034
+    },
+    {
+      "id": "adl-34-cam0",
+      "runtime_event_times": [
+        0.7666666666666667
+      ],
+      "cached_event_times": [
+        0.7666666666666667
+      ],
+      "sampled_frames": 77,
+      "analysis_seconds": 0.946
+    },
+    {
+      "id": "adl-35-cam0",
+      "runtime_event_times": [
+        1.1
+      ],
+      "cached_event_times": [
+        1.1
+      ],
+      "sampled_frames": 112,
+      "analysis_seconds": 1.274
+    },
+    {
+      "id": "adl-36-cam0",
+      "runtime_event_times": [
+        8.266666666666667
+      ],
+      "cached_event_times": [
+        8.266666666666667
+      ],
+      "sampled_frames": 136,
+      "analysis_seconds": 1.5
+    },
+    {
+      "id": "adl-37-cam0",
+      "runtime_event_times": [],
+      "cached_event_times": [],
+      "sampled_frames": 140,
+      "analysis_seconds": 1.531
+    },
+    {
+      "id": "adl-38-cam0",
+      "runtime_event_times": [
+        4.6
+      ],
+      "cached_event_times": [
+        4.6
+      ],
+      "sampled_frames": 138,
+      "analysis_seconds": 1.478
+    },
+    {
+      "id": "adl-39-cam0",
+      "runtime_event_times": [
+        4.933333333333334
+      ],
+      "cached_event_times": [
+        4.933333333333334
+      ],
+      "sampled_frames": 108,
+      "analysis_seconds": 1.245
+    },
+    {
+      "id": "adl-40-cam0",
+      "runtime_event_times": [
+        6.433333333333334
+      ],
+      "cached_event_times": [
+        6.433333333333334
+      ],
+      "sampled_frames": 132,
+      "analysis_seconds": 1.46
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "project": "safetylens-validation-release",
+  "no_existing_containers_or_volumes": true,
+  "documented_compose_profile": true,
+  "all_three_services_healthy": true,
+  "first_start_seconds": 58.79642254200007,
+  "seeded_counts": {
+    "cameras": 12,
+    "safety_procedures": 4,
+    "platform_users": 0
+  },
+  "default_accounts": false,
+  "services": [
+    {
+      "service": "backend",
+      "image": "safetylens-validation-release-backend",
+      "health": "healthy"
+    },
+    {
+      "service": "frontend",
+      "image": "safetylens-validation-release-frontend",
+      "health": "healthy"
+    },
+    {
+      "service": "postgres",
+      "image": "postgres:17-alpine",
+      "health": "healthy"
+    }
+  ],
+  "limits": [
+    "Fresh data volumes and application startup verified; image build cache reused",
+    "Loopback HTTP, not production HTTPS",
+    "No previous installation reset"
+  ]
+}

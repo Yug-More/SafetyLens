@@ -124,7 +124,8 @@ class TemporalModel:
 
     @classmethod
     def load(cls, path, *, expected_sha256):
-        raw = Path(path).read_bytes()
+        with Path(path).open("rb") as handle:
+            raw = handle.read(2_000_001)
         if len(raw) > 2_000_000 or hashlib.sha256(raw).hexdigest() != expected_sha256:
             raise ValueError("Temporal checkpoint size/hash mismatch")
         return cls(json.loads(raw))
@@ -143,103 +144,142 @@ class TemporalModel:
         return 1 / (1 + np.exp(-np.clip(logits, -30, 30)))
 
 
+DECISION_VERSION = "temporal-decision-v2"
+
+
+class TemporalDecision:
+    """Shared runtime/evaluation decision state; no invisible recovery credit."""
+
+    def __init__(self, threshold):
+        self.threshold = threshold
+        self.since = None
+        self.latched = False
+        self.recovery = None
+        self.last_timestamp = None
+        self.state = DetectorState.MONITORING
+
+    def update(self, timestamp, score, metrics, coverage):
+        import math
+
+        if (
+            not math.isfinite(timestamp)
+            or timestamp < 0
+            or (self.last_timestamp is not None and timestamp <= self.last_timestamp)
+        ):
+            raise ValueError("Decision timestamps must strictly increase")
+        if self.last_timestamp is not None and timestamp - self.last_timestamp > 0.75:
+            self.since = self.recovery = None
+        self.last_timestamp = timestamp
+        if score is None:
+            self.since = self.recovery = None
+            self.state = DetectorState.LOW_VISIBILITY
+            return self.state, False
+        if not math.isfinite(score) or not 0 <= score <= 1:
+            raise ValueError("Invalid temporal score")
+        if self.latched:
+            upright = (
+                metrics.torso_angle_degrees_from_vertical < 35
+                and (metrics.bbox_width_height_ratio or 10) < 1.2
+            )
+            self.recovery = (
+                (timestamp if self.recovery is None else self.recovery)
+                if upright
+                else None
+            )
+            if self.recovery is not None and timestamp - self.recovery >= 1:
+                self.latched = False
+                self.since = self.recovery = None
+            self.state = DetectorState.COOLDOWN
+            return self.state, False
+        if score >= self.threshold:
+            self.since = timestamp if self.since is None else self.since
+            self.state = DetectorState.CONFIRMING
+            if timestamp - self.since >= 0.083 and coverage >= 0.25:
+                self.latched = True
+                self.state = DetectorState.INCIDENT
+                return self.state, True
+        else:
+            self.since = None
+            self.state = DetectorState.MONITORING
+        return self.state, False
+
+
 class TemporalDetectorEngine:
-    """Opt-in research event engine: bounded per-track history and abstention."""
+    """Bounded per-track inference using exactly the evaluator's decision state."""
 
     def __init__(self, model):
         self.model = model
         self.tracks = {}
 
+    def _track(self, key):
+        if key not in self.tracks and len(self.tracks) >= 64:
+            self.tracks.pop(next(iter(self.tracks)))
+        return self.tracks.setdefault(
+            key,
+            {
+                "features": CausalFeatures(),
+                "decision": TemporalDecision(self.model.threshold),
+            },
+        )
+
     def forget_track(self, track_id):
         self.tracks.pop(track_id, None)
 
-    def mark_missing(self, track_id):
-        self.forget_track(track_id)
+    def mark_missing(self, track_id, *, timestamp_seconds=None):
+        track = self._track(track_id)
+        decision = track["decision"]
+        previous = decision.state
+        if timestamp_seconds is None:
+            # Legacy callers may not provide time; never fabricate a recovery.
+            decision.since = decision.recovery = None
+            decision.state = DetectorState.LOW_VISIBILITY
+        else:
+            decision.update(timestamp_seconds, None, None, 0)
         return DetectorResult(
-            track_id,
-            DetectorState.MONITORING,
-            DetectorState.LOW_VISIBILITY,
-            None,
-            reasons=("track_missing",),
+            track_id, previous, decision.state, None, reasons=("track_missing",)
         )
 
     def process(self, observation):
         key = observation.track_id
-        # Callers expire tracks, but also impose an independent resource bound.
-        if key not in self.tracks and len(self.tracks) >= 64:
-            self.tracks.pop(next(iter(self.tracks)))
-        track = self.tracks.setdefault(
-            key,
-            {
-                "features": CausalFeatures(),
-                "since": None,
-                "latched": False,
-                "recovery": None,
-            },
-        )
-        prior = track["features"].previous
-        if prior and observation.timestamp_seconds - prior.timestamp_seconds > 0.75:
-            track["since"] = None
+        track = self._track(key)
         features, metrics = track["features"].process(observation)
-        t = observation.timestamp_seconds
-        if features is None:
-            track["since"] = None
-            return DetectorResult(
-                key,
-                DetectorState.MONITORING,
-                DetectorState.LOW_VISIBILITY,
-                metrics,
-                reasons=("insufficient_pose_quality",),
-            )
-        score = float(self.model.score(features))
+        decision = track["decision"]
+        previous = decision.state
+        score = float(self.model.score(features)) if features is not None else None
+        state, triggered = decision.update(
+            observation.timestamp_seconds,
+            score,
+            metrics,
+            features[-2] if features is not None else 0,
+        )
         event = None
-        state = DetectorState.MONITORING
-        if track["latched"]:
-            # Sustained upright posture, rather than score noise, rearms the track.
-            upright = (
-                metrics.torso_angle_degrees_from_vertical < 35
-                and (metrics.bbox_width_height_ratio or 10) < 1.2
+        if triggered:
+            event = DetectionEvent(
+                "1.0",
+                str(uuid4()),
+                "possible_person_down",
+                observation.source_id,
+                key,
+                observation.timestamp_seconds,
+                observation.source_timestamp_seconds,
+                state,
+                ("learned_temporal_candidate",),
+                metrics.pose_quality,
+                metrics,
+                (
+                    "experimental_learned_pose_classifier",
+                    "score_is_not_calibrated_fall_probability",
+                    "requires_human_verification",
+                    DECISION_VERSION,
+                ),
             )
-            track["recovery"] = (
-                (track["recovery"] if track["recovery"] is not None else t)
-                if upright
-                else None
-            )
-            if track["recovery"] is not None and t - track["recovery"] >= 1:
-                track["latched"] = False
-                track["since"] = None
-            state = DetectorState.COOLDOWN
-        elif score >= self.model.threshold:
-            track["since"] = t if track["since"] is None else track["since"]
-            state = DetectorState.CONFIRMING
-            if t - track["since"] >= 0.083 and features[-2] >= 0.25:
-                track["latched"] = True
-                state = DetectorState.INCIDENT
-                event = DetectionEvent(
-                    "1.0",
-                    str(uuid4()),
-                    "possible_person_down",
-                    observation.source_id,
-                    key,
-                    t,
-                    observation.source_timestamp_seconds,
-                    state,
-                    ("learned_temporal_candidate",),
-                    metrics.pose_quality,
-                    metrics,
-                    (
-                        "experimental_learned_pose_classifier",
-                        "score_is_not_calibrated_fall_probability",
-                        "requires_human_verification",
-                    ),
-                )
-        else:
-            track["since"] = None
         return DetectorResult(
             key,
-            DetectorState.MONITORING,
+            previous,
             state,
             metrics,
             event,
-            (f"temporal_score={score:.4f}",),
+            (f"temporal_score={score:.4f}",)
+            if score is not None
+            else ("insufficient_pose_quality",),
         )

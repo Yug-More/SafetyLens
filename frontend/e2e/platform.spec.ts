@@ -315,3 +315,20 @@ test("PPE class gates recover from an unavailable API without fake status", asyn
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBeTruthy();
   await page.screenshot({path:"test-results/ppe-gates-mobile.png",fullPage:true});
 });
+
+
+test("core operator screens satisfy automated WCAG A/AA checks", async ({page}) => {
+  const {default:AxeBuilder}=await import("@axe-core/playwright");
+  const fs=await import("node:fs/promises");
+  await login(page);
+  const results=[];
+  for(const route of ["/", "/cameras", "/ppe", "/incidents", "/settings"]) {
+    await page.goto(route);
+    await page.getByRole("main").waitFor();
+    await expect(page.getByText("Loading",{exact:true})).toHaveCount(0);
+    const scan=await new AxeBuilder({page}).withTags(["wcag2a","wcag2aa"]).analyze();
+    results.push({route,violations:scan.violations,passes:scan.passes.length,incomplete:scan.incomplete.length});
+  }
+  await fs.writeFile("test-results/accessibility.json",JSON.stringify(results,null,2));
+  expect(results.flatMap(x=>x.violations.map(v=>({route:x.route,id:v.id,nodes:v.nodes.map(n=>({target:n.target,summary:n.failureSummary}))})))).toEqual([]);
+});

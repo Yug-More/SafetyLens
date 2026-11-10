@@ -41,3 +41,9 @@ Research checkpoint inference uses hash-pinned bounded JSON with numeric/shape v
 The installation still shares authorized evidence across its users by role. It does not implement organization tenancy or per-user ownership isolation, SSO/MFA, an immutable audit ledger or distributed exactly-once actions. A proxy/service admission policy and representative security testing remain requirements before nonlocal operational deployment. No external consequential action was added.
 
 New automated `ppe_noncompliance` detector ingestion is rejected while all visual gates are closed, even if a device bypasses the normal worker/configuration controls. Existing UUID acknowledgements remain retryable. Configured demos, human review and offline diagnostics are separate paths, not qualified live PPE deployment.
+
+## Final release advisory and allocation review
+
+The exact final lockfile audit reports zero known vulnerabilities across52 pinned Python packages, zero frontend production advisories and seven moderate development-tool advisories, with no high/critical findings. `npm audit fix --force` would require incompatible changes and was not used. The remaining glob-amplification findings apply to trusted-project lint tooling; they are not exposed as an application API. This is a public-advisory snapshot, not a penetration test or a vulnerability-free guarantee. Reports and scope are in `evaluation/finalization/`.
+
+The shadcn generator tree is no longer a runtime dependency. Its required stylesheet remains unmodified with MIT license/provenance. Temporal checkpoint reads are capped before parsing/allocation, and independent association labels cannot use missing/duplicate IDs to manufacture accuracy. No role, evidence, approval or deployment gate was weakened. Metrics/source drift is now a CI failure.

@@ -1,0 +1,32 @@
+[
+  {
+    "route": "/",
+    "violations": [],
+    "passes": 25,
+    "incomplete": 1
+  },
+  {
+    "route": "/cameras",
+    "violations": [],
+    "passes": 23,
+    "incomplete": 1
+  },
+  {
+    "route": "/ppe",
+    "violations": [],
+    "passes": 25,
+    "incomplete": 1
+  },
+  {
+    "route": "/incidents",
+    "violations": [],
+    "passes": 23,
+    "incomplete": 1
+  },
+  {
+    "route": "/settings",
+    "violations": [],
+    "passes": 25,
+    "incomplete": 1
+  }
+]

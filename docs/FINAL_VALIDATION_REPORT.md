@@ -1,3 +1,19 @@
+# Finalization acceptance — November 9, 2026
+
+The authoritative, machine-checkable release claims are now in [FINAL_PROJECT_METRICS.md](FINAL_PROJECT_METRICS.md). The November 8 research report is preserved below. This finalization changes decision consistency and release verification, not model weights or thresholds.
+
+- Fixed a scientific-validity defect: cached evaluation duplicated runtime decision code, and missing pose could erase a latch or contribute unseen recovery time. Both paths now share `TemporalDecision` v2; explicit pose-loss handling never counts as observed upright recovery. All 18 published test recordings match actual MediaPipe event times exactly. Training reproduction remains byte-identical; validation/test confusion matrices are unchanged. This is published-data replay, not a new holdout.
+- Bounded temporal checkpoint reading before allocation and rejected missing/duplicate wearer IDs in association ground truth. No independent wearer accuracy is invented.
+- Verified 92 backend and 69 detector tests; all 10 actual-model browser cases passed, including five-route automated WCAG A/AA scans with zero detected violations after button/link fixes. No scan rules or tests were disabled; this is not accessibility certification.
+- Removed the unused shadcn generator dependency tree while retaining its exact required MIT stylesheet/license; a first clean build exposed the stylesheet dependency and Linux optional-lock entries. Both were repaired and verified. Final advisory snapshot: 52 pinned Python packages/zero known advisories; frontend production zero, complete frontend seven moderate development-tool advisories, no high/critical. Forced major dependency changes were not used.
+- A truly fresh `safetylens-validation-release` project had no prior containers/volumes, generated private secrets and zero default users. PostgreSQL 17/backend/frontend became healthy in 58.80s using cached build layers. An initial probe's wrong `users` table name was corrected; the passing run used another entirely new project, not a reset database.
+- An actual default detector event on that installation completed protected evidence/checksum, notification, cited procedures, human approval, simulated response, audit/PDF and controlled restart/retry/restore. Source footage/weights/private dumps stay outside Git. A Docker update had broken local plugin symlinks; task-local configuration restored Compose without changing global settings. These environment/harness failures were not hidden as passing tests.
+- CI now enforces frozen metrics/source consistency and runs the documented fresh-volume Docker profile. README is a concise 618-word overview excluding commands/diagram; all original images, current diagram, award evidence and human attribution remain.
+
+Release scope remains a research platform. Excessive false alarms and unqualified protective-rating inference are excluded from operational deployment; no workplace readiness, paid-provider validation, physical RTSP qualification or certification is claimed. Engineering acceptance requires local/CI tests, clean deployment, preserved evidence and scientific honesty—not invented detector quality. Mandatory checks must pass before the normal GitHub merge; remaining development-only advisory risk is disclosed.
+
+---
+
 # SafetyLens research and reliability validation — November 8, 2026
 
 ## Executive assessment

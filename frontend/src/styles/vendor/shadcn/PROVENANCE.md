@@ -1,0 +1,1 @@
+Unmodified stylesheet from shadcn 4.23.0, MIT, copyright 2023 shadcn. Source: https://www.npmjs.com/package/shadcn/v/4.23.0 . Package tarball SHA512 matches the previously committed npm lock integrity. Only the stylesheet is retained to avoid shipping the unused generator dependency tree; LICENSE.md is included.

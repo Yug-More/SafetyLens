@@ -87,6 +87,17 @@ def evaluate_associations(predictions, labels):
         }
     if not labels:
         return {"accuracy": None, "evaluated_links": 0, "reason": "No labeled links"}
+    keys = set()
+    for item in labels:
+        if (
+            not item.get("equipment_id")
+            or not item.get("person_id")
+            or item["equipment_id"] in keys
+        ):
+            raise ValueError(
+                "Association labels require unique equipment IDs and nonempty independent person IDs"
+            )
+        keys.add(item["equipment_id"])
     correct = sum(
         predictions.get(item["equipment_id"]) == item["person_id"] for item in labels
     )

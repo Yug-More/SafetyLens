@@ -149,48 +149,21 @@ def extract(args):
 
 
 def events(clip, model):
-    # Same debounce, coverage and sustained-upright rearm as runtime engine.
-    valid = [r for r in clip["rows"] if r["features"] is not None]
-    scores = (
-        iter(model.score(np.array([r["features"] for r in valid])).tolist())
-        if valid
-        else iter([])
-    )
-    since = None
-    latched = False
-    recovery = None
-    last = None
-    times = []
-    scored = []
+    from safetylens_detector.temporal import TemporalDecision
+    from safetylens_detector.models import PoseMetrics
+
+    decision = TemporalDecision(model.threshold)
+    times, scored = [], []
     for row in clip["rows"]:
-        t = row["t"]
-        f = row["features"]
-        if f is None:
-            since = None
-            scored.append([t, None])
-            continue
-        score = next(scores)
-        scored.append([t, score])
-        if last is not None and t - last > 0.75:
-            since = None
-        last = t
-        if latched:
-            m = row["metrics"]
-            upright = (
-                m["torso_angle_degrees_from_vertical"] < 35
-                and (m["bbox_width_height_ratio"] or 10) < 1.2
-            )
-            recovery = (t if recovery is None else recovery) if upright else None
-            if recovery is not None and t - recovery >= 1:
-                latched = False
-                since = None
-        elif score >= model.threshold:
-            since = t if since is None else since
-            if t - since >= 0.083 and f[-2] >= 0.25:
-                times.append(t)
-                latched = True
-        else:
-            since = None
+        features = row["features"]
+        score = float(model.score(features)) if features is not None else None
+        metrics = PoseMetrics(**row["metrics"]) if row["metrics"] is not None else None
+        _, triggered = decision.update(
+            row["t"], score, metrics, features[-2] if features is not None else 0
+        )
+        scored.append([row["t"], score])
+        if triggered:
+            times.append(row["t"])
     return times, scored
 
 
@@ -429,7 +402,10 @@ def evaluate(args):
         raise ValueError("Pose provider mismatch")
     start = perf_counter()
     result = summarize(data["clips"], model, include_scores=True)
+    from safetylens_detector.temporal import DECISION_VERSION
+
     result.update(
+        decision_version=DECISION_VERSION,
         checkpoint_sha256=args.checkpoint_sha256,
         cache_sha256=digest(args.cache),
         feature_version=FEATURE_VERSION,

@@ -1,0 +1,46 @@
+{
+  "event_id": "02c5d856-1666-44ed-b774-ff2a97f84688",
+  "events": 1,
+  "mode": "real_learned_temporal_worker",
+  "clip": "/private/tmp/safetylens-research/urfall/fall-27-cam0.mp4",
+  "delivery_wall_seconds": 4.16119445800723,
+  "event": {
+    "schema_version": "1.0",
+    "event_id": "02c5d856-1666-44ed-b774-ff2a97f84688",
+    "event_type": "possible_person_down",
+    "source_id": "cam-03",
+    "track_id": "person-1",
+    "occurred_at_seconds": 2.2666666666666666,
+    "source_timestamp_seconds": 2.2666666666666666,
+    "state": "incident",
+    "trigger_signals": [
+      "learned_temporal_candidate"
+    ],
+    "pose_quality": 0.999832347035408,
+    "metrics": {
+      "timestamp_seconds": 2.2666666666666666,
+      "pose_quality": 0.999832347035408,
+      "shoulder_center_y": 0.6216775178909302,
+      "torso_angle_degrees_from_vertical": 23.984290202441745,
+      "bbox_width_height_ratio": 0.83643364723101,
+      "downward_hip_velocity_body_lengths_per_second": 4.950736707143182,
+      "mean_landmark_motion_body_lengths_per_second": 9.333404052950968,
+      "model_sha256": "436948b4ec1fb8e371303a2c346630fa9869a00894cc9067e572bb5c34fd8bd8",
+      "feature_version": "causal-pose-summary-v1"
+    },
+    "limitations": [
+      "experimental_learned_pose_classifier",
+      "score_is_not_calibrated_fall_probability",
+      "requires_human_verification",
+      "temporal-decision-v2",
+      "post_event_window_truncated_at_source_end"
+    ],
+    "occurred_at": "2026-11-10T00:44:07.819472+00:00",
+    "camera_id": "cam-03",
+    "clip_event_offset_seconds": 2.0,
+    "evidence": {
+      "clip_sha256": "36ba425bac550b7810dbd5c5a4b1d5d9b872406dde1ce52e2e77d2aeced2412e"
+    }
+  },
+  "source_consumed_once": true
+}
