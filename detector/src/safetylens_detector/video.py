@@ -132,17 +132,23 @@ def analyze_video(
                     )
                     if observation is None:
                         missing += 1
-                        missing_since = (
-                            timestamp if missing_since is None else missing_since
-                        )
-                        if (
-                            not track_marked_missing
-                            and timestamp - missing_since >= missing_pose_grace_seconds
-                        ):
-                            result = engine.mark_missing("person-1")
-                            track_marked_missing = True
+                        if temporal_model is not None:
+                            result = engine.mark_missing(
+                                "person-1", timestamp_seconds=timestamp
+                            )
                         else:
-                            continue
+                            missing_since = (
+                                timestamp if missing_since is None else missing_since
+                            )
+                            if (
+                                not track_marked_missing
+                                and timestamp - missing_since
+                                >= missing_pose_grace_seconds
+                            ):
+                                result = engine.mark_missing("person-1")
+                                track_marked_missing = True
+                            else:
+                                continue
                     else:
                         detected += 1
                         missing_since = None

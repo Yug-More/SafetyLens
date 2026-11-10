@@ -77,6 +77,8 @@ class TemporalResearchTests(unittest.TestCase):
             "confirming",
         )
         engine.mark_missing("person-1")
+        self.assertTrue(engine.tracks["person-1"]["decision"].latched)
+        engine.forget_track("person-1")
         self.assertNotIn("person-1", engine.tracks)
 
 
@@ -175,3 +177,90 @@ class StreamBackpressureTests(unittest.TestCase):
         self.assertLess(time.monotonic() - start, 0.5)
         raw.resume.set()
         capture.release()
+
+
+class TemporalDecisionParityTests(unittest.TestCase):
+    def test_pose_loss_never_counts_as_upright_recovery_or_rearms_alert(self):
+        from safetylens_detector.temporal import TemporalDecision
+        from safetylens_detector.models import PoseMetrics
+
+        metrics = PoseMetrics(0, 1, 0.2, 10, 0.5, 0, 0)
+        decision = TemporalDecision(0.9)
+        decision.update(0, 0.99, metrics, 0.5)
+        self.assertTrue(decision.update(0.1, 0.99, metrics, 0.5)[1])
+        decision.update(0.2, 0.99, metrics, 0.5)
+        decision.update(0.3, None, None, 0)
+        decision.update(2, 0.99, metrics, 0.5)
+        self.assertTrue(decision.latched)
+        self.assertFalse(decision.update(2.1, 0.99, metrics, 0.5)[1])
+        decision.update(2.5, 0.1, metrics, 0.5)
+        decision.update(2.9, 0.1, metrics, 0.5)
+        decision.update(3.1, 0.1, metrics, 0.5)
+        self.assertFalse(decision.latched)
+
+    def test_evaluator_and_runtime_share_identical_decisions_through_dropouts(self):
+        import importlib.util
+        from dataclasses import asdict
+
+        path = Path(__file__).resolve().parents[2] / "scripts/temporal_experiment.py"
+        spec = importlib.util.spec_from_file_location("temporal_evaluation", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        model = TemporalModel(checkpoint())
+        engine = TemporalDetectorEngine(model)
+        extract = CausalFeatures()
+        rows = []
+        times = []
+        for t in [
+            0,
+            0.1,
+            0.2,
+            0.3,
+            0.4,
+            0.5,
+            0.6,
+            0.7,
+            0.8,
+            1.2,
+            1.3,
+            1.4,
+            1.5,
+            1.6,
+            2.7,
+            2.8,
+            3.0,
+            3.1,
+        ]:
+            if t in [1.2, 1.3, 1.4]:
+                result = engine.mark_missing("person-1", timestamp_seconds=t)
+                rows.append({"t": t, "features": None, "metrics": None})
+            else:
+                obs = observation(t)
+                f, m = extract.process(obs)
+                result = engine.process(obs)
+                rows.append({"t": t, "features": f.tolist(), "metrics": asdict(m)})
+            if result.event:
+                times.append(t)
+        cached, _ = module.events({"rows": rows}, model)
+        self.assertEqual(times, cached)
+
+
+class AssociationLabelIntegrityTests(unittest.TestCase):
+    def test_unknown_or_duplicate_ground_truth_cannot_inflate_accuracy(self):
+        with self.assertRaises(ValueError):
+            evaluate_associations({}, [{"equipment_id": "helmet", "person_id": None}])
+        with self.assertRaises(ValueError):
+            evaluate_associations(
+                {},
+                [
+                    {"equipment_id": "helmet", "person_id": "worker"},
+                    {"equipment_id": "helmet", "person_id": "worker"},
+                ],
+            )
+        self.assertEqual(
+            evaluate_associations(
+                {"helmet": "worker"},
+                [{"equipment_id": "helmet", "person_id": "worker"}],
+            )["accuracy"],
+            1,
+        )
