@@ -1,0 +1,356 @@
+{
+  "schema_version": "1.0",
+  "frozen_date": "2026-11-09",
+  "project": "SafetyLens",
+  "description": "Computer vision evidence and human-supervised incident-response research platform",
+  "technical_areas": [
+    "Applied AI",
+    "Computer Vision",
+    "Multimodal AI",
+    "Reliable Intelligent Systems"
+  ],
+  "scope": "Research release; not workplace-ready or certified",
+  "award": {
+    "competition": "The Executable World Hackathon",
+    "team_reported_place": 1,
+    "team_reported_prize_usd": 25000,
+    "participant_denominator_team_reported": 384,
+    "independent_organizer_corroboration_of_prize_and_denominator": false,
+    "evidence": "docs/README_RESTORATION.md"
+  },
+  "fall": {
+    "checkpoint_sha256": "436948b4ec1fb8e371303a2c346630fa9869a00894cc9067e572bb5c34fd8bd8",
+    "decision_version": "temporal-decision-v2",
+    "evaluation_status": "Published 18-clip replay with runtime parity; original held-out evaluation preserved, no new holdout claimed",
+    "video_presence": {
+      "tp": 4,
+      "fn": 0,
+      "fp": 10,
+      "tn": 4,
+      "precision": 0.2857142857142857,
+      "recall": 1.0,
+      "f1": 0.4444444444444444,
+      "specificity": 0.2857142857142857,
+      "false_positive_rate": 0.7142857142857143,
+      "false_negative_rate": 0.0,
+      "recall_nominal_wilson95": [
+        0.5101091635454027,
+        1
+      ],
+      "precision_nominal_wilson95": [
+        0.11721378644576919,
+        0.5464908432989318
+      ]
+    },
+    "onset_matching": {
+      "matched": 4,
+      "missed": 0,
+      "unmatched_alerts": 10,
+      "mean_detected_delay_seconds": 0.4916666666666666,
+      "delays_seconds": [
+        0.5999999999999999,
+        0.3999999999999999,
+        0.33333333333333326,
+        0.6333333333333333
+      ]
+    },
+    "negative_seconds": 115.53333333333333,
+    "false_alarms_per_negative_hour": 311.59838430467397,
+    "subjects_and_sessions": "unknown; recording/content split only",
+    "default_promotion": false,
+    "same_recordings_baseline": {
+      "samples": 18,
+      "true_positive": 0,
+      "false_positive": 8,
+      "true_negative": 6,
+      "false_negative": 4,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "false_positive_rate": 0.5714285714285714,
+      "false_negative_rate": 1.0,
+      "recall_95pct_wilson": [
+        0,
+        0.4898908364545973
+      ],
+      "precision_95pct_wilson": [
+        0,
+        0.32440756488388023
+      ],
+      "false_alarms_per_negative_camera_hour": 249.27942665731865,
+      "negative_camera_hours": 0.0320925,
+      "processing_seconds": 19.87603725000372,
+      "processing_fps": 77.98141588377227,
+      "event_detection_latency": "Only available for samples with independently annotated onset; pre-onset alerts not matched.",
+      "cpu_utilization": null,
+      "gpu_utilization": null,
+      "peak_memory_bytes": null
+    }
+  },
+  "ppe": {
+    "diagnostic_images": 100,
+    "model_sha256": "75c6b138880fb518cc9f8b04ca856a91a5ee84b94f118d4315dc09ee8070baac",
+    "appearance_metrics": {
+      "person": {
+        "status": "evaluated",
+        "iou_50": {
+          "true_positive_boxes": 193,
+          "f1": 0.6531302876480541,
+          "ground_truth_boxes": 236,
+          "predicted_boxes": 355,
+          "precision": 0.543661971830986,
+          "recall": 0.8177966101694916,
+          "ap": 0.7846021245044714
+        },
+        "ap_50_95": 0.5315514214200546
+      },
+      "earmuffs": {
+        "status": "evaluated",
+        "iou_50": {
+          "true_positive_boxes": 1,
+          "f1": 0.2857142857142857,
+          "ground_truth_boxes": 5,
+          "predicted_boxes": 2,
+          "precision": 0.5,
+          "recall": 0.2,
+          "ap": 0.10396039603960396
+        },
+        "ap_50_95": 0.02079207920792079
+      },
+      "face_shield": {
+        "status": "evaluated",
+        "iou_50": {
+          "true_positive_boxes": 2,
+          "f1": 0.2857142857142857,
+          "ground_truth_boxes": 3,
+          "predicted_boxes": 11,
+          "precision": 0.18181818181818182,
+          "recall": 0.6666666666666666,
+          "ap": 0.4422442244224422
+        },
+        "ap_50_95": 0.2765676567656766
+      },
+      "medical_mask": {
+        "status": "evaluated",
+        "iou_50": {
+          "true_positive_boxes": 5,
+          "f1": 0.37037037037037035,
+          "ground_truth_boxes": 14,
+          "predicted_boxes": 13,
+          "precision": 0.38461538461538464,
+          "recall": 0.35714285714285715,
+          "ap": 0.3564356435643564
+        },
+        "ap_50_95": 0.17544554455445543
+      },
+      "ordinary_eyewear": {
+        "status": "evaluated",
+        "iou_50": {
+          "true_positive_boxes": 4,
+          "f1": 0.24242424242424243,
+          "ground_truth_boxes": 12,
+          "predicted_boxes": 21,
+          "precision": 0.19047619047619047,
+          "recall": 0.3333333333333333,
+          "ap": 0.30268741159830265
+        },
+        "ap_50_95": 0.15219236209335218
+      },
+      "gloves": {
+        "status": "evaluated",
+        "iou_50": {
+          "true_positive_boxes": 26,
+          "f1": 0.325,
+          "ground_truth_boxes": 63,
+          "predicted_boxes": 97,
+          "precision": 0.26804123711340205,
+          "recall": 0.4126984126984127,
+          "ap": 0.31793626239030653
+        },
+        "ap_50_95": 0.18665540038710976
+      },
+      "hard_hat": {
+        "status": "evaluated",
+        "iou_50": {
+          "true_positive_boxes": 17,
+          "f1": 0.4927536231884058,
+          "ground_truth_boxes": 40,
+          "predicted_boxes": 29,
+          "precision": 0.5862068965517241,
+          "recall": 0.425,
+          "ap": 0.3586887534907337
+        },
+        "ap_50_95": 0.19034338841123932
+      },
+      "ordinary_footwear": {
+        "status": "evaluated",
+        "iou_50": {
+          "true_positive_boxes": 50,
+          "f1": 0.3952569169960474,
+          "ground_truth_boxes": 99,
+          "predicted_boxes": 154,
+          "precision": 0.3246753246753247,
+          "recall": 0.5050505050505051,
+          "ap": 0.4046113787201275
+        },
+        "ap_50_95": 0.20354149119466278
+      },
+      "high_visibility_vest": {
+        "status": "evaluated",
+        "iou_50": {
+          "true_positive_boxes": 23,
+          "f1": 0.4742268041237113,
+          "ground_truth_boxes": 30,
+          "predicted_boxes": 67,
+          "precision": 0.34328358208955223,
+          "recall": 0.7666666666666667,
+          "ap": 0.6120998382026306
+        },
+        "ap_50_95": 0.3328953648572603
+      }
+    },
+    "mapping_verified_boxes": 1172,
+    "mapping_unmatched": 0,
+    "independent_wearer_accuracy": null,
+    "protective_rating_accuracy": null,
+    "all_protective_deployment_gates_closed": true,
+    "training_overlap": "unknown"
+  },
+  "engineering": {
+    "tests": {
+      "backend_passed": 92,
+      "backend_seconds": 12.58,
+      "detector_passed": 69,
+      "detector_seconds": 0.174,
+      "browser_passed": 10,
+      "browser_duration_ms": 85226.70000000001,
+      "actual_model_browser_fixture": true,
+      "accessibility_routes": 5,
+      "accessibility_violations": 0,
+      "accessibility_scope": "axe-core4.14.0 WCAG2A/2AA automated scans, no rules disabled",
+      "lint": "passed",
+      "typecheck": "passed",
+      "standalone_container_build": "passed",
+      "ppe_current_predictions_identical_to_frozen_research_run": true,
+      "commands": [
+        "backend/.venv/bin/python -m pytest -c backend/pytest.ini backend/tests -q",
+        "PYTHONPATH=detector/src backend/.venv/bin/python -m unittest discover -s detector/tests -q",
+        "SAFETYLENS_REAL_CLIP=/tmp/safetylens-hardening/development/fall-07.mp4 SAFETYLENS_POSE_MODEL=/tmp/safetylens-hardening/models/pose_landmarker_lite.task npm --prefix frontend run test:e2e",
+        "npm --prefix frontend run lint",
+        "npm --prefix frontend run typecheck"
+      ]
+    },
+    "clean_install": {
+      "project": "safetylens-validation-release",
+      "no_existing_containers_or_volumes": true,
+      "documented_compose_profile": true,
+      "all_three_services_healthy": true,
+      "first_start_seconds": 58.79642254200007,
+      "seeded_counts": {
+        "cameras": 12,
+        "safety_procedures": 4,
+        "platform_users": 0
+      },
+      "default_accounts": false,
+      "services": [
+        {
+          "service": "backend",
+          "image": "safetylens-validation-release-backend",
+          "health": "healthy"
+        },
+        {
+          "service": "frontend",
+          "image": "safetylens-validation-release-frontend",
+          "health": "healthy"
+        },
+        {
+          "service": "postgres",
+          "image": "postgres:17-alpine",
+          "health": "healthy"
+        }
+      ],
+      "limits": [
+        "Fresh data volumes and application startup verified; image build cache reused",
+        "Loopback HTTP, not production HTTPS",
+        "No previous installation reset"
+      ]
+    },
+    "actual_model_workflow": {
+      "stack": "documented Compose; PostgreSQL17; frontend standalone; backend Python3.12",
+      "model_event_id": "10e6f062-420d-470b-8205-12e9c58f77e2",
+      "model_source_seconds": 4.5,
+      "worker_offline_wall_seconds": 2.566442042007111,
+      "clip_sha256_verified": "0dbfdc5fa252278633a6574ea0c086e0c1c4d0c895b55a7abdd274711fa4e013",
+      "operator_notification": true,
+      "concurrent_operator_statuses": [
+        200,
+        409
+      ],
+      "browser": {
+        "login": true,
+        "actualEvidencePlayback": true,
+        "approval": true,
+        "simulatedExecution": true,
+        "pdfBytes": 6830
+      },
+      "audit_events": 17,
+      "offline_outbox_restart_and_duplicate_reuse": true,
+      "postgres_restart_session_and_evidence_mapping": true,
+      "backup_restore_detector_records": 1,
+      "backup_sha256": "52b5f281c1ad03797fe3556fe4c06ed0b4c75d4b41b7c8df22cf24a8443e62d1",
+      "warm_camera_inventory_30_requests_ms": {
+        "minimum": 4.22045799496118,
+        "mean": 5.726618164529403,
+        "maximum": 14.989041999797337
+      },
+      "limitations": [
+        "Offline replay wall time is not physical fall-to-alert latency",
+        "Local HTTP profile; HTTPS and physical camera fleet not tested",
+        "Snapshot/page render are not PPE validation"
+      ]
+    },
+    "security": {
+      "backend_packages_checked": 52,
+      "backend_advisories": 0,
+      "npm_all_advisories": 7,
+      "npm_production_advisories": 0,
+      "high_or_critical": 0,
+      "remaining_risk": "Moderate development-only minimatch/typescript-eslint glob amplification; no compatible fix was available without forced major changes. Not exposed as a remote application endpoint.",
+      "snapshot_date": "2026-11-09",
+      "not_a_security_certification": true
+    }
+  },
+  "source_revision": "bb7df098fa269998b48139bf83ec77aafebbc807",
+  "source_hashes": {
+    "detector/src/safetylens_detector/temporal.py": "91e412c22750216d04b6d5a52c0e73b6370d9b0f0ceb69ab70d2c7028e898d63",
+    "detector/src/safetylens_detector/engine.py": "05e5d5a3158d2eac0d586ab14f27c3e650fa82809480dfeb4fc8f13be4f6ece5",
+    "detector/src/safetylens_detector/state_machine.py": "e23896136bf29e8388090eca1f805a9a90f0f843eccbbd83d34488a637e2d354",
+    "detector/src/safetylens_detector/metrics.py": "df2f78dcadaf509f2256f2561ef378b76b9236b497933f7d66bbfb4b13bc21b8",
+    "detector/src/safetylens_detector/mediapipe_provider.py": "ee9e056e6c67f5869a5e2132ecf2260f77473024871b19e33a40cb8a31c484f1",
+    "detector/src/safetylens_detector/ppe.py": "89c3ed8b8d7e3e5b89b6f13960c6d141821233159e5a5575c9796ecc0c0cc068",
+    "detector/src/safetylens_detector/ppe_evaluation.py": "f4dd0f217ff1d20500e9c164397fc08220bdf8a5131161903d3722e6ebf879a1",
+    "detector/src/safetylens_detector/compliance.py": "68fc9213d6119b4829709c4a37ab738ed21dafa602897963dec354fa5f6e51eb",
+    "detector/src/safetylens_detector/tracking.py": "e1958494e9eb003af1f4bd144900ce8a502f03f4b132004b5680727bf80f75ef",
+    "detector/src/safetylens_detector/stream.py": "637b9444720d9cf159b8f3a2fd734643c89c3bec739ce900e07691015b23c2fb",
+    "detector/src/safetylens_detector/worker.py": "b5cc71c27be0032565f989a07d840072a869e82cb3579c46f9f1af5b5516a1da",
+    "detector/src/safetylens_detector/video.py": "4990ed3ca8f0a2d978ec8e69a1362ecb9ac405244723b35dbc90227baf7f85fc",
+    "scripts/temporal_experiment.py": "8be62fb88d2bf7306f9e5e861772b1394a8dbed435c95df224efdb5f85e0a378",
+    "scripts/verify_temporal_parity.py": "226de172e56688a80703d3105b917c30e4a9af0198b6596dd6ac12b507249898",
+    "scripts/freeze_project_metrics.py": "60ca69efdac1832fe8c78e0752ccbfe17bd8a21a738498f0e608079e317e1d18"
+  },
+  "artifact_hashes": {
+    "docs/evaluation/finalization/temporal-parity.json": "37976e365815071caa9b1e5a2c3675a1fd71b6dd39eb784d544bf85778c326e1",
+    "docs/evaluation/finalization/test-results.json": "956ae86924624a8c6d4d5a6e02656fc871675b12290c8a705b239a62905bba9d",
+    "docs/evaluation/finalization/clean-install.json": "34aff3c8555c112d29f3ce13b0a5416a882937d95743144517df5be75a8c1bf9",
+    "docs/evaluation/finalization/compose.json": "3a1aa53767dd249aac359efbbab147add40fdb4fd7bf782094d04cccbf0ceb7f",
+    "docs/evaluation/finalization/security-summary.json": "80f1684ab9b629fb3b500d85ade3a464b90377648479e703e923413092799ad3",
+    "docs/evaluation/research/ppe100-final.json": "22b5493d780559a92cefe8305d0601abe81181a43d18747dae568ce128add28c",
+    "docs/evaluation/research/verified-label-mapping.json": "3c760da3f95a930b1e3f6426e20db21b8b284cad71dd48a3bcaed57bc559c1c7",
+    "docs/evaluation/research/test-baseline.json": "f048e5a15f46111487a04e064562d857de223bd0ad69c722a9de10bd3f25ec85",
+    "docs/evaluation/finalization/ppe-replay.json": "4f4aebc5ccc9527cac160727ec9c0fa432dd0e9fb2eac626cd258cb7eedb6364",
+    "docs/evaluation/finalization/accessibility.json": "4c944f4ebc91c8760599621a66ff5ecc79ddb0171c07db210d3950ce8842f6ea",
+    "docs/evaluation/finalization/backend-advisories.json": "2b5410bb90a518d2266c9afdccac824e3ecef1906d73ab61651bcce5492dc0d7",
+    "docs/evaluation/finalization/frontend-advisories.json": "35f5381fcb50a7bd8ed2945691d049791da7d37b25c2bfbe3bcb40f6ab872a7b",
+    "docs/evaluation/finalization/frontend-production-advisories.json": "b92a1f405b24ba200a2d9f68a16cddda507b7467cec85757607257b9b84c8c51"
+  }
+}

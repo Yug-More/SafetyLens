@@ -11,3 +11,5 @@ Historical evidence is retained in [platform audit](PLATFORM_AUDIT.md), [histori
 Final phase: [PPE validation](PPE_VALIDATION.md), [performance](PERFORMANCE_REPORT.md), [security review](SECURITY_REVIEW.md), [pilot acceptance gates](PILOT_READINESS.md), [preserved previous completion report](PRODUCT_COMPLETION_BASELINE_REPORT.md).
 
 Current November 8 research: [final validation](FINAL_VALIDATION_REPORT.md), [fall learning/evaluation](FALL_DETECTION_EVALUATION.md), [corrected PPE evaluation](PPE_EVALUATION.md), [reproducibility](REPRODUCIBILITY.md), [demo guide](DEMO_GUIDE.md), [graduate presentation](GRADUATE_APPLICATION_SUMMARY.md), [current audit](CURRENT_TECHNICAL_AUDIT.md). Historical equipment metrics are withdrawn where the mirror semantic map was incorrect; source predictions remain preserved.
+
+Authoritative final claims: [FINAL_PROJECT_METRICS.md](FINAL_PROJECT_METRICS.md). It supersedes changing historical subset summaries; the machine-readable ledger and source/artifact hashes are under `evaluation/finalization/`. Run the freeze checker before reusing metrics in applications.

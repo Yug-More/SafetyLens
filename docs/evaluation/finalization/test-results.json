@@ -1,0 +1,23 @@
+{
+  "backend_passed": 92,
+  "backend_seconds": 12.58,
+  "detector_passed": 69,
+  "detector_seconds": 0.174,
+  "browser_passed": 10,
+  "browser_duration_ms": 85226.70000000001,
+  "actual_model_browser_fixture": true,
+  "accessibility_routes": 5,
+  "accessibility_violations": 0,
+  "accessibility_scope": "axe-core4.14.0 WCAG2A/2AA automated scans, no rules disabled",
+  "lint": "passed",
+  "typecheck": "passed",
+  "standalone_container_build": "passed",
+  "ppe_current_predictions_identical_to_frozen_research_run": true,
+  "commands": [
+    "backend/.venv/bin/python -m pytest -c backend/pytest.ini backend/tests -q",
+    "PYTHONPATH=detector/src backend/.venv/bin/python -m unittest discover -s detector/tests -q",
+    "SAFETYLENS_REAL_CLIP=/tmp/safetylens-hardening/development/fall-07.mp4 SAFETYLENS_POSE_MODEL=/tmp/safetylens-hardening/models/pose_landmarker_lite.task npm --prefix frontend run test:e2e",
+    "npm --prefix frontend run lint",
+    "npm --prefix frontend run typecheck"
+  ]
+}

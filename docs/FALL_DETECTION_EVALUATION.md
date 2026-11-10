@@ -42,3 +42,7 @@ Earlier rules missed short post-fall tails, lost poses and insufficient down-pos
 Needed next: independent subject/session metadata and consented target-camera footage; independently labeled intent, onset, recovery and wearer visibility; longer realistic negative exposure; calibration/abstention and prospective false-alert acceptance gates fixed before evaluation. This phase establishes a runnable learning/evaluation path and a defensible rejection of promotion, not a solved safety classifier.
 
 Actual runtime, CPU/memory and multi-camera results are in [FINAL_VALIDATION_REPORT.md](FINAL_VALIDATION_REPORT.md). Training/inference commands: [REPRODUCIBILITY.md](REPRODUCIBILITY.md).
+
+## Frozen-release runtime parity
+
+November9 finalization centralizes `TemporalDecision` v2 instead of duplicating evaluation state. Missing/low-quality pose resets candidate/recovery persistence without silently rearming an active incident; explicit identity expiry remains separate. Both video and worker paths propagate missing observations. All18 published test recordings reproduce the cached event times exactly, with the same frozen checkpoint/operating point and unchanged4/0/10/4 matrix. Training reproduction remains byte-identical. This is regression/reproducibility evidence, not new held-out accuracy. See `evaluation/finalization/temporal-parity.json` and FINAL_PROJECT_METRICS.md.

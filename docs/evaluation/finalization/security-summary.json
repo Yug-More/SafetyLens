@@ -1,0 +1,10 @@
+{
+  "backend_packages_checked": 52,
+  "backend_advisories": 0,
+  "npm_all_advisories": 7,
+  "npm_production_advisories": 0,
+  "high_or_critical": 0,
+  "remaining_risk": "Moderate development-only minimatch/typescript-eslint glob amplification; no compatible fix was available without forced major changes. Not exposed as a remote application endpoint.",
+  "snapshot_date": "2026-11-09",
+  "not_a_security_certification": true
+}

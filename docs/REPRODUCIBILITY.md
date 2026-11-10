@@ -76,3 +76,13 @@ SAFETYLENS_REAL_CLIP=/tmp/safetylens-reproduce/urfall/fall-07-cam0.mp4 SAFETYLEN
 ```
 
 Default browser delivery without these variables is explicitly synthetic. To verify actual learned delivery through the Docker verifier, set `SAFETYLENS_TEMPORAL_CHECKPOINT` and `SAFETYLENS_TEMPORAL_SHA256` and pass fall27 to `scripts/verify_compose.py`. The verifier creates private QA records/dumps on a dedicated test installation; it is not an operational-site command. Four-replay/MJPEG probes are in `scripts/verify_camera_load.py`; they do not establish physical RTSP or sustained fleet capacity. See [DEMO_GUIDE.md](DEMO_GUIDE.md).
+
+## Final clean-install and metrics-freeze procedure
+
+`scripts/prepare_local_env.py --output PATH` creates private first-run secrets using exclusive creation and0600 permissions; it never overwrites an existing file. The concise root quick start uses a persistent user configuration directory. Keep encryption keys/backups secure and independent of test data.
+
+`python3 scripts/verify_clean_install.py --project safetylens-validation-UNIQUE --env-file /private/path/local.env --output /tmp/clean-install.json` refuses existing project containers/volumes before running the documented PostgreSQL17 profile. It verifies all services healthy and zero default users. Build layers may be reused; fresh data volumes were actually exercised. Default host ports must be free; do not stop unrelated installations. CI runs this probe on an isolated runner and uploads only the non-secret receipt.
+
+`python3 scripts/freeze_project_metrics.py --check` verifies model/decision source and experiment artifact hashes plus the generated metrics document. `--write` is an explicit new freeze, only after review/verification; no inference or training happens during `--check`. A merge/documentation commit can change Git HEAD without changing the bound scientific source. The tested source revision and evidence remain traceable in the ledger.
+
+Runtime/evaluation parity on the published test uses `scripts/verify_temporal_parity.py`; it loads the same checkpoint/cache/manifest/pose model, runs actual video inference and compares every event timestamp. No retraining or new accuracy claim is implied. Final test/source/clean-install/advisory artifacts are in `docs/evaluation/finalization/`.
