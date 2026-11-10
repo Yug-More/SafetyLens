@@ -293,7 +293,7 @@ export function OperationsConsole({
         human-approved and simulated.{" "}
         <a
           href={`${getApiBaseUrl()}/api/incidents-export`}
-          className="text-blue-400"
+          className="text-blue-400 underline underline-offset-2"
         >
           Export incident CSV
         </a>

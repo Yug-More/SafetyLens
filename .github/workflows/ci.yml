@@ -11,6 +11,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install -r backend/requirements.lock.txt
+      - run: python scripts/freeze_project_metrics.py --check
       - run: python -m pytest -c backend/pytest.ini backend/tests -q
       - run: PYTHONPATH=detector/src python -m unittest discover -s detector/tests -v
   frontend:
@@ -44,3 +45,19 @@ jobs:
         with:
           name: browser-results
           path: frontend/test-results
+  docker-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify the documented profile on fresh volumes
+        run: |
+          python scripts/prepare_local_env.py --output "$RUNNER_TEMP/safetylens.env"
+          python scripts/verify_clean_install.py --project safetylens-validation-ci --env-file "$RUNNER_TEMP/safetylens.env" --output "$RUNNER_TEMP/clean-install.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: clean-install-proof
+          path: ${{ runner.temp }}/clean-install.json

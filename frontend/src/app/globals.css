@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import "../styles/vendor/shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -63,7 +63,7 @@
   --card-foreground: #f8fafc;
   --popover: #151e31;
   --popover-foreground: #f8fafc;
-  --primary: #3b82f6;
+  --primary: #2563eb;
   --primary-foreground: #f8fafc;
   --secondary: #1a2438;
   --secondary-foreground: #e2e8f0;
@@ -106,7 +106,7 @@
   --card-foreground: #f8fafc;
   --popover: #151e31;
   --popover-foreground: #f8fafc;
-  --primary: #3b82f6;
+  --primary: #2563eb;
   --primary-foreground: #f8fafc;
   --secondary: #1a2438;
   --secondary-foreground: #e2e8f0;

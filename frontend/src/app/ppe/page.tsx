@@ -9,7 +9,7 @@ export default function PpePage() {
       <p className="rounded-xl border border-amber-500/20 p-4 text-sm text-muted-foreground">
         Local PPE deployment is disabled: no validated, license-cleared model is available. Offline inference evaluation and historical reviews remain available. Configured demo observations remain
         labeled.{" "}
-        <Link href="/cameras" className="text-blue-400">
+        <Link href="/cameras" className="text-blue-400 underline underline-offset-2">
           Manage camera-specific PPE requirements
         </Link>
         .
